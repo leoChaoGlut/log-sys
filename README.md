@@ -1,2 +1,1 @@
-# log-sys
-A log system
+log-sys
