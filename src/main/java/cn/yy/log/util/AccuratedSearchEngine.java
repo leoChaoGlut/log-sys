@@ -27,20 +27,30 @@ public class AccuratedSearchEngine {
     private String contextBeginTag;
     private String contextEndTag;
 
-    private LinkedList<String> contextCache = new LinkedList<>();
+    private LinkedList<String> contextCache;
+    private List<String> contextList = new ArrayList<>();
 
+    private final String END_OF_ROW_TAG = "$RowEnd$";
+    private final String END_OF_ROW_VALUE_END_TAG = "$";
 
-    private final String END_OF_ROW_TAG = "End Of Row Tag";
-    private final String END_OF_ROW_VALUE_END_TAG = "End Of Row Value Tag";
+    private final String CONTEXT_BEGIN_TAG_PREFIX = "$ReqBegin$";
+    private final String CONTEXT_BEGIN_TAG_SUFFIX = "$";
 
-    private final String CONTEXT_BEGIN_TAG_PREFIX = "Context Begin Tag Prefix";
-    private final String CONTEXT_BEGIN_TAG_SUFFIX = "Context Begin Tag Suffix";
-
-    private final String CONTEXT_END_TAG_PREFIX = "Context End Tag Prefix";
-    private final String CONTEXT_END_TAG_SUFFIX = "Context End Tag Suffix";
+    private final String CONTEXT_END_TAG_PREFIX = "$ReqEnd$";
+    private final String CONTEXT_END_TAG_SUFFIX = "$";
 
     private final int END_OF_ROW_TAG_LENGTH = END_OF_ROW_TAG.length();
 
+    public static List<String> search(String key, String value, Map<String, LogPair> logPairMap) {
+        try {
+            AccuratedSearchEngine accuratedSearchEngine = new AccuratedSearchEngine(key, value, logPairMap);
+            accuratedSearchEngine.search();
+            return accuratedSearchEngine.getContextList();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
     public AccuratedSearchEngine(String key, String value, Map<String, LogPair> logPairMap) throws Exception {
         this.key = key;
@@ -60,12 +70,12 @@ public class AccuratedSearchEngine {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
 
     private void findContext() throws Exception {
         int valueIndexListSize = valueIndexList.size();
         for (int i = 0; i < valueIndexListSize; i++) {
+            contextCache = new LinkedList<>();//重置上下文缓存
             Integer valueIndex = valueIndexList.get(i);
             Map.Entry<String, LogPair> logPairEntry = logPairList.get(logPairIndex);
             LogPair logPair = logPairEntry.getValue();
@@ -84,23 +94,61 @@ public class AccuratedSearchEngine {
             contextBeginTag = CONTEXT_BEGIN_TAG_PREFIX + requestCount + CONTEXT_BEGIN_TAG_SUFFIX;
             contextEndTag = CONTEXT_END_TAG_PREFIX + requestCount + CONTEXT_END_TAG_SUFFIX;
 
-            findContextHead();
-            findContextTail();
+            findContextHead(logContent);
+            findContextTail(logContent);
+
+            if (contextCache.isEmpty()) {
+                throw new Exception("查找上下文失败");
+            } else {
+                String context = buildContext();
+                contextList.add(context);
+            }
         }
     }
 
-    private void findContextHead() {
-
+    private String buildContext() {
+        int capacity = 0;
+        for (String contextSegment : contextCache) {
+            capacity += contextSegment.length();
+        }
+        StringBuilder contextBuilder = new StringBuilder(capacity);
+        for (String contextSegment : contextCache) {
+            contextBuilder.append(contextSegment);
+        }
+        return contextBuilder.toString();
     }
 
-    private void findContextTail() {
-
+    private void findContextHead(String logContent) throws IOException {
+        backTracking(logContent, logPairIndex, 0, logContent.length(), true);
     }
 
-    private void backTracking(int logPairIndex) throws IOException {
+    private void findContextTail(String logContent) throws IOException {
+        backTracking(logContent, logPairIndex, 0, logContent.length(), false);
+    }
+
+    private void backTracking(String logContent, int logPairIndex, int contentBeginIndex, int contentEndIndex, boolean isForward) throws IOException {
         if (0 <= logPairIndex && logPairIndex < logPairListSize) {
-            File logFile = logPairList.get(logPairIndex).getValue().getLogFile();
-            String logContent = IOUtil.read(logFile);
+            String contextTag = isForward ? contextBeginTag : contextEndTag;
+            int contextTagIndex = logContent.indexOf(contextTag, contentBeginIndex);
+            if (contextTagIndex >= 0) {//如果找到了上下文标记
+                if (isForward) {
+                    contextCache.addFirst(logContent.substring(contextTagIndex, contentEndIndex));
+                } else {
+                    contextCache.addLast(logContent.substring(contentBeginIndex, contextTagIndex));
+                }
+            } else {//如果没有找到了上下文标记
+                if (isForward) {
+                    contextCache.addFirst(logContent.substring(contentBeginIndex, contentEndIndex));
+                    File logFile = logPairList.get(logPairIndex - 1).getValue().getLogFile();
+                    String prevLogContent = IOUtil.read(logFile);
+                    backTracking(prevLogContent, logPairIndex - 1, 0, prevLogContent.length(), isForward);
+                } else {
+                    contextCache.addLast(logContent.substring(contentBeginIndex, contentEndIndex));
+                    File logFile = logPairList.get(logPairIndex + 1).getValue().getLogFile();
+                    String nextLogContent = IOUtil.read(logFile);
+                    backTracking(nextLogContent, logPairIndex + 1, 0, nextLogContent.length(), isForward);
+                }
+            }
         }
     }
 
@@ -134,5 +182,7 @@ public class AccuratedSearchEngine {
         return logIndex.getAccuratedIndexMap();
     }
 
-
+    public List<String> getContextList() {
+        return contextList;
+    }
 }

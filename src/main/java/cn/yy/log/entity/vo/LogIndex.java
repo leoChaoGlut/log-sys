@@ -13,6 +13,9 @@ public class LogIndex {
     private Map<String, TreeSet<Integer>> normalIndexMap;
     private Map<String, Map<String, TreeSet<Integer>>> accuratedIndexMap;
 
+    public LogIndex() {
+    }
+
     public LogIndex(Map<String, TreeSet<Integer>> normalIndexMap, Map<String, Map<String, TreeSet<Integer>>> accuratedIndexMap) {
         this.normalIndexMap = normalIndexMap;
         this.accuratedIndexMap = accuratedIndexMap;

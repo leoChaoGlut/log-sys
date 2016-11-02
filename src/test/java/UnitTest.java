@@ -1,5 +1,6 @@
 import cn.yy.log.entity.vo.LogIndex;
 import cn.yy.log.entity.vo.LogPair;
+import cn.yy.log.util.AccuratedSearchEngine;
 import cn.yy.log.util.IOUtil;
 import cn.yy.log.util.IndexBuilder;
 import cn.yy.log.util.LogScanner;
@@ -51,22 +52,13 @@ public class UnitTest {
     }
 
     @Test
-    public void test() {
+    public void accuratedSearchEngineTest() {
         String beginDateTime = "2016-01-01 01:01";
         String endDateTime = "2016-02-01 01:03";
         String basePath = "D:\\tmp";
         Map<String, LogPair> logPairMap = LogScanner.scan(beginDateTime, endDateTime, basePath);
-        ArrayList<Map.Entry<String, LogPair>> list = new ArrayList<>(logPairMap.entrySet());
-
-        System.out.println(JSON.toJSONString(list, true));
-
-    }
-
-    @Test
-    public void test01() {
-        String str = "Greeting everyone,Leo is coming";
-        str.indexOf("");
-        StringBuilder sb = new StringBuilder(str);
-        System.out.println(sb.reverse().toString());
+        List<String> contextList = AccuratedSearchEngine.search("pat_card_no", "aaa", logPairMap);
+//        System.out.println(JSON.toJSONString(contextList, true));
+        System.out.println(contextList.size());
     }
 }
