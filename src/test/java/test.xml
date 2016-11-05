@@ -1,19 +1,24 @@
-<?xml version="1.0" encoding="utf-8"?>
-<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"
-               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-    <soap:Body>
-        <ackpayorderResponse xmlns="http://tempurl.org">
-            <ackpayorderResult>
-                <response>
-                    <resultcode>0</resultcode>
-                    <resultmessage></resultmessage>
-                    <receiptnum>110903</receiptnum>
-                    <hisordnum>110903</hisordnum>
-                    <barcode>20081217</barcode>
-                    <hismessage>缴费成功。你需要去:检验科,免疫发光室,Ｂ超室,心电图室。对应的科室地址依次是：1号楼一楼东侧,1号楼一楼东侧,1号楼三层东侧,1号楼三楼东侧心电图室。
-                    </hismessage>
-                </response>
-            </ackpayorderResult>
-        </ackpayorderResponse>
-    </soap:Body>
-</soap:Envelope>
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:zes="http://zesing.com/">
+    <soapenv:Header/>
+    <soapenv:Body>
+        <zes:SaveBookingRegister>
+            <zes:OrgnaizationId>0008</zes:OrgnaizationId>
+            <zes:HisPatId>2320362</zes:HisPatId>
+            <zes:Name>微信测试</zes:Name>
+            <zes:Sex>1</zes:Sex>
+            <zes:Birthday>1991-07-25</zes:Birthday>
+            <zes:IdentityNo>350525199107250591</zes:IdentityNo>
+            <zes:identityKindId>1</zes:identityKindId>
+            <zes:CardNo>20115755</zes:CardNo>
+            <zes:CardKindId>1</zes:CardKindId>
+            <zes:MobilePhone>15913172331</zes:MobilePhone>
+            <zes:RegDate>2016-11-03</zes:RegDate>
+            <zes:RegId>1898(582)</zes:RegId>
+            <zes:DoctorId>1898</zes:DoctorId>
+            <zes:RegName>内分泌代谢科门诊</zes:RegName>
+            <zes:TimeSlotId>1</zes:TimeSlotId>
+            <zes:StartTime>14:30</zes:StartTime>
+            <zes:EndTime>16:00</zes:EndTime>
+        </zes:SaveBookingRegister>
+    </soapenv:Body>
+</soapenv:Envelope>

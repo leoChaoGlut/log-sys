@@ -1,4 +1,4 @@
-package cn.yy.log.util;
+package cn.yy.log.util.v1;
 
 import cn.yy.log.entity.vo.DirDepth;
 import cn.yy.log.entity.vo.LogPair;

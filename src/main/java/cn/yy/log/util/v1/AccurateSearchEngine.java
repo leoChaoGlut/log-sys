@@ -1,7 +1,8 @@
-package cn.yy.log.util;
+package cn.yy.log.util.v1;
 
 import cn.yy.log.entity.vo.LogIndex;
 import cn.yy.log.entity.vo.LogPair;
+import cn.yy.log.util.IOUtil;
 import com.alibaba.fastjson.JSON;
 
 import java.io.File;
@@ -190,13 +191,17 @@ public class AccurateSearchEngine {
         return false;
     }
 
-    private Map<String, Map<String, TreeSet<Integer>>> getAccurateIndexMap(int i) throws IOException {
+    private Map<String, Map<String, TreeSet<Integer>>> getAccurateIndexMap(int i) throws Exception {
         Map.Entry<String, LogPair> logPairEntry = logPairList.get(i);
         LogPair logPair = logPairEntry.getValue();
         File indexFile = logPair.getIndexFile();
         String indexFileContent = IOUtil.read(indexFile);
         LogIndex logIndex = JSON.parseObject(indexFileContent, LogIndex.class);
-        return logIndex.getAccuratedIndexMap();
+        Map<String, Map<String, TreeSet<Integer>>> accuratedIndexMap = logIndex.getAccuratedIndexMap();
+        if (accuratedIndexMap == null) {
+            throw new Exception(logPair.getLogFile().getName() + " 的索引文件丢失");
+        }
+        return accuratedIndexMap;
     }
 
     public List<String> getContextList() {

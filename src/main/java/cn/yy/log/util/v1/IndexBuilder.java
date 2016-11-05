@@ -1,4 +1,4 @@
-package cn.yy.log.util;
+package cn.yy.log.util.v1;
 
 import java.util.HashMap;
 import java.util.List;
