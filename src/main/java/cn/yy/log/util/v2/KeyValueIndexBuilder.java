@@ -80,9 +80,10 @@ public class KeyValueIndexBuilder {
     private String logContent;
     private Map<String, Map<String, List<IndexInfo>>> keyValueIndex;
 
-    public KeyValueIndexBuilder(List<Tag> tagList, File logFile) {
+    public KeyValueIndexBuilder(List<Tag> tagList, File logFile, Map<String, Map<String, List<IndexInfo>>> keyValueIndex) {
         this.tagList = tagList;
         this.logFile = logFile;
+        this.keyValueIndex = keyValueIndex;
         try {
             logContent = IOUtil.read(logFile);
         } catch (IOException e) {

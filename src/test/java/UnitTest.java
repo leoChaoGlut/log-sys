@@ -1,7 +1,7 @@
 import cn.yy.log.entity.vo.LogIndex;
 import cn.yy.log.entity.vo.LogPair;
-import cn.yy.log.util.v1.AccurateSearchEngine;
 import cn.yy.log.util.IOUtil;
+import cn.yy.log.util.v1.AccurateSearchEngine;
 import cn.yy.log.util.v1.IndexBuilder;
 import cn.yy.log.util.v1.LogScanner;
 import com.alibaba.fastjson.JSON;
@@ -10,10 +10,8 @@ import org.junit.Test;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeSet;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  * @Author: Leo
@@ -63,5 +61,14 @@ public class UnitTest {
         List<String> contextList = AccurateSearchEngine.search("pat_card_no", "0000427177", logPairMap);
 //        System.out.println(JSON.toJSONString(contextList, true));
         System.out.println(contextList.size());
+    }
+
+    @Test
+    public void test() {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date today = new Date();
+        Date tomorrow = new Date(today.getTime() + 3600 * 1000);
+        System.out.println(sdf.format(today));
+        System.out.println(sdf.format(tomorrow));
     }
 }

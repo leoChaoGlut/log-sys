@@ -4,6 +4,7 @@ import cn.yy.log.util.IOUtil;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -13,24 +14,6 @@ import java.util.Map;
  * @Description: 采集节点使用
  */
 public class RequestIndexBuilder {
-
-    public static class IndexInfo {
-        private File logFile;
-        private int indexOfLogFile;
-
-        public IndexInfo(File logFile, int indexOfLogFile) {
-            this.logFile = logFile;
-            this.indexOfLogFile = indexOfLogFile;
-        }
-
-        public File getLogFile() {
-            return logFile;
-        }
-
-        public int getIndexOfLogFile() {
-            return indexOfLogFile;
-        }
-    }
 
     private final String REQUEST_BEGIN_TAG = "";
     private final String REQUEST_END_TAG = "";
@@ -47,8 +30,12 @@ public class RequestIndexBuilder {
 
     public RequestIndexBuilder(Map<Long, IndexInfo> requestIndex, File logFile) {
         this.requestIndex = requestIndex;
+        if (this.requestIndex == null) {
+            this.requestIndex = new HashMap<>();
+        }
         this.logFile = logFile;
         try {
+//            Files.readAllLines(Path)
             this.logContent = IOUtil.read(logFile);
         } catch (IOException e) {
             e.printStackTrace();
@@ -74,10 +61,26 @@ public class RequestIndexBuilder {
             requestCountEndTagIndex = logContent.indexOf(REQUEST_COUNT_END_TAG, requestCountBeginTagIndex);
             String count = logContent.substring(requestCountBeginTagIndex, requestCountEndTagIndex);
             IndexInfo indexInfo = new IndexInfo(logFile, requestTagIndex);
-            requestIndex.put(Long.valueOf(count), indexInfo);//理论上 key 不会有重复
+            requestIndex.put(Long.valueOf(count), indexInfo);//理论上 key( AtomicLong ) 不会有重复
             requestTagIndex = requestCountBeginTagIndex;
         }
     }
 
+    public static class IndexInfo {
+        private File logFile;
+        private int indexOfLogFile;
 
+        public IndexInfo(File logFile, int indexOfLogFile) {
+            this.logFile = logFile;
+            this.indexOfLogFile = indexOfLogFile;
+        }
+
+        public File getLogFile() {
+            return logFile;
+        }
+
+        public int getIndexOfLogFile() {
+            return indexOfLogFile;
+        }
+    }
 }
