@@ -49,8 +49,8 @@ public class KeyValueIndexBuilder {
 
         public Tag(String key, String keyTag, String valueEndTag) {
             this.key = key;
-            this.keyTag = keyTag;
-            this.valueEndTag = valueEndTag;
+            this.keyTag = keyTag;//Tag一定要足够有标识性,不要嫌它字符多.否则可能会将不必要的值作为索引.尽量大于2个字符
+            this.valueEndTag = valueEndTag;//Tag一定要足够有标识性,不要嫌它字符多.否则可能会将不必要的值作为索引.
             this.keyOffset = keyTag.indexOf(key);// key OffSet
         }
 

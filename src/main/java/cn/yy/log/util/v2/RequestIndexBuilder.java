@@ -35,7 +35,6 @@ public class RequestIndexBuilder {
         }
         this.logFile = logFile;
         try {
-//            Files.readAllLines(Path)
             this.logContent = IOUtil.read(logFile);
         } catch (IOException e) {
             e.printStackTrace();
