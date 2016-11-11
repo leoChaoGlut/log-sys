@@ -1,5 +1,6 @@
 package cn.yy.log.util;
 
+import cn.yy.log.constant.Tag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,10 +18,6 @@ public class LogUtil {
     private static final ConcurrentHashMap<String, Long> countMap = new ConcurrentHashMap<>(128);
     private Logger logger;
 
-    private final String REQUEST_BEGIN_TAG = "$ReqBegin$";
-    private final String REQUEST_END_TAG = "$ReqEnd$";
-    private final String ROW_END_TAG = "@RowEnd@";
-    private final String COUNT_END_TAG = "&";
 
     private Class<?> targetClass;
 
@@ -32,22 +29,22 @@ public class LogUtil {
         logger = LoggerFactory.getLogger(targetClass);
     }
 
-    public void requestBegin(String msg) {
+    public void contextBegin(String msg) {
         Long count = counter.getAndIncrement();
         countMap.put(Thread.currentThread().getName(), count);
-        logger.info(msg + REQUEST_BEGIN_TAG + count + COUNT_END_TAG);
+        logger.info(msg + Tag.CONTEXT_BEGIN + count + Tag.CONTEXT_COUNT_END);
     }
 
-    public void requestEnd(String msg) {
-        logger.info(msg + REQUEST_END_TAG + countMap.get(Thread.currentThread().getName()) + COUNT_END_TAG);
+    public void contextEnd(String msg) {
+        logger.info(msg + Tag.CONTEXT_END + countMap.get(Thread.currentThread().getName()) + Tag.CONTEXT_COUNT_END);
     }
 
     public void info(String msg) {
-        logger.info(msg + ROW_END_TAG + countMap.get(Thread.currentThread().getName()) + COUNT_END_TAG);
+        logger.info(msg + Tag.ROW_END + countMap.get(Thread.currentThread().getName()) + Tag.CONTEXT_COUNT_END);
     }
 
     public void error(String msg) {
-        logger.error(msg + ROW_END_TAG + countMap.get(Thread.currentThread().getName()) + COUNT_END_TAG);
+        logger.error(msg + Tag.ROW_END + countMap.get(Thread.currentThread().getName()) + Tag.CONTEXT_COUNT_END);
     }
 
     /**
