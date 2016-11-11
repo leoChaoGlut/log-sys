@@ -1,4 +1,5 @@
 import cn.yy.log.util.builder.imp.ContextIndexBuilder;
+import cn.yy.log.util.builder.imp.KeyValueIndexBuilder;
 import cn.yy.log.util.builder.imp.KeywordIndexBuilder;
 import com.alibaba.fastjson.JSON;
 import com.google.common.base.Charsets;
@@ -38,6 +39,15 @@ public class BuilderTest {
         keywordList.add("Context End");
         KeywordIndexBuilder builder = new KeywordIndexBuilder(new File("D://1.txt"), keywordList);
         Map<String, List<KeywordIndexBuilder.IndexInfo>> map = builder.build();
+        System.out.println(JSON.toJSONString(map, true));
+    }
+
+    @Test
+    public void keyValueIndexBuilderTest() {
+        List<KeyValueIndexBuilder.KvTag> kvTagList = new ArrayList<>();
+        kvTagList.add(new KeyValueIndexBuilder.KvTag("Test", "\"Test\":\"", "\""));
+        KeyValueIndexBuilder builder = new KeyValueIndexBuilder(kvTagList, new File("D://1.txt"));
+        Map<String, Map<String, List<KeyValueIndexBuilder.IndexInfo>>> map = builder.build();
         System.out.println(JSON.toJSONString(map, true));
     }
 

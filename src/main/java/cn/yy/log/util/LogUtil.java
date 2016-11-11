@@ -32,11 +32,12 @@ public class LogUtil {
     public void contextBegin(String msg) {
         Long count = counter.getAndIncrement();
         countMap.put(Thread.currentThread().getName(), count);
-        logger.info(msg + Tag.CONTEXT_BEGIN + count + Tag.CONTEXT_COUNT_END);
+        logger.info(msg + Tag.CONTEXT_BEGIN + count + Tag.CONTEXT_COUNT_END + Tag.ROW_END + count + Tag.CONTEXT_COUNT_END);
     }
 
     public void contextEnd(String msg) {
-        logger.info(msg + Tag.CONTEXT_END + countMap.get(Thread.currentThread().getName()) + Tag.CONTEXT_COUNT_END);
+        Long count = countMap.get(Thread.currentThread().getName());
+        logger.info(msg + Tag.CONTEXT_END + count + Tag.CONTEXT_COUNT_END + Tag.ROW_END + count + Tag.CONTEXT_COUNT_END);
     }
 
     public void info(String msg) {

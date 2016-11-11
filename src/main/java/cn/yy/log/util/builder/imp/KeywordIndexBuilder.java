@@ -39,23 +39,20 @@ public class KeywordIndexBuilder implements IndexBuilder<Map<String, List<Keywor
     @Override
     public Map<String, List<IndexInfo>> build() {
         for (String keyword : keywordList) {
-            int keywordListSize = keywordList.size();
-            for (int i = 0; i < keywordListSize; i++) {
-                int keywordTagIndex = 0;
-                while (0 <= (keywordTagIndex = logContent.indexOf(keyword, keywordTagIndex))) {
-                    int rowEndTagIndex = logContent.indexOf(Tag.ROW_END, keywordTagIndex + keyword.length());
-                    int contextCountBeginTagIndex = rowEndTagIndex + Tag.ROW_END.length();
-                    int contextCountEndTagIndex = logContent.indexOf(Tag.CONTEXT_COUNT_END, contextCountBeginTagIndex);
-                    String count = logContent.substring(contextCountBeginTagIndex, contextCountEndTagIndex);
-                    IndexInfo indexInfo = new IndexInfo(logFile, keywordTagIndex, Long.valueOf(count));
-                    List<IndexInfo> indexInfoList = keywordIndex.get(keyword);
-                    if (indexInfoList == null) {
-                        indexInfoList = new ArrayList<>();
-                    }
-                    indexInfoList.add(indexInfo);
-                    keywordIndex.put(keyword, indexInfoList);
-                    keywordTagIndex = contextCountEndTagIndex;
+            int keywordTagIndex = 0;
+            while (0 <= (keywordTagIndex = logContent.indexOf(keyword, keywordTagIndex))) {
+                int rowEndTagIndex = logContent.indexOf(Tag.ROW_END, keywordTagIndex + keyword.length());
+                int contextCountBeginTagIndex = rowEndTagIndex + Tag.ROW_END.length();
+                int contextCountEndTagIndex = logContent.indexOf(Tag.CONTEXT_COUNT_END, contextCountBeginTagIndex);
+                String count = logContent.substring(contextCountBeginTagIndex, contextCountEndTagIndex);
+                IndexInfo indexInfo = new IndexInfo(logFile, keywordTagIndex, Long.valueOf(count));
+                List<IndexInfo> indexInfoList = keywordIndex.get(keyword);
+                if (indexInfoList == null) {
+                    indexInfoList = new ArrayList<>();
                 }
+                indexInfoList.add(indexInfo);
+                keywordIndex.put(keyword, indexInfoList);
+                keywordTagIndex = contextCountEndTagIndex;
             }
         }
         return keywordIndex;

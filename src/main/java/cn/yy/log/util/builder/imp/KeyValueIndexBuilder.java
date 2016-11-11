@@ -66,6 +66,7 @@ public class KeyValueIndexBuilder implements IndexBuilder<Map<String, Map<String
                     valueMap.put(value, indexInfoList);
                     keyValueIndex.put(key, valueMap);
                 }
+                keyTagIndex = valueEndIndex;
             }
         }
         return keyValueIndex;
@@ -103,8 +104,16 @@ public class KeyValueIndexBuilder implements IndexBuilder<Map<String, Map<String
 
         public KvTag(String key, String keyTag, String valueEndTag) {
             this.key = key;
-            this.keyTag = keyTag;//Tag一定要足够有标识性,不要嫌它字符多.否则可能会将不必要的值作为索引.尽量大于2个字符
-            this.valueEndTag = valueEndTag;//Tag一定要足够有标识性,不要嫌它字符多.否则可能会将不必要的值作为索引.
+            /**
+             * Tag一定要足够有标识性,不要嫌它字符多.否则可能会将不必要的值作为索引.尽量大于2个字符,并且要与value的起始位置相连.
+             * 如: "key":"value",
+             * 那么:
+             * key = "key"
+             * keyTag = "\"key\":\""
+             * valueEndTag = "\","
+             */
+            this.keyTag = keyTag;
+            this.valueEndTag = valueEndTag;//Tag一定要足够有标识性,不要嫌它字符多.否则可能会将不必要的值作为索引.尽量大于2个字符.
             this.keyOffset = keyTag.indexOf(key);// key OffSet
         }
 
