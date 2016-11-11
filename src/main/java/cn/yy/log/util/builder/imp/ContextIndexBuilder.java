@@ -16,14 +16,14 @@ import java.util.Map;
  * @CreateTime: 2016/11/3 14:23
  * @Description: 上下文索引构造器
  */
-public class ContextIndexBuilder implements IndexBuilder<Map<Long, ContextIndexBuilder.IndexInfo>> {
+public class ContextIndexBuilder implements IndexBuilder<Map<Long, ContextIndexBuilder.ContextInfo>> {
 
     private File logFile;
 
     /**
      * 多线程标记tag的时候,要把 Map 改为 ConcurrentHashMap
      */
-    private Map<Long, IndexInfo> contextIndex = new HashMap<>(1024);
+    private Map<Long, ContextInfo> contextIndex = new HashMap<>(1024);
     private String logContent;
 
 
@@ -42,23 +42,58 @@ public class ContextIndexBuilder implements IndexBuilder<Map<Long, ContextIndexB
      * 暂时先用单线程
      */
     @Override
-    public Map<Long, IndexInfo> build() {
-        markTag(Tag.CONTEXT_BEGIN);
-        markTag(Tag.CONTEXT_END);
+    public Map<Long, ContextInfo> build() {
+        markTag(Tag.CONTEXT_BEGIN, true);
+        markTag(Tag.CONTEXT_END, false);
         return contextIndex;
     }
 
-    private void markTag(String tag) {
+    private void markTag(String tag, boolean isBeginTag) {
         int contextTagIndex = 0;
         int contextCountBeginTagIndex;
         int contextCountEndTagIndex;
         while (0 <= (contextTagIndex = logContent.indexOf(tag, contextTagIndex))) {
             contextCountBeginTagIndex = contextTagIndex + tag.length();
             contextCountEndTagIndex = logContent.indexOf(Tag.CONTEXT_COUNT_END, contextCountBeginTagIndex);
-            String count = logContent.substring(contextCountBeginTagIndex, contextCountEndTagIndex);
+            Long count = Long.valueOf(logContent.substring(contextCountBeginTagIndex, contextCountEndTagIndex));
             IndexInfo indexInfo = new IndexInfo(logFile, contextTagIndex);
-            contextIndex.put(Long.valueOf(count), indexInfo);//理论上 key( AtomicLong ) 不会有重复
+            ContextInfo contextInfo = contextIndex.get(count);
+            if (null == contextInfo) {
+                contextInfo = new ContextInfo();
+            }
+            if (isBeginTag) {
+                contextInfo.setBegin(indexInfo);
+            } else {
+                contextInfo.setEnd(indexInfo);
+            }
+            contextIndex.put(count, contextInfo);//理论上 key( AtomicLong ) 不会有重复
             contextTagIndex = contextCountBeginTagIndex;
+        }
+    }
+
+    public static class ContextInfo {
+        private IndexInfo begin;
+        private IndexInfo end;
+
+        public ContextInfo() {
+        }
+
+        public IndexInfo getBegin() {
+            return begin;
+        }
+
+        public ContextInfo setBegin(IndexInfo begin) {
+            this.begin = begin;
+            return this;
+        }
+
+        public IndexInfo getEnd() {
+            return end;
+        }
+
+        public ContextInfo setEnd(IndexInfo end) {
+            this.end = end;
+            return this;
         }
     }
 

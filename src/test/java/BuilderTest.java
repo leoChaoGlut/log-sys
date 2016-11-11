@@ -23,12 +23,13 @@ public class BuilderTest {
     @Test
     public void contextIndexBuilderTest() throws IOException {
         ContextIndexBuilder builder = new ContextIndexBuilder(new File("D://1.txt"));
-        Map<Long, ContextIndexBuilder.IndexInfo> contextIndex = builder.build();
-        Files.write(JSON.toJSONString(contextIndex), new File("D://context.index"), Charsets.UTF_8);
-        System.out.println(contextIndex);
+        Map<Long, ContextIndexBuilder.ContextInfo> map = builder.build();
+        Files.write(JSON.toJSONString(map), new File("D://context.index"), Charsets.UTF_8);
+        System.out.println(JSON.toJSONString(map, true));
 //        String json = Files.asCharSource(new File("D://context.index"), Charsets.UTF_8).read();
 //        Map<Long, ContextIndexBuilder.IndexInfo> map = JSON.parseObject(json, Map.class);
 //        System.out.println(map);
+//        System.out.println(Files.asCharSource(new File("D://1.txt"), Charsets.UTF_8).read().substring(2407, 3070));
     }
 
     @Test
