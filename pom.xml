@@ -13,6 +13,7 @@
         <module>schedule-task</module>
         <module>node</module>
         <module>center</module>
+        <module>search-engine</module>
     </modules>
 
     <dependencies>
