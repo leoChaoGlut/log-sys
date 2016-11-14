@@ -20,7 +20,6 @@ import java.util.Map;
  */
 public class KeyValueIndexBuilder implements IndexBuilder<Map<String, Map<String, List<KeyValueIndexBuilder.IndexInfo>>>> {
 
-
     private List<KvTag> kvTagList;
     private File logFile;
 

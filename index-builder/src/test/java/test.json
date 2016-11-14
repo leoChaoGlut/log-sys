@@ -1,0 +1,74 @@
+{
+  "Test": {
+    "3": [
+      {
+        "contextCount": 8,
+        "indexOfLogFile": 6367,
+        "logFile": "D:\\1.txt"
+      }
+    ],
+    "2": [
+      {
+        "contextCount": 3,
+        "indexOfLogFile": 3683,
+        "logFile": "D:\\1.txt"
+      }
+    ],
+    "1": [
+      {
+        "contextCount": 2,
+        "indexOfLogFile": 3821,
+        "logFile": "D:\\1.txt"
+      }
+    ],
+    "0": [
+      {
+        "contextCount": 5,
+        "indexOfLogFile": 4773,
+        "logFile": "D:\\1.txt"
+      }
+    ],
+    "7": [
+      {
+        "contextCount": 6,
+        "indexOfLogFile": 5415,
+        "logFile": "D:\\1.txt"
+      }
+    ],
+    "6": [
+      {
+        "contextCount": 4,
+        "indexOfLogFile": 4635,
+        "logFile": "D:\\1.txt"
+      }
+    ],
+    "5": [
+      {
+        "contextCount": 7,
+        "indexOfLogFile": 5891,
+        "logFile": "D:\\1.txt"
+      }
+    ],
+    "4": [
+      {
+        "contextCount": 1,
+        "indexOfLogFile": 2868,
+        "logFile": "D:\\1.txt"
+      }
+    ],
+    "9": [
+      {
+        "contextCount": 9,
+        "indexOfLogFile": 6845,
+        "logFile": "D:\\1.txt"
+      }
+    ],
+    "8": [
+      {
+        "contextCount": 0,
+        "indexOfLogFile": 2729,
+        "logFile": "D:\\1.txt"
+      }
+    ]
+  }
+}
