@@ -11,9 +11,10 @@
     <modules>
         <module>index-builder</module>
         <module>schedule-task</module>
-        <module>node</module>
-        <module>center</module>
+        <module>collection-node</module>
+        <module>search-center</module>
         <module>search-engine</module>
+        <module>store-node</module>
     </modules>
 
     <dependencies>

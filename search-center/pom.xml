@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>center</artifactId>
+    <artifactId>search-center</artifactId>
 
 
 </project>
