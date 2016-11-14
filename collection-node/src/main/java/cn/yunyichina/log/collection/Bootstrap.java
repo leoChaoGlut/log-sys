@@ -13,7 +13,6 @@ import org.springframework.boot.SpringApplication;
 public class Bootstrap {
 
     public static void main(String[] args) {
-        SpringApplication bootstrap = new SpringApplication(SpringConfig.class);
-        bootstrap.run(args);
+        SpringApplication.run(SpringConfig.class, args);
     }
 }
