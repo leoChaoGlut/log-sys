@@ -1,6 +1,7 @@
 package cn.yunyichina.log.collection;
 
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+import cn.yunyichina.log.collection.config.SpringConfig;
+import org.springframework.boot.SpringApplication;
 
 /**
  * @Author: Leo
@@ -8,6 +9,11 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @CreateTime: 2016/11/14 18:13
  * @Description:
  */
-@SpringBootApplication(scanBasePackages = {"cn.yunyichina.log.collection"})
+
 public class Bootstrap {
+
+    public static void main(String[] args) {
+        SpringApplication bootstrap = new SpringApplication(SpringConfig.class);
+        bootstrap.run(args);
+    }
 }

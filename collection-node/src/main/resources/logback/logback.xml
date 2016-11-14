@@ -34,7 +34,7 @@
     <!--如果在生产环境,则要把root中的appender注释掉.否则会打印到控制台 ,debug时可以打开.-->
     <logger name="cn.yunyichina.front" level="INFO" additivity="false">
         <appender-ref ref="ALL_YY"/>
-        <!--<appender-ref ref="STDOUT"/>-->
+        <appender-ref ref="STDOUT"/>
     </logger>
     <!--打印SQL-->
     <!--<logger name="cn.yunyichina.front.business.mapper" level="DEBUG" additivity="false">-->
@@ -44,7 +44,7 @@
 
     <!--打印任意包日志-->
     <root level="INFO">
-        <!--<appender-ref ref="STDOUT"/>-->
+        <appender-ref ref="STDOUT"/>
     </root>
 
 </configuration>
