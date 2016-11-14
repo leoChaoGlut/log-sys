@@ -1,4 +1,4 @@
-import cn.yy.log.util.LogScanner;
+import cn.yy.log.index.util.LogScanner;
 import com.alibaba.fastjson.JSON;
 import org.junit.Test;
 

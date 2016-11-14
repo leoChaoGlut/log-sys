@@ -1,6 +1,6 @@
-package cn.yy.log.util;
+package cn.yy.log.index.util;
 
-import cn.yy.log.constant.Tag;
+import cn.yy.log.index.constant.Tag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,7 +13,7 @@ import java.util.concurrent.atomic.AtomicLong;
  * @CreateTime: 2016/11/9 16:37
  * @Description:
  */
-public class LogUtil {
+public class LogWrapper {
     private static final AtomicLong counter = new AtomicLong();
     private static final ConcurrentHashMap<String, Long> countMap = new ConcurrentHashMap<>(128);
     private Logger logger;
@@ -21,11 +21,11 @@ public class LogUtil {
 
     private Class<?> targetClass;
 
-    public static LogUtil newInstance(Class<?> targetClass) {
-        return new LogUtil(targetClass);
+    public static LogWrapper newInstance(Class<?> targetClass) {
+        return new LogWrapper(targetClass);
     }
 
-    private LogUtil(Class<?> targetClass) {
+    private LogWrapper(Class<?> targetClass) {
         logger = LoggerFactory.getLogger(targetClass);
     }
 

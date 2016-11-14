@@ -1,6 +1,6 @@
-import cn.yy.log.util.builder.imp.ContextIndexBuilder;
-import cn.yy.log.util.builder.imp.KeyValueIndexBuilder;
-import cn.yy.log.util.builder.imp.KeywordIndexBuilder;
+import cn.yy.log.index.util.builder.imp.ContextIndexBuilder;
+import cn.yy.log.index.util.builder.imp.KeyValueIndexBuilder;
+import cn.yy.log.index.util.builder.imp.KeywordIndexBuilder;
 import com.alibaba.fastjson.JSON;
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;

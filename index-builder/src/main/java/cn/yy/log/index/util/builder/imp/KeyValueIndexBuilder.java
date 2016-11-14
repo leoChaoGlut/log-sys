@@ -1,7 +1,7 @@
-package cn.yy.log.util.builder.imp;
+package cn.yy.log.index.util.builder.imp;
 
-import cn.yy.log.constant.Tag;
-import cn.yy.log.util.builder.IndexBuilder;
+import cn.yy.log.index.constant.Tag;
+import cn.yy.log.index.util.builder.IndexBuilder;
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 

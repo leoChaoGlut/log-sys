@@ -1,6 +1,6 @@
-package cn.yy.log.util;
+package cn.yy.log.index.util;
 
-import cn.yy.log.entity.vo.DirDepth;
+import cn.yy.log.index.entity.vo.DirDepth;
 
 import java.io.File;
 import java.util.Map;

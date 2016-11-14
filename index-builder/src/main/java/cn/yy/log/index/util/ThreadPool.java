@@ -1,4 +1,4 @@
-package cn.yy.log.util;
+package cn.yy.log.index.util;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
