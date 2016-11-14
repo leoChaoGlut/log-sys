@@ -1,4 +1,4 @@
-import cn.yy.log.index.util.LogScanner;
+import cn.yy.log.index.util.LogFileScanner;
 import com.alibaba.fastjson.JSON;
 import org.junit.Test;
 
@@ -11,12 +11,12 @@ import java.util.Map;
  * @CreateTime: 2016/11/14 9:41
  * @Description:
  */
-public class LogScannerTest {
+public class LogFileScannerTest {
 
     @Test
     public void logScannerTest() {
-        LogScanner logScanner = new LogScanner("2016-01-01 01:02", "2016-01-01 01:02", "D:\\tmp");
-        Map<String, File> fileMap = logScanner.scan();
+        LogFileScanner logFileScanner = new LogFileScanner("2016-01-01 01:02", "2016-01-01 01:02", "D:\\tmp");
+        Map<String, File> fileMap = logFileScanner.scan();
         System.out.println(JSON.toJSONString(fileMap, true));
     }
 }

@@ -1,6 +1,6 @@
 package cn.yy.log.index.util;
 
-import cn.yy.log.index.entity.vo.DirDepth;
+import cn.yy.log.index.constant.DirDepth;
 
 import java.io.File;
 import java.util.Map;
@@ -12,7 +12,7 @@ import java.util.TreeMap;
  * @CreateTime: 2016/11/1 15:08
  * @Description:
  */
-public class LogScanner {
+public class LogFileScanner {
 
     private String baseDir;
     private String beginDatetime;
@@ -27,7 +27,7 @@ public class LogScanner {
      * @param endDateTime   yyyy-MM-dd hh:mm
      * @param baseDir       注意文件分隔符,\\ 和 / 的差异,会导致找不到文件.切记要使用File.separator
      */
-    public LogScanner(String beginDateTime, String endDateTime, String baseDir) {
+    public LogFileScanner(String beginDateTime, String endDateTime, String baseDir) {
         this.beginDatetime = baseDir + File.separator + beginDateTime.replace("-", File.separator).replace(" ", File.separator).replace(":", File.separator);
         this.endDatetime = baseDir + File.separator + endDateTime.replace("-", File.separator).replace(" ", File.separator).replace(":", File.separator);
         this.baseDir = baseDir;

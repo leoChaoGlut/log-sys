@@ -1,4 +1,4 @@
-package cn.yy.log.index.entity.vo;
+package cn.yy.log.index.constant;
 
 /**
  * @Author: Leo

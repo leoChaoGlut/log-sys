@@ -13,7 +13,7 @@ import java.util.concurrent.atomic.AtomicLong;
  * @CreateTime: 2016/11/9 16:37
  * @Description:
  */
-public class LogWrapper {
+public class LoggerWrapper {
     private static final AtomicLong counter = new AtomicLong();
     private static final ConcurrentHashMap<String, Long> countMap = new ConcurrentHashMap<>(128);
     private Logger logger;
@@ -21,11 +21,11 @@ public class LogWrapper {
 
     private Class<?> targetClass;
 
-    public static LogWrapper newInstance(Class<?> targetClass) {
-        return new LogWrapper(targetClass);
+    public static LoggerWrapper newInstance(Class<?> targetClass) {
+        return new LoggerWrapper(targetClass);
     }
 
-    private LogWrapper(Class<?> targetClass) {
+    private LoggerWrapper(Class<?> targetClass) {
         logger = LoggerFactory.getLogger(targetClass);
     }
 

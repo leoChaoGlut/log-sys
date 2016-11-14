@@ -1,4 +1,4 @@
-package cn.yy.log.index.util.builder;
+package cn.yy.log.index.builder;
 
 /**
  * @Author: Leo
