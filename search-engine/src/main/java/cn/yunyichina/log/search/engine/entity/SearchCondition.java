@@ -1,4 +1,4 @@
-package cn.yunyichina.log.search.engine.builder.entity;
+package cn.yunyichina.log.search.engine.entity;
 
 import java.util.Date;
 
@@ -91,6 +91,15 @@ public class SearchCondition {
 
     public SearchCondition setMethodName(String methodName) {
         this.methodName = methodName;
+        return this;
+    }
+
+    public int getSearchWay() {
+        return searchWay;
+    }
+
+    public SearchCondition setSearchWay(int searchWay) {
+        this.searchWay = searchWay;
         return this;
     }
 }
