@@ -1,4 +1,4 @@
-package cn.yunyichina.log.index.builder.util;
+package cn.yunyichina.log.collection.util;
 
 import cn.yunyichina.log.index.builder.constant.Tag;
 import org.slf4j.Logger;
@@ -11,20 +11,20 @@ import java.util.concurrent.atomic.AtomicLong;
  * @Author: Leo
  * @Blog: http://blog.csdn.net/lc0817
  * @CreateTime: 2016/11/9 16:37
- * @Description:
- * *************注意*************
- *  在每一个请求的开始和结束,   *
- *  一定要调用contextBegin和    *
- *  contextEnd,否则无法进行     *
- *  请求计数,导致索引构建       *
- *  异常                        *
+ * @Description: *************注意*************
+ * 在每一个请求的开始和结束,   *
+ * 一定要调用contextBegin和    *
+ * contextEnd,否则无法进行     *
+ * 请求计数,导致索引构建       *
+ * 异常. 最好把contextEnd      *
+ * 放在finally块里.            *
  * *************注意*************
  */
 public class LoggerWrapper {
     private static final AtomicLong counter = new AtomicLong();
     private static final ConcurrentHashMap<String, Long> countMap = new ConcurrentHashMap<>(128);
     private Logger logger;
-
+    private final int STACK_INDEX = 2;
 
     private Class<?> targetClass;
 
@@ -39,24 +39,29 @@ public class LoggerWrapper {
     public void contextBegin(String msg) {
         Long count = counter.getAndIncrement();
         countMap.put(Thread.currentThread().getName(), count);
-        logger.info(msg + Tag.CONTEXT_BEGIN + count + Tag.CONTEXT_COUNT_END + Tag.ROW_END + count + Tag.CONTEXT_COUNT_END);
+        logger.info(getInvokeClassAndMethod() + msg + Tag.CONTEXT_BEGIN + count + Tag.CONTEXT_COUNT_END + Tag.ROW_END + count + Tag.CONTEXT_COUNT_END);
     }
 
     public void contextEnd(String msg) {
         Long count = countMap.get(Thread.currentThread().getName());
-        logger.info(msg + Tag.CONTEXT_END + count + Tag.CONTEXT_COUNT_END + Tag.ROW_END + count + Tag.CONTEXT_COUNT_END);
+        logger.info(getInvokeClassAndMethod() + msg + Tag.CONTEXT_END + count + Tag.CONTEXT_COUNT_END + Tag.ROW_END + count + Tag.CONTEXT_COUNT_END);
     }
 
     public void info(String msg) {
-        logger.info(msg + Tag.ROW_END + countMap.get(Thread.currentThread().getName()) + Tag.CONTEXT_COUNT_END);
+        logger.info(getInvokeClassAndMethod() + msg + Tag.ROW_END + countMap.get(Thread.currentThread().getName()) + Tag.CONTEXT_COUNT_END);
     }
 
     public void error(String msg) {
-        logger.error(msg + Tag.ROW_END + countMap.get(Thread.currentThread().getName()) + Tag.CONTEXT_COUNT_END);
+        logger.error(getInvokeClassAndMethod() + msg + Tag.ROW_END + countMap.get(Thread.currentThread().getName()) + Tag.CONTEXT_COUNT_END);
     }
 
     public void error(String msg, Throwable t) {
-        logger.error(msg + Tag.ROW_END + countMap.get(Thread.currentThread().getName()) + Tag.CONTEXT_COUNT_END, t);
+        logger.error(getInvokeClassAndMethod() + msg + Tag.ROW_END + countMap.get(Thread.currentThread().getName()) + Tag.CONTEXT_COUNT_END, t);
+    }
+
+    private String getInvokeClassAndMethod() {
+        StackTraceElement stackTraceElement = new Throwable().getStackTrace()[STACK_INDEX];
+        return stackTraceElement.getClassName() + "." + stackTraceElement.getMethodName() + ":" + stackTraceElement.getLineNumber();
     }
 
     /**

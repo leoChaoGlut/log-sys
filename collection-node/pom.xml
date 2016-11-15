@@ -11,5 +11,13 @@
 
     <artifactId>collection-node</artifactId>
 
+    <dependencies>
+        <dependency>
+            <groupId>cn.yy</groupId>
+            <artifactId>index-builder</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
+
 
 </project>
