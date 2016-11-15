@@ -1,4 +1,4 @@
-package cn.yunyichina.log.index.util;
+package cn.yunyichina.log.index.builder.util;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;

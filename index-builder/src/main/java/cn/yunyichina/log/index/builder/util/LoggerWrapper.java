@@ -1,6 +1,6 @@
-package cn.yunyichina.log.index.util;
+package cn.yunyichina.log.index.builder.util;
 
-import cn.yunyichina.log.index.constant.Tag;
+import cn.yunyichina.log.index.builder.constant.Tag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,6 +46,10 @@ public class LoggerWrapper {
 
     public void error(String msg) {
         logger.error(msg + Tag.ROW_END + countMap.get(Thread.currentThread().getName()) + Tag.CONTEXT_COUNT_END);
+    }
+
+    public void error(String msg, Throwable t) {
+        logger.error(msg + Tag.ROW_END + countMap.get(Thread.currentThread().getName()) + Tag.CONTEXT_COUNT_END, t);
     }
 
     /**

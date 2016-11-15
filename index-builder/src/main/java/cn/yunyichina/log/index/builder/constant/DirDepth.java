@@ -1,4 +1,4 @@
-package cn.yunyichina.log.index.constant;
+package cn.yunyichina.log.index.builder.constant;
 
 /**
  * @Author: Leo
