@@ -17,10 +17,9 @@ import java.util.Map;
  * @ModifiyedBy: Leo
  * @Blog: http://blog.csdn.net/lc0817
  * @CreateTime: 2016/11/14 18:13
- * @Description: 关键词搜索引擎
+ * @Description: 关键词搜索引擎, 不支持模糊搜索.
  */
 public class KeywordSearchEngine extends AbstractSearchEngine implements SearchEngine<List<ContextIndexBuilder.ContextInfo>> {
-
 
     private Map<String, List<KeywordIndexBuilder.IndexInfo>> keywordIndex;
     private Map<Long, ContextIndexBuilder.ContextInfo> contextIndex;
@@ -31,7 +30,6 @@ public class KeywordSearchEngine extends AbstractSearchEngine implements SearchE
         this.searchCondition = searchCondition;
     }
 
-    //TODO 模糊搜索
     @Override
     public List<ContextIndexBuilder.ContextInfo> search() throws Exception {
         List<KeywordIndexBuilder.IndexInfo> indexInfoList = keywordIndex.get(searchCondition.getKeyword());

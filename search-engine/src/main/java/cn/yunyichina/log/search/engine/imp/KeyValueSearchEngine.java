@@ -10,12 +10,13 @@ import org.springframework.util.CollectionUtils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @Author: Leo
  * @Blog: http://blog.csdn.net/lc0817
  * @CreateTime: 2016/11/15 11:30
- * @Description:
+ * @Description: kv搜索引擎, 支持精确key, 模糊value搜索
  */
 public class KeyValueSearchEngine extends AbstractSearchEngine implements SearchEngine<List<ContextIndexBuilder.ContextInfo>> {
 
@@ -28,26 +29,46 @@ public class KeyValueSearchEngine extends AbstractSearchEngine implements Search
         this.searchCondition = searchCondition;
     }
 
-    //TODO 模糊搜索
+    /**
+     * 只允许选择精确搜索或模糊搜索其一,不能同时选择.
+     *
+     * @return
+     * @throws Exception
+     */
     @Override
     public List<ContextIndexBuilder.ContextInfo> search() throws Exception {
         Map<String, List<KeyValueIndexBuilder.IndexInfo>> valueIndex = keyValueIndex.get(searchCondition.getKey());
-        if (CollectionUtils.isEmpty(valueIndex)) {
-
-        } else {
-            List<KeyValueIndexBuilder.IndexInfo> indexInfoList = valueIndex.get(searchCondition.getValue());
-            if (CollectionUtils.isEmpty(indexInfoList)) {
+        List<KeyValueIndexBuilder.IndexInfo> indexInfoList = null;
+        if (fuzzySearch) {
+            Set<String> valueSet = valueIndex.keySet();
+            if (CollectionUtils.isEmpty(valueSet)) {
 
             } else {
-                matchedContextInfoList = new ArrayList<>(indexInfoList.size());
-                for (KeyValueIndexBuilder.IndexInfo indexInfo : indexInfoList) {
-                    Long contextCount = indexInfo.getContextCount();
-                    ContextIndexBuilder.ContextInfo contextInfo = contextIndex.get(contextCount);
-                    if (inDateTimeRange(contextInfo)) {
-                        matchedContextInfoList.add(contextInfo);
-                    } else {
-
+                indexInfoList = new ArrayList<>(valueSet.size() * 5);//避免扩容
+                for (String value : valueSet) {
+                    if (value.contains(searchCondition.getValue())) {
+                        indexInfoList.addAll(valueIndex.get(value));
                     }
+                }
+            }
+        } else {
+            if (CollectionUtils.isEmpty(valueIndex)) {
+
+            } else {
+                indexInfoList = valueIndex.get(searchCondition.getValue());
+            }
+        }
+        if (CollectionUtils.isEmpty(indexInfoList)) {
+
+        } else {
+            matchedContextInfoList = new ArrayList<>(indexInfoList.size());
+            for (KeyValueIndexBuilder.IndexInfo indexInfo : indexInfoList) {
+                Long contextCount = indexInfo.getContextCount();
+                ContextIndexBuilder.ContextInfo contextInfo = contextIndex.get(contextCount);
+                if (inDateTimeRange(contextInfo)) {
+                    matchedContextInfoList.add(contextInfo);
+                } else {
+
                 }
             }
         }
