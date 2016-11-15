@@ -8,9 +8,9 @@ import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @Author: Leo
@@ -34,21 +34,21 @@ public class BuilderTest {
 
     @Test
     public void keywordIndexBuilderTest() {
-        List<String> keywordList = new ArrayList<>();
+        Set<String> keywordList = new HashSet<>();
         keywordList.add("Test");
         keywordList.add("Context Begin");
         keywordList.add("Context End");
         KeywordIndexBuilder builder = new KeywordIndexBuilder(new File("D://1.txt"), keywordList);
-        Map<String, List<KeywordIndexBuilder.IndexInfo>> map = builder.build();
+        Map<String, Set<KeywordIndexBuilder.IndexInfo>> map = builder.build();
         System.out.println(JSON.toJSONString(map, true));
     }
 
     @Test
     public void keyValueIndexBuilderTest() {
-        List<KeyValueIndexBuilder.KvTag> kvTagList = new ArrayList<>();
+        Set<KeyValueIndexBuilder.KvTag> kvTagList = new HashSet<>();
         kvTagList.add(new KeyValueIndexBuilder.KvTag("Test", "\"Test\":\"", "\""));
         KeyValueIndexBuilder builder = new KeyValueIndexBuilder(kvTagList, new File("D://1.txt"));
-        Map<String, Map<String, List<KeyValueIndexBuilder.IndexInfo>>> map = builder.build();
+        Map<String, Map<String, Set<KeyValueIndexBuilder.IndexInfo>>> map = builder.build();
         System.out.println(JSON.toJSONString(map, true));
     }
 

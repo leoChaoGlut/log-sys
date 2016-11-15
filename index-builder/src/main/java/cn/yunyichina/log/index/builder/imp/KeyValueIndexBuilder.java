@@ -1,16 +1,16 @@
 package cn.yunyichina.log.index.builder.imp;
 
 import cn.yunyichina.log.index.builder.IndexBuilder;
-import cn.yunyichina.log.index.builder.constant.Tag;
+import cn.yunyichina.log.index.constant.Tag;
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @Author: Leo
@@ -18,16 +18,16 @@ import java.util.Map;
  * @CreateTime: 2016/11/6 0:33
  * @Description: 键值对索引构造器
  */
-public class KeyValueIndexBuilder implements IndexBuilder<Map<String, Map<String, List<KeyValueIndexBuilder.IndexInfo>>>> {
+public class KeyValueIndexBuilder implements IndexBuilder<Map<String, Map<String, Set<KeyValueIndexBuilder.IndexInfo>>>> {
 
-    private List<KvTag> kvTagList;
+    private Set<KvTag> kvTagSet;
     private File logFile;
 
     private String logContent;
-    private Map<String, Map<String, List<IndexInfo>>> keyValueIndex = new HashMap<>(1024);
+    private Map<String, Map<String, Set<IndexInfo>>> keyValueIndex = new HashMap<>(1024);
 
-    public KeyValueIndexBuilder(List<KvTag> kvTagList, File logFile) {
-        this.kvTagList = kvTagList;
+    public KeyValueIndexBuilder(Set<KvTag> kvTagSet, File logFile) {
+        this.kvTagSet = kvTagSet;
         this.logFile = logFile;
         try {
             logContent = Files.asCharSource(logFile, Charsets.UTF_8).read();
@@ -37,8 +37,8 @@ public class KeyValueIndexBuilder implements IndexBuilder<Map<String, Map<String
     }
 
     @Override
-    public Map<String, Map<String, List<IndexInfo>>> build() {
-        for (KvTag kvTag : kvTagList) {
+    public Map<String, Map<String, Set<IndexInfo>>> build() {
+        for (KvTag kvTag : kvTagSet) {
             String key = kvTag.getKey();
             String keyTag = kvTag.getKeyTag();
             int keyTagIndex = 0;
@@ -52,17 +52,16 @@ public class KeyValueIndexBuilder implements IndexBuilder<Map<String, Map<String
                     int contextCountBeginTagIndex = rowEndTagIndex + Tag.ROW_END.length();
                     int contextCountEndTagIndex = logContent.indexOf(Tag.CONTEXT_COUNT_END, contextCountBeginTagIndex);
                     String count = logContent.substring(contextCountBeginTagIndex, contextCountEndTagIndex);
-
-                    Map<String, List<IndexInfo>> valueMap = keyValueIndex.get(key);
+                    Map<String, Set<IndexInfo>> valueMap = keyValueIndex.get(key);
                     if (valueMap == null) {
                         valueMap = new HashMap<>();
                     }
-                    List<IndexInfo> indexInfoList = valueMap.get(value);
-                    if (indexInfoList == null) {
-                        indexInfoList = new ArrayList<>();
+                    Set<IndexInfo> indexInfoSet = valueMap.get(value);
+                    if (indexInfoSet == null) {
+                        indexInfoSet = new HashSet<>();
                     }
-                    indexInfoList.add(new IndexInfo(logFile, keyTagIndex, Long.valueOf(count)));
-                    valueMap.put(value, indexInfoList);
+                    indexInfoSet.add(new IndexInfo(logFile, keyTagIndex, Long.valueOf(count)));
+                    valueMap.put(value, indexInfoSet);
                     keyValueIndex.put(key, valueMap);
                 }
                 keyTagIndex = valueEndIndex;

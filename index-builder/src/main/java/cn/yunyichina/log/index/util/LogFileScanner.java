@@ -1,6 +1,6 @@
-package cn.yunyichina.log.index.builder.util;
+package cn.yunyichina.log.index.util;
 
-import cn.yunyichina.log.index.builder.constant.DirDepth;
+import cn.yunyichina.log.index.constant.DirDepth;
 
 import java.io.File;
 import java.util.Map;

@@ -1,7 +1,7 @@
 package cn.yunyichina.log.index.builder.imp;
 
 import cn.yunyichina.log.index.builder.IndexBuilder;
-import cn.yunyichina.log.index.builder.constant.Tag;
+import cn.yunyichina.log.index.constant.Tag;
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 

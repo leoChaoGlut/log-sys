@@ -1,6 +1,6 @@
 package cn.yunyichina.log.collection.util;
 
-import cn.yunyichina.log.index.builder.constant.Tag;
+import cn.yunyichina.log.index.constant.Tag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
