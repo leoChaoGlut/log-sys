@@ -24,7 +24,7 @@ public class KeyValueIndexBuilder implements IndexBuilder<Map<String, Map<String
     private File logFile;
 
     private String logContent;
-    private Map<String, Map<String, Set<IndexInfo>>> keyValueIndex = new HashMap<>(1024);
+    private Map<String, Map<String, Set<IndexInfo>>> keyValueIndexMap = new HashMap<>(1024);
 
     public KeyValueIndexBuilder(Set<KvTag> kvTagSet, File logFile) {
         this.kvTagSet = kvTagSet;
@@ -52,7 +52,7 @@ public class KeyValueIndexBuilder implements IndexBuilder<Map<String, Map<String
                     int contextCountBeginTagIndex = rowEndTagIndex + Tag.ROW_END.length();
                     int contextCountEndTagIndex = logContent.indexOf(Tag.CONTEXT_COUNT_END, contextCountBeginTagIndex);
                     String count = logContent.substring(contextCountBeginTagIndex, contextCountEndTagIndex);
-                    Map<String, Set<IndexInfo>> valueMap = keyValueIndex.get(key);
+                    Map<String, Set<IndexInfo>> valueMap = keyValueIndexMap.get(key);
                     if (valueMap == null) {
                         valueMap = new HashMap<>();
                     }
@@ -62,12 +62,12 @@ public class KeyValueIndexBuilder implements IndexBuilder<Map<String, Map<String
                     }
                     indexInfoSet.add(new IndexInfo(logFile, keyTagIndex, Long.valueOf(count)));
                     valueMap.put(value, indexInfoSet);
-                    keyValueIndex.put(key, valueMap);
+                    keyValueIndexMap.put(key, valueMap);
                 }
                 keyTagIndex = valueEndIndex;
             }
         }
-        return keyValueIndex;
+        return keyValueIndexMap;
     }
 
     public static class IndexInfo {

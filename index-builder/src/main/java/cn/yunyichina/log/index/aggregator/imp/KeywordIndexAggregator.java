@@ -24,16 +24,14 @@ public class KeywordIndexAggregator extends AbstractAggregator<Map<String, Set<K
     public Map<String, Set<KeywordIndexBuilder.IndexInfo>> aggregate(Map<String, Set<KeywordIndexBuilder.IndexInfo>> input) {
         if (!CollectionUtils.isEmpty(input)) {
             Set<Map.Entry<String, Set<KeywordIndexBuilder.IndexInfo>>> entrySet = input.entrySet();
-            if (!CollectionUtils.isEmpty(entrySet)) {
-                for (Map.Entry<String, Set<KeywordIndexBuilder.IndexInfo>> entry : entrySet) {
-                    Set<KeywordIndexBuilder.IndexInfo> indexInfoSet = aggregatedCollection.get(entry.getKey());
-                    if (indexInfoSet == null) {
-                        indexInfoSet = entry.getValue();
-                    } else {
-                        indexInfoSet.addAll(entry.getValue());
-                    }
-                    aggregatedCollection.put(entry.getKey(), indexInfoSet);
+            for (Map.Entry<String, Set<KeywordIndexBuilder.IndexInfo>> entry : entrySet) {
+                Set<KeywordIndexBuilder.IndexInfo> indexInfoSet = aggregatedCollection.get(entry.getKey());
+                if (indexInfoSet == null) {
+                    indexInfoSet = entry.getValue();
+                } else {
+                    indexInfoSet.addAll(entry.getValue());
                 }
+                aggregatedCollection.put(entry.getKey(), indexInfoSet);
             }
         }
         return aggregatedCollection;

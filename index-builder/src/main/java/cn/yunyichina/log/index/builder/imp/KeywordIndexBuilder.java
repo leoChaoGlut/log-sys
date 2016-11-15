@@ -19,7 +19,7 @@ public class KeywordIndexBuilder implements IndexBuilder<Map<String, Set<Keyword
     private File logFile;
     private Set<String> keywordSet;
 
-    private Map<String, Set<IndexInfo>> keywordIndex = new HashMap<>(1024);
+    private Map<String, Set<IndexInfo>> keywordIndexMap = new HashMap<>(1024);
     private String logContent;
 
 
@@ -43,16 +43,16 @@ public class KeywordIndexBuilder implements IndexBuilder<Map<String, Set<Keyword
                 int contextCountEndTagIndex = logContent.indexOf(Tag.CONTEXT_COUNT_END, contextCountBeginTagIndex);
                 String count = logContent.substring(contextCountBeginTagIndex, contextCountEndTagIndex);
                 IndexInfo indexInfo = new IndexInfo(logFile, keywordTagIndex, Long.valueOf(count));
-                Set<IndexInfo> indexInfoSet = keywordIndex.get(keyword);
+                Set<IndexInfo> indexInfoSet = keywordIndexMap.get(keyword);
                 if (indexInfoSet == null) {
                     indexInfoSet = new HashSet<>();
                 }
                 indexInfoSet.add(indexInfo);
-                keywordIndex.put(keyword, indexInfoSet);
+                keywordIndexMap.put(keyword, indexInfoSet);
                 keywordTagIndex = contextCountEndTagIndex;
             }
         }
-        return keywordIndex;
+        return keywordIndexMap;
     }
 
     public static class IndexInfo {

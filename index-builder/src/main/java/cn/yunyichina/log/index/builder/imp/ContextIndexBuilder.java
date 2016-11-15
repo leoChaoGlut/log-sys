@@ -23,7 +23,7 @@ public class ContextIndexBuilder implements IndexBuilder<Map<Long, ContextIndexB
     /**
      * 多线程标记tag的时候,要把 Map 改为 ConcurrentHashMap
      */
-    private Map<Long, ContextInfo> contextIndex = new HashMap<>(1024);
+    private Map<Long, ContextInfo> contextIndexMap = new HashMap<>(1024);
     private String logContent;
 
 
@@ -45,7 +45,7 @@ public class ContextIndexBuilder implements IndexBuilder<Map<Long, ContextIndexB
     public Map<Long, ContextInfo> build() {
         markTag(Tag.CONTEXT_BEGIN, true);
         markTag(Tag.CONTEXT_END, false);
-        return contextIndex;
+        return contextIndexMap;
     }
 
     private void markTag(String tag, boolean isBeginTag) {
@@ -57,7 +57,7 @@ public class ContextIndexBuilder implements IndexBuilder<Map<Long, ContextIndexB
             contextCountEndTagIndex = logContent.indexOf(Tag.CONTEXT_COUNT_END, contextCountBeginTagIndex);
             Long count = Long.valueOf(logContent.substring(contextCountBeginTagIndex, contextCountEndTagIndex));
             IndexInfo indexInfo = new IndexInfo(logFile, contextTagIndex);
-            ContextInfo contextInfo = contextIndex.get(count);
+            ContextInfo contextInfo = contextIndexMap.get(count);
             if (null == contextInfo) {
                 contextInfo = new ContextInfo();
             }
@@ -66,7 +66,7 @@ public class ContextIndexBuilder implements IndexBuilder<Map<Long, ContextIndexB
             } else {
                 contextInfo.setEnd(indexInfo);
             }
-            contextIndex.put(count, contextInfo);//理论上 key( AtomicLong ) 不会有重复
+            contextIndexMap.put(count, contextInfo);//理论上 key( AtomicLong ) 不会有重复
             contextTagIndex = contextCountBeginTagIndex;
         }
     }
