@@ -19,7 +19,7 @@ public abstract class AbstractSearchEngine {
     protected SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddhhmm");
 
     /**
-     * TODO 模糊搜索
+     * 是否模糊搜索
      */
     protected boolean fuzzySearch = false;
     /**

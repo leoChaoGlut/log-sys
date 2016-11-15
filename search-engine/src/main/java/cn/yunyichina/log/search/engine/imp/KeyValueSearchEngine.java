@@ -17,6 +17,7 @@ import java.util.Set;
  * @Blog: http://blog.csdn.net/lc0817
  * @CreateTime: 2016/11/15 11:30
  * @Description: kv搜索引擎, 支持精确key, 模糊value搜索
+ * 只允许选择精确搜索或模糊搜索其一,不能同时选择.
  */
 public class KeyValueSearchEngine extends AbstractSearchEngine implements SearchEngine<List<ContextIndexBuilder.ContextInfo>> {
 
@@ -29,12 +30,6 @@ public class KeyValueSearchEngine extends AbstractSearchEngine implements Search
         this.searchCondition = searchCondition;
     }
 
-    /**
-     * 只允许选择精确搜索或模糊搜索其一,不能同时选择.
-     *
-     * @return
-     * @throws Exception
-     */
     @Override
     public List<ContextIndexBuilder.ContextInfo> search() throws Exception {
         Map<String, List<KeyValueIndexBuilder.IndexInfo>> valueIndex = keyValueIndex.get(searchCondition.getKey());
@@ -44,7 +39,7 @@ public class KeyValueSearchEngine extends AbstractSearchEngine implements Search
             if (CollectionUtils.isEmpty(valueSet)) {
 
             } else {
-                indexInfoList = new ArrayList<>(valueSet.size() * 5);//避免扩容
+                indexInfoList = new ArrayList<>(valueSet.size() << 1);//避免扩容,
                 for (String value : valueSet) {
                     if (value.contains(searchCondition.getValue())) {
                         indexInfoList.addAll(valueIndex.get(value));
