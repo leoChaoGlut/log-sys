@@ -12,6 +12,13 @@ import java.util.concurrent.atomic.AtomicLong;
  * @Blog: http://blog.csdn.net/lc0817
  * @CreateTime: 2016/11/9 16:37
  * @Description:
+ * *************注意*************
+ *  在每一个请求的开始和结束,   *
+ *  一定要调用contextBegin和    *
+ *  contextEnd,否则无法进行     *
+ *  请求计数,导致索引构建       *
+ *  异常                        *
+ * *************注意*************
  */
 public class LoggerWrapper {
     private static final AtomicLong counter = new AtomicLong();
