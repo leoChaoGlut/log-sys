@@ -3,7 +3,7 @@ server:
   port: 9999
   context-path: /
   ssl:
-    key-store: ${user.home}/.keystore
+    key-store: classpath:.keystore
     key-store-password: 123123
     key-alias: tomcat
 

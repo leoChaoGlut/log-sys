@@ -1,8 +1,6 @@
 import cn.yunyichina.log.index.builder.imp.ContextIndexBuilder;
 import cn.yunyichina.log.index.builder.imp.KeyValueIndexBuilder;
 import cn.yunyichina.log.index.builder.imp.KeywordIndexBuilder;
-import cn.yunyichina.log.search.builder.SearchBuilder;
-import cn.yunyichina.log.search.builder.imp.KeyWordSearchBuilder;
 import org.junit.Test;
 
 import java.io.File;
@@ -18,18 +16,18 @@ import static com.alibaba.fastjson.JSON.toJSONString;
 /**
  * Created by Jonven on 2016/11/14.
  */
-public class SearchTest {
+public class SearchEngineTest {
 
     @Test
     public void contextIndexBuilderTest() throws IOException {
         ContextIndexBuilder builder = new ContextIndexBuilder(new File("E://testLog/2.txt"));
         Map<Long, ContextIndexBuilder.ContextInfo> map = builder.build();
         Map<Long, ContextIndexBuilder.ContextInfo> mapNext = new ContextIndexBuilder(new File("E://testLog/3.txt")).build();
-        System.out.println("2222222222===="+toJSONString(map, true));
-        for (Map.Entry<Long, ContextIndexBuilder.ContextInfo> entry:mapNext.entrySet()){
+        System.out.println("2222222222====" + toJSONString(map, true));
+        for (Map.Entry<Long, ContextIndexBuilder.ContextInfo> entry : mapNext.entrySet()) {
             map.get(entry.getKey()).setEnd(entry.getValue().getEnd());
         }
-        System.out.println("2222222222===="+toJSONString(map, true));
+        System.out.println("2222222222====" + toJSONString(map, true));
     }
 
     @Test
@@ -39,11 +37,11 @@ public class SearchTest {
         KeywordIndexBuilder builder = new KeywordIndexBuilder(new File("E://testLog/2.txt"), keywordList);
         Map<String, List<KeywordIndexBuilder.IndexInfo>> map = builder.build();
         Map<String, List<KeywordIndexBuilder.IndexInfo>> mapNext = new KeywordIndexBuilder(new File("E://testLog/3.txt"), keywordList).build();
-        System.out.println("2222222222===="+toJSONString(map, true));
-        for (Map.Entry<String, List<KeywordIndexBuilder.IndexInfo>> entry:mapNext.entrySet()) {
+        System.out.println("2222222222====" + toJSONString(map, true));
+        for (Map.Entry<String, List<KeywordIndexBuilder.IndexInfo>> entry : mapNext.entrySet()) {
             map.get(entry.getKey()).addAll(entry.getValue());
         }
-        System.out.println("3333333333===="+toJSONString(map, true));
+        System.out.println("3333333333====" + toJSONString(map, true));
     }
 
     @Test
@@ -71,11 +69,11 @@ public class SearchTest {
 
         Map<String, List<KeywordIndexBuilder.IndexInfo>> keyWordMapNext = new KeywordIndexBuilder(new File(testFileName2), keywordList).build();
 
-        for (Map.Entry<String, List<KeywordIndexBuilder.IndexInfo>> entry:keyWordMapNext.entrySet()) {
-            if(keyWordMap.get(entry.getKey())!=null){
+        for (Map.Entry<String, List<KeywordIndexBuilder.IndexInfo>> entry : keyWordMapNext.entrySet()) {
+            if (keyWordMap.get(entry.getKey()) != null) {
                 keyWordMap.get(entry.getKey()).addAll(entry.getValue());
-            }else{
-                keyWordMap.put(entry.getKey(),entry.getValue());
+            } else {
+                keyWordMap.put(entry.getKey(), entry.getValue());
             }
 
         }
@@ -87,26 +85,32 @@ public class SearchTest {
         Map<Long, ContextIndexBuilder.ContextInfo> contextMap = ContextBuilder.build();
         Map<Long, ContextIndexBuilder.ContextInfo> contextMapNext = new ContextIndexBuilder(new File(testFileName2)).build();
 
-        for (Map.Entry<Long, ContextIndexBuilder.ContextInfo> entry:contextMapNext.entrySet()){
-            if(contextMap.get(entry.getKey()) != null){
+        for (Map.Entry<Long, ContextIndexBuilder.ContextInfo> entry : contextMapNext.entrySet()) {
+            if (contextMap.get(entry.getKey()) != null) {
                 contextMap.get(entry.getKey()).setEnd(entry.getValue().getEnd());
-            }else{
-                contextMap.put(entry.getKey(),entry.getValue());
+            } else {
+                contextMap.put(entry.getKey(), entry.getValue());
             }
 
         }
 //        System.err.println("contextMap========="+JSON.toJSONString(contextMap,true));
         /**************************************************************/
 
-        SearchBuilder searchBuilder = new KeyWordSearchBuilder(keyWord,keyWordMap,contextMap);
-        System.err.println(searchBuilder.builder());
+//        SearchEngine searchEngine = new KeyWordSearchEngine(keyWord,keyWordMap,contextMap);
+//        System.err.println(searchEngine.search());
     }
 
     @Test
-    public void getTime(){
+    public void getTime() {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyymmddhhmm");
         Date date = new Date();
         System.out.println(sdf.format(date));
+    }
+
+    @Test
+    public void test() {
+        File file = new File("D://1.txt");
+        System.out.println(file.getUsableSpace());
     }
 
 }
