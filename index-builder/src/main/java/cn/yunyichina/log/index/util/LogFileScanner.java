@@ -33,6 +33,20 @@ public class LogFileScanner {
         this.baseDir = baseDir;
     }
 
+    /**
+     *
+     * @param beginLogFile
+     * @param endLogFile
+     * @param baseDir
+     */
+    public LogFileScanner(File beginLogFile, File endLogFile, String baseDir) {
+        String beginFileName = beginLogFile.getName().substring(0,beginLogFile.getName().lastIndexOf("."));
+        String endFileName = endLogFile.getName().substring(0,endLogFile.getName().lastIndexOf("."));
+        this.beginDatetime = baseDir + File.separator + beginFileName.substring(0, 4) + File.separator + beginFileName.substring(4, 6) + File.separator + beginFileName.substring(6, 8) + File.separator + beginFileName.substring(8, 10) + File.separator + beginFileName.substring(10, 12);
+        this.endDatetime = baseDir + File.separator + endFileName.substring(0, 4) + File.separator + endFileName.substring(4, 6) + File.separator + endFileName.substring(6, 8) + File.separator + endFileName.substring(8, 10) + File.separator + endFileName.substring(10, 12);
+        this.baseDir = baseDir;
+    }
+
     public Map<String, File> scan() {
         File baseDir = new File(this.baseDir);
         File[] files = baseDir.listFiles();
