@@ -7,10 +7,7 @@ import com.google.common.io.Files;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @Author: Leo
@@ -107,7 +104,7 @@ public class KeyValueIndexBuilder implements IndexBuilder<Map<String, Map<String
              * 如: "key":"value",
              * 那么:
              * key = "key"
-             * keyTag = "\"key\":\""
+             * keyTag = "\"key\":\""  -> 注意,keyTag的结束字符一定要是value的开始字符,如果想不明白,可以以"key":"value"为例子,想想,如何才能获取到它的value部分
              * valueEndTag = "\","
              */
             this.keyTag = keyTag;
@@ -129,6 +126,21 @@ public class KeyValueIndexBuilder implements IndexBuilder<Map<String, Map<String
 
         public int getKeyOffset() {
             return keyOffset;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            KvTag kvTag = (KvTag) o;
+            return Objects.equals(key, kvTag.key) &&
+                    Objects.equals(keyTag, kvTag.keyTag) &&
+                    Objects.equals(valueEndTag, kvTag.valueEndTag);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(key, keyTag, valueEndTag);
         }
     }
 }

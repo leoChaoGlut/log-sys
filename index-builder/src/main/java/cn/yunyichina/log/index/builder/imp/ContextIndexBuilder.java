@@ -22,6 +22,7 @@ public class ContextIndexBuilder implements IndexBuilder<Map<Long, ContextIndexB
 
     /**
      * 多线程标记tag的时候,要把 Map 改为 ConcurrentHashMap
+     * 如果对顺序有需要,可用TreeMap,但是数据量大的时候维护TreeMap可能会耗费更多的内存和消耗更多的CPU时间
      */
     private Map<Long, ContextInfo> contextIndexMap = new HashMap<>(1024);
     private String logContent;

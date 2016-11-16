@@ -17,6 +17,9 @@ import java.util.*;
  */
 public class KeywordIndexBuilder implements IndexBuilder<Map<String, Set<KeywordIndexBuilder.IndexInfo>>> {
     private File logFile;
+    /**
+     * set保证关键词不重复
+     */
     private Set<String> keywordSet;
 
     private Map<String, Set<IndexInfo>> keywordIndexMap = new HashMap<>(1024);
@@ -33,6 +36,13 @@ public class KeywordIndexBuilder implements IndexBuilder<Map<String, Set<Keyword
         }
     }
 
+    /**
+     * 假设现在要搜索patCardNo关键词,文件里一共有6个,但是返回的结果可能是3个.这是正确的结果.
+     * 原因:当搜索到关键词的时候,就会标记这一条完整的logger.info,就算这条logger.info里
+     * 还有相同的关键词,他们都已经被标记在这一条logger.info里了.
+     *
+     * @return
+     */
     @Override
     public Map<String, Set<IndexInfo>> build() {
         for (String keyword : keywordSet) {

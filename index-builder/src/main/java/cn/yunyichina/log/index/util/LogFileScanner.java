@@ -69,8 +69,10 @@ public class LogFileScanner {
                 }
             } else {
                 String fileName = file.getName();
-                fileName = fileName.substring(0, fileName.lastIndexOf("."));
-                fileMap.put(fileName, file);
+                if (fileName.endsWith(".log")) {
+                    fileName = fileName.substring(0, fileName.lastIndexOf("."));
+                    fileMap.put(fileName, file);
+                }
             }
         }
     }
