@@ -1,3 +1,4 @@
+import cn.yunyichina.log.index.aggregator.imp.ContextIndexAggregator;
 import cn.yunyichina.log.index.aggregator.imp.KeyValueIndexAggregator;
 import cn.yunyichina.log.index.aggregator.imp.KeywordIndexAggregator;
 import cn.yunyichina.log.index.builder.imp.ContextIndexBuilder;
@@ -9,7 +10,10 @@ import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @Author: Leo
@@ -19,24 +23,30 @@ import java.util.*;
  */
 public class AggregatorTest {
 
+
     @Test
     public void contextIndexAggregator() throws IOException {
-        LogFileScanner logFileScanner = new LogFileScanner("2016-01-01 01:02", "2017-01-01 01:02", "D:\\tmp");
+        //        TODO 比较难测试
+        LogFileScanner logFileScanner = new LogFileScanner("2016-01-01 01:02", "2016-11-15 14:23", "D:\\tmp");
         Map<String, File> fileMap = logFileScanner.scan();
         Collection<File> values = fileMap.values();
-        Map<Long, ContextIndexBuilder.ContextInfo> contextIndex = new HashMap<>();
+        ContextIndexAggregator aggregator = new ContextIndexAggregator();
+
         for (File f : values) {
             ContextIndexBuilder builder = new ContextIndexBuilder(f);
             Map<Long, ContextIndexBuilder.ContextInfo> map = builder.build();
             System.out.println(JSON.toJSONString(map, true));
-            contextIndex.putAll(map);
+            System.out.println("===================");
+            aggregator.aggregate(map);
         }
-        System.out.println(JSON.toJSONString(contextIndex, true));
+
+        Map<Long, ContextIndexBuilder.ContextInfo> aggregatedCollection = aggregator.getAggregatedCollection();
+        System.out.println(JSON.toJSONString(aggregatedCollection, true));
     }
 
     @Test
     public void keywordIndexAggregator() throws IOException {
-        LogFileScanner logFileScanner = new LogFileScanner("2016-01-01 01:02", "2016-11-15 14:23", "D:\\tmp");
+        LogFileScanner logFileScanner = new LogFileScanner("2016-01-01 01:02", "2017-11-15 14:23", "D:\\tmp");
         Map<String, File> fileMap = logFileScanner.scan();
         Collection<File> files = fileMap.values();
 
@@ -61,7 +71,7 @@ public class AggregatorTest {
 
     @Test
     public void keyValueIndexAggregator() {
-        LogFileScanner logFileScanner = new LogFileScanner("2016-01-01 01:02", "2016-11-15 14:23", "D:\\tmp");
+        LogFileScanner logFileScanner = new LogFileScanner("2016-01-01 01:02", "2017-11-15 14:23", "D:\\tmp");
         Map<String, File> fileMap = logFileScanner.scan();
         Collection<File> files = fileMap.values();
         KeyValueIndexAggregator aggregator = new KeyValueIndexAggregator();

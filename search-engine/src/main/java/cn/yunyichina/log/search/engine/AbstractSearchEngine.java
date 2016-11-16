@@ -3,10 +3,11 @@ package cn.yunyichina.log.search.engine;
 import cn.yunyichina.log.index.builder.imp.ContextIndexBuilder;
 import cn.yunyichina.log.search.engine.entity.SearchCondition;
 
+import java.io.File;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
+import java.util.Set;
 
 /**
  * @Author: Leo
@@ -35,7 +36,7 @@ public abstract class AbstractSearchEngine {
     protected boolean exactlyBetweenTimeRange = false;
     protected String baseDir;
     protected SearchCondition searchCondition;
-    protected List<ContextIndexBuilder.ContextInfo> matchedContextInfoList;
+    protected Set<ContextIndexBuilder.ContextInfo> matchedContextInfoSet;
 
     /**
      * 时间区间交集判断
@@ -44,34 +45,49 @@ public abstract class AbstractSearchEngine {
      * @return
      * @throws ParseException
      */
-    protected boolean inDateTimeRange(ContextIndexBuilder.ContextInfo contextInfo) throws ParseException {
-        String beginLogFileName = contextInfo.getBegin().getLogFile().getName();
-        beginLogFileName = beginLogFileName.substring(0, beginLogFileName.lastIndexOf("."));
-        String endLogFileName = contextInfo.getEnd().getLogFile().getName();
-        endLogFileName = endLogFileName.substring(0, endLogFileName.lastIndexOf("."));
+    protected boolean inDateTimeRange(ContextIndexBuilder.ContextInfo contextInfo) {
+        try {
+            if (contextInfo == null) {
+                return false;
+            } else {
+                ContextIndexBuilder.IndexInfo contextInfoBegin = contextInfo.getBegin();
+                File contextInfoBeginLogFile = contextInfoBegin.getLogFile();
+                String beginLogFileName = contextInfoBeginLogFile.getName();
+                beginLogFileName = beginLogFileName.substring(0, beginLogFileName.lastIndexOf("."));
 
-        Date conditionBeginDateTime = searchCondition.getBeginDateTime();
-        Date conditionEndDateTime = searchCondition.getEndDateTime();
-        Date contextBeginDateTime = sdf.parse(beginLogFileName);
-        Date contextEndDateTime = sdf.parse(endLogFileName);
+                ContextIndexBuilder.IndexInfo contextInfoEnd = contextInfo.getEnd();
+                File contextInfoEndLogFile = contextInfoEnd.getLogFile();
+                String endLogFileName = contextInfoEndLogFile.getName();
+                endLogFileName = endLogFileName.substring(0, endLogFileName.lastIndexOf("."));
 
-        if (conditionBeginDateTime.after(contextEndDateTime)) {
-            return false;
-        } else if (conditionEndDateTime.before(contextBeginDateTime)) {
-            return false;
-        } else if (conditionBeginDateTime.before(contextBeginDateTime) || conditionEndDateTime.after(contextEndDateTime)) {
-            if (exactlyBetweenTimeRange) {
-                if (conditionBeginDateTime.before(contextBeginDateTime) && conditionEndDateTime.after(contextEndDateTime)) {
+                Date conditionBeginDateTime = searchCondition.getBeginDateTime();
+                Date conditionEndDateTime = searchCondition.getEndDateTime();
+                Date contextBeginDateTime = sdf.parse(beginLogFileName);
+                Date contextEndDateTime = sdf.parse(endLogFileName);
+
+                if (conditionBeginDateTime.after(contextEndDateTime)) {
+                    return false;
+                } else if (conditionEndDateTime.before(contextBeginDateTime)) {
+                    return false;
+                } else if (conditionBeginDateTime.before(contextBeginDateTime) || conditionEndDateTime.after(contextEndDateTime)) {
+                    if (exactlyBetweenTimeRange) {
+                        if (conditionBeginDateTime.before(contextBeginDateTime) && conditionEndDateTime.after(contextEndDateTime)) {
+                            return true;
+                        } else {
+                            return false;
+                        }
+                    } else {
+                        return true;
+                    }
+                } else if (allowOverTimeRange && conditionBeginDateTime.after(contextBeginDateTime) && conditionEndDateTime.before(contextEndDateTime)) {
                     return true;
                 } else {
                     return false;
                 }
-            } else {
-                return true;
             }
-        } else if (allowOverTimeRange && conditionBeginDateTime.after(contextBeginDateTime) && conditionEndDateTime.before(contextEndDateTime)) {
-            return true;
-        } else {
+
+        } catch (Exception e) {//有一些ContextInfo可能是由于上下文跨文件的缘故,导致在某个时期它是缺陷的,缺了begin或者end.所以可能会抛出NullPointerException.但是在索引聚合的时候,可以保证数据一致性.
+            e.printStackTrace();
             return false;
         }
     }

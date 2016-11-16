@@ -7,9 +7,9 @@ import cn.yunyichina.log.search.engine.SearchEngine;
 import cn.yunyichina.log.search.engine.entity.SearchCondition;
 import org.springframework.util.CollectionUtils;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 
 /**
@@ -19,35 +19,35 @@ import java.util.Map;
  * @CreateTime: 2016/11/14 18:13
  * @Description: 关键词搜索引擎, 不支持模糊搜索.
  */
-public class KeywordSearchEngine extends AbstractSearchEngine implements SearchEngine<List<ContextIndexBuilder.ContextInfo>> {
+public class KeywordSearchEngine extends AbstractSearchEngine implements SearchEngine<Set<ContextIndexBuilder.ContextInfo>> {
 
-    private Map<String, List<KeywordIndexBuilder.IndexInfo>> keywordIndex;
-    private Map<Long, ContextIndexBuilder.ContextInfo> contextIndex;
+    private Map<String, Set<KeywordIndexBuilder.IndexInfo>> keywordIndexMap;
+    private Map<Long, ContextIndexBuilder.ContextInfo> contextIndexMap;
 
-    public KeywordSearchEngine(Map<String, List<KeywordIndexBuilder.IndexInfo>> keywordIndex, Map<Long, ContextIndexBuilder.ContextInfo> contextIndex, SearchCondition searchCondition) {
-        this.keywordIndex = keywordIndex;
-        this.contextIndex = contextIndex;
+    public KeywordSearchEngine(Map<String, Set<KeywordIndexBuilder.IndexInfo>> keywordIndexMap, Map<Long, ContextIndexBuilder.ContextInfo> contextIndexMap, SearchCondition searchCondition) {
+        this.keywordIndexMap = keywordIndexMap;
+        this.contextIndexMap = contextIndexMap;
         this.searchCondition = searchCondition;
     }
 
     @Override
-    public List<ContextIndexBuilder.ContextInfo> search() throws Exception {
-        List<KeywordIndexBuilder.IndexInfo> indexInfoList = keywordIndex.get(searchCondition.getKeyword());
-        if (CollectionUtils.isEmpty(indexInfoList)) {
+    public Set<ContextIndexBuilder.ContextInfo> search() throws Exception {
+        Set<KeywordIndexBuilder.IndexInfo> indexInfoSet = keywordIndexMap.get(searchCondition.getKeyword());
+        if (CollectionUtils.isEmpty(indexInfoSet)) {
 
         } else {
-            matchedContextInfoList = new ArrayList<>(indexInfoList.size());
-            for (KeywordIndexBuilder.IndexInfo indexInfo : indexInfoList) {
+            matchedContextInfoSet = new HashSet<>(indexInfoSet.size());
+            for (KeywordIndexBuilder.IndexInfo indexInfo : indexInfoSet) {
                 Long contextCount = indexInfo.getContextCount();
-                ContextIndexBuilder.ContextInfo contextInfo = contextIndex.get(contextCount);
+                ContextIndexBuilder.ContextInfo contextInfo = contextIndexMap.get(contextCount);
                 if (inDateTimeRange(contextInfo)) {
-                    matchedContextInfoList.add(contextInfo);
+                    matchedContextInfoSet.add(contextInfo);
                 } else {
 
                 }
             }
         }
-        return matchedContextInfoList;
+        return matchedContextInfoSet;
     }
 
 

@@ -20,8 +20,6 @@ public class SearchCondition {
     private String methodName;
 
 
-    private int searchWay;
-
     public Date getBeginDateTime() {
         return beginDateTime;
     }
@@ -94,12 +92,4 @@ public class SearchCondition {
         return this;
     }
 
-    public int getSearchWay() {
-        return searchWay;
-    }
-
-    public SearchCondition setSearchWay(int searchWay) {
-        this.searchWay = searchWay;
-        return this;
-    }
 }

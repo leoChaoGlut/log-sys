@@ -7,6 +7,7 @@ import com.google.common.io.Files;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -72,7 +73,7 @@ public class ContextIndexBuilder implements IndexBuilder<Map<Long, ContextIndexB
         }
     }
 
-    public static class ContextInfo {
+    public static class ContextInfo implements Serializable {
         private IndexInfo begin;
         private IndexInfo end;
 
@@ -98,9 +99,12 @@ public class ContextIndexBuilder implements IndexBuilder<Map<Long, ContextIndexB
         }
     }
 
-    public static class IndexInfo {
+    public static class IndexInfo implements Serializable {
         private File logFile;
         private int indexOfLogFile;
+
+        public IndexInfo() {
+        }
 
         public IndexInfo(File logFile, int indexOfLogFile) {
             this.logFile = logFile;
@@ -113,6 +117,16 @@ public class ContextIndexBuilder implements IndexBuilder<Map<Long, ContextIndexB
 
         public int getIndexOfLogFile() {
             return indexOfLogFile;
+        }
+
+        public IndexInfo setLogFile(File logFile) {
+            this.logFile = logFile;
+            return this;
+        }
+
+        public IndexInfo setIndexOfLogFile(int indexOfLogFile) {
+            this.indexOfLogFile = indexOfLogFile;
+            return this;
         }
     }
 }
