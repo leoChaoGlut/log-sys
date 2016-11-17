@@ -1,6 +1,6 @@
-import cn.yunyichina.log.index.aggregator.imp.ContextIndexAggregator;
-import cn.yunyichina.log.index.aggregator.imp.KeyValueIndexAggregator;
-import cn.yunyichina.log.index.aggregator.imp.KeywordIndexAggregator;
+import cn.yunyichina.log.aggregator.index.imp.ContextIndexAggregator;
+import cn.yunyichina.log.aggregator.index.imp.KeyValueIndexAggregator;
+import cn.yunyichina.log.aggregator.index.imp.KeywordIndexAggregator;
 import cn.yunyichina.log.index.builder.imp.ContextIndexBuilder;
 import cn.yunyichina.log.index.builder.imp.KeyValueIndexBuilder;
 import cn.yunyichina.log.index.builder.imp.KeywordIndexBuilder;

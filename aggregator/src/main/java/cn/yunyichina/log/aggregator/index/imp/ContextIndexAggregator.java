@@ -1,6 +1,6 @@
-package cn.yunyichina.log.index.aggregator.imp;
+package cn.yunyichina.log.aggregator.index.imp;
 
-import cn.yunyichina.log.index.aggregator.AbstractAggregator;
+import cn.yunyichina.log.aggregator.index.AbstractIndexAggregator;
 import cn.yunyichina.log.index.builder.imp.ContextIndexBuilder;
 import org.springframework.util.CollectionUtils;
 
@@ -15,7 +15,7 @@ import java.util.Set;
  * @CreateTime: 2016/11/15 14:48
  * @Description:
  */
-public class ContextIndexAggregator extends AbstractAggregator<Map<Long, ContextIndexBuilder.ContextInfo>> {
+public class ContextIndexAggregator extends AbstractIndexAggregator<Map<Long, ContextIndexBuilder.ContextInfo>> {
 
     /**
      * 是否替换旧值

@@ -23,8 +23,8 @@ public class LogFileScanner {
     /**
      * 闭区间
      *
-     * @param beginDateTime yyyy-MM-dd hh:mm
-     * @param endDateTime   yyyy-MM-dd hh:mm
+     * @param beginDateTime yyyy-MM-dd HH:mm
+     * @param endDateTime   yyyy-MM-dd HH:mm
      * @param baseDir       注意文件分隔符,\\ 和 / 的差异,会导致找不到文件.切记要使用File.separator
      */
     public LogFileScanner(String beginDateTime, String endDateTime, String baseDir) {
@@ -34,8 +34,8 @@ public class LogFileScanner {
     }
 
     /**
-     * @param beginLogFile
-     * @param endLogFile
+     * @param beginLogFile yyyyMMddHHmm
+     * @param endLogFile   yyyyMMddHHmm
      * @param baseDir
      */
     public LogFileScanner(File beginLogFile, File endLogFile, String baseDir) {

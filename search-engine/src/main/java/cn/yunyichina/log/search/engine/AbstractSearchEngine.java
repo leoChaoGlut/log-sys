@@ -69,9 +69,9 @@ public abstract class AbstractSearchEngine {
                     return false;
                 } else if (conditionEndDateTime.before(contextBeginDateTime)) {
                     return false;
-                } else if (conditionBeginDateTime.before(contextBeginDateTime) || conditionEndDateTime.after(contextEndDateTime)) {
+                } else if (0 >= conditionBeginDateTime.compareTo(contextBeginDateTime) || 0 <= conditionEndDateTime.compareTo(contextEndDateTime)) {
                     if (exactlyBetweenTimeRange) {
-                        if (conditionBeginDateTime.before(contextBeginDateTime) && conditionEndDateTime.after(contextEndDateTime)) {
+                        if (0 >= conditionBeginDateTime.compareTo(contextBeginDateTime) && 0 <= conditionEndDateTime.compareTo(contextEndDateTime)) {
                             return true;
                         } else {
                             return false;
@@ -88,6 +88,7 @@ public abstract class AbstractSearchEngine {
 
         } catch (Exception e) {//有一些ContextInfo可能是由于上下文跨文件的缘故,导致在某个时期它是缺陷的,缺了begin或者end.所以可能会抛出NullPointerException.但是在索引聚合的时候,可以保证数据一致性.
             e.printStackTrace();
+//            TODO 这里是否需要打印异常?如果出现异常,默认返回false
             return false;
         }
     }

@@ -24,9 +24,12 @@ public class KeywordSearchEngine extends AbstractSearchEngine implements SearchE
     private Map<String, Set<KeywordIndexBuilder.IndexInfo>> keywordIndexMap;
     private Map<Long, ContextIndexBuilder.ContextInfo> contextIndexMap;
 
-    public KeywordSearchEngine(Map<String, Set<KeywordIndexBuilder.IndexInfo>> keywordIndexMap, Map<Long, ContextIndexBuilder.ContextInfo> contextIndexMap, SearchCondition searchCondition) {
+    public KeywordSearchEngine(Map<String, Set<KeywordIndexBuilder.IndexInfo>> keywordIndexMap, Map<Long, ContextIndexBuilder.ContextInfo> contextIndexMap, SearchCondition searchCondition) throws Exception {
         this.keywordIndexMap = keywordIndexMap;
         this.contextIndexMap = contextIndexMap;
+        if (searchCondition.getBeginDateTime().after(searchCondition.getEndDateTime())) {
+            throw new Exception("开始时间不能小于结束时间");
+        }
         this.searchCondition = searchCondition;
     }
 
@@ -41,14 +44,13 @@ public class KeywordSearchEngine extends AbstractSearchEngine implements SearchE
                 Long contextCount = indexInfo.getContextCount();
                 ContextIndexBuilder.ContextInfo contextInfo = contextIndexMap.get(contextCount);
                 if (inDateTimeRange(contextInfo)) {
+                    System.err.println(contextCount);
                     matchedContextInfoSet.add(contextInfo);
                 } else {
-
                 }
             }
         }
         return matchedContextInfoSet;
     }
-
 
 }

@@ -1,4 +1,4 @@
-package cn.yunyichina.log.index.aggregator;
+package cn.yunyichina.log.aggregator;
 
 /**
  * @Author: Leo

@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * @Author: Leo
@@ -73,7 +74,7 @@ public class ContextIndexBuilder implements IndexBuilder<Map<Long, ContextIndexB
         }
     }
 
-    public static class ContextInfo implements Serializable {
+    public static class ContextInfo {
         private IndexInfo begin;
         private IndexInfo end;
 
@@ -96,6 +97,20 @@ public class ContextIndexBuilder implements IndexBuilder<Map<Long, ContextIndexB
         public ContextInfo setEnd(IndexInfo end) {
             this.end = end;
             return this;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            ContextInfo that = (ContextInfo) o;
+            return Objects.equals(begin, that.begin) &&
+                    Objects.equals(end, that.end);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(begin, end);
         }
     }
 
@@ -127,6 +142,20 @@ public class ContextIndexBuilder implements IndexBuilder<Map<Long, ContextIndexB
         public IndexInfo setIndexOfLogFile(int indexOfLogFile) {
             this.indexOfLogFile = indexOfLogFile;
             return this;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            IndexInfo indexInfo = (IndexInfo) o;
+            return indexOfLogFile == indexInfo.indexOfLogFile &&
+                    Objects.equals(logFile, indexInfo.logFile);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(logFile, indexOfLogFile);
         }
     }
 }

@@ -9,6 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>index-builder</artifactId>
+    <artifactId>common</artifactId>
+
 
 </project>

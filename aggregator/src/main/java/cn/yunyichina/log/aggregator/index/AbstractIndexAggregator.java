@@ -1,4 +1,6 @@
-package cn.yunyichina.log.index.aggregator;
+package cn.yunyichina.log.aggregator.index;
+
+import cn.yunyichina.log.aggregator.Aggregator;
 
 /**
  * @Author: Leo
@@ -6,16 +8,16 @@ package cn.yunyichina.log.index.aggregator;
  * @CreateTime: 2016/11/15 15:08
  * @Description:
  */
-public abstract class AbstractAggregator<T> implements Aggregator<T> {
+public abstract class AbstractIndexAggregator<T> implements Aggregator<T> {
 
     protected T aggregatedCollection;
     protected final int DEFAULT_CAPACITY = 1024;
 
 
-    public AbstractAggregator() {
+    public AbstractIndexAggregator() {
     }
 
-    public AbstractAggregator(T aggregatedCollection) {
+    public AbstractIndexAggregator(T aggregatedCollection) {
         this.aggregatedCollection = aggregatedCollection;
     }
 
@@ -23,7 +25,7 @@ public abstract class AbstractAggregator<T> implements Aggregator<T> {
         return aggregatedCollection;
     }
 
-    public AbstractAggregator setAggregatedCollection(T aggregatedCollection) {
+    public AbstractIndexAggregator setAggregatedCollection(T aggregatedCollection) {
         this.aggregatedCollection = aggregatedCollection;
         return this;
     }

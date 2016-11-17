@@ -22,6 +22,8 @@
         <module>search-center</module>
         <module>search-engine</module>
         <module>store-node</module>
+        <module>aggregator</module>
+        <module>common</module>
     </modules>
 
     <properties>

@@ -1,6 +1,6 @@
-package cn.yunyichina.log.index.aggregator.imp;
+package cn.yunyichina.log.aggregator.index.imp;
 
-import cn.yunyichina.log.index.aggregator.AbstractAggregator;
+import cn.yunyichina.log.aggregator.index.AbstractIndexAggregator;
 import cn.yunyichina.log.index.builder.imp.KeywordIndexBuilder;
 import org.springframework.util.CollectionUtils;
 
@@ -14,7 +14,7 @@ import java.util.Set;
  * @CreateTime: 2016/11/15 15:26
  * @Description:
  */
-public class KeywordIndexAggregator extends AbstractAggregator<Map<String, Set<KeywordIndexBuilder.IndexInfo>>> {
+public class KeywordIndexAggregator extends AbstractIndexAggregator<Map<String, Set<KeywordIndexBuilder.IndexInfo>>> {
 
     public KeywordIndexAggregator() {
         this.aggregatedCollection = new HashMap<>(DEFAULT_CAPACITY);

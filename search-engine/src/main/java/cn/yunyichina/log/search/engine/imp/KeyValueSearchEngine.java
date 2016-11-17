@@ -20,18 +20,18 @@ import java.util.Set;
  */
 public class KeyValueSearchEngine extends AbstractSearchEngine implements SearchEngine<Set<ContextIndexBuilder.ContextInfo>> {
 
-    private Map<String, Map<String, Set<KeyValueIndexBuilder.IndexInfo>>> keyValueIndex;
-    private Map<Long, ContextIndexBuilder.ContextInfo> contextIndex;
+    private Map<String, Map<String, Set<KeyValueIndexBuilder.IndexInfo>>> keyValueIndexMap;
+    private Map<Long, ContextIndexBuilder.ContextInfo> contextIndexMap;
 
-    public KeyValueSearchEngine(Map<String, Map<String, Set<KeyValueIndexBuilder.IndexInfo>>> keyValueIndex, Map<Long, ContextIndexBuilder.ContextInfo> contextIndex, SearchCondition searchCondition) {
-        this.keyValueIndex = keyValueIndex;
-        this.contextIndex = contextIndex;
+    public KeyValueSearchEngine(Map<String, Map<String, Set<KeyValueIndexBuilder.IndexInfo>>> keyValueIndexMap, Map<Long, ContextIndexBuilder.ContextInfo> contextIndexMap, SearchCondition searchCondition) {
+        this.keyValueIndexMap = keyValueIndexMap;
+        this.contextIndexMap = contextIndexMap;
         this.searchCondition = searchCondition;
     }
 
     @Override
     public Set<ContextIndexBuilder.ContextInfo> search() throws Exception {
-        Map<String, Set<KeyValueIndexBuilder.IndexInfo>> valueIndex = keyValueIndex.get(searchCondition.getKey());
+        Map<String, Set<KeyValueIndexBuilder.IndexInfo>> valueIndex = keyValueIndexMap.get(searchCondition.getKey());
         Set<KeyValueIndexBuilder.IndexInfo> indexInfoSet = null;
         if (fuzzySearch) {
             Set<String> valueSet = valueIndex.keySet();
@@ -58,8 +58,9 @@ public class KeyValueSearchEngine extends AbstractSearchEngine implements Search
             matchedContextInfoSet = new HashSet<>(indexInfoSet.size());
             for (KeyValueIndexBuilder.IndexInfo indexInfo : indexInfoSet) {
                 Long contextCount = indexInfo.getContextCount();
-                ContextIndexBuilder.ContextInfo contextInfo = contextIndex.get(contextCount);
+                ContextIndexBuilder.ContextInfo contextInfo = contextIndexMap.get(contextCount);
                 if (inDateTimeRange(contextInfo)) {
+//                    System.err.println(contextCount);
                     matchedContextInfoSet.add(contextInfo);
                 } else {
 
