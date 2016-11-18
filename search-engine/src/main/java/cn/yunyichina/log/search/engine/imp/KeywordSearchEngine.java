@@ -24,8 +24,6 @@ public class KeywordSearchEngine extends AbstractSearchEngine implements SearchE
     private Map<String, Set<KeywordIndexBuilder.IndexInfo>> keywordIndexMap;
     private Map<Long, ContextIndexBuilder.ContextInfo> contextIndexMap;
 
-    public KeywordSearchEngine() {
-    }
 
     public KeywordSearchEngine(Map<String, Set<KeywordIndexBuilder.IndexInfo>> keywordIndexMap, Map<Long, ContextIndexBuilder.ContextInfo> contextIndexMap, SearchCondition searchCondition) throws Exception {
         this.keywordIndexMap = keywordIndexMap;

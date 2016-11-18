@@ -1,5 +1,7 @@
 package cn.yunyichina.log.common.entity.dto;
 
+import com.alibaba.fastjson.annotation.JSONField;
+
 import java.util.Date;
 
 /**
@@ -14,8 +16,9 @@ public class SearchCondition {
      */
     private int searchEngineType;
     private boolean fuzzy;
-
+    @JSONField(format = "yyyy-MM-dd HH:mm")
     private Date beginDateTime;
+    @JSONField(format = "yyyy-MM-dd HH:mm")
     private Date endDateTime;
     private String keyword;
     private String key;

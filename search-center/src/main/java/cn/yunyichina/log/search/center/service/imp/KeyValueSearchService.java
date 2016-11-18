@@ -5,7 +5,7 @@ import cn.yunyichina.log.common.entity.dto.SearchCondition;
 import cn.yunyichina.log.index.builder.imp.ContextIndexBuilder;
 import cn.yunyichina.log.search.center.service.SearchService;
 import cn.yunyichina.log.search.center.util.IndexManager;
-import cn.yunyichina.log.search.engine.imp.KeywordSearchEngine;
+import cn.yunyichina.log.search.engine.imp.KeyValueSearchEngine;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,14 +20,14 @@ import java.util.Set;
  * @Description:
  */
 @Service
-public class KeywordSearchService implements SearchService {
+public class KeyValueSearchService implements SearchService {
 
     @Autowired
     IndexManager indexManager;
 
     @Override
     public List<String> search(SearchCondition searchCondition) throws Exception {
-        KeywordSearchEngine searchEngine = new KeywordSearchEngine(indexManager.getKeywordIndexMap(), indexManager.getContextIndexMap(), searchCondition);
+        KeyValueSearchEngine searchEngine = new KeyValueSearchEngine(indexManager.getKeyValueIndexMap(), indexManager.getContextIndexMap(), searchCondition);
         Set<ContextIndexBuilder.ContextInfo> contextInfoSet = searchEngine.search();
         if (contextInfoSet == null) {
             return null;

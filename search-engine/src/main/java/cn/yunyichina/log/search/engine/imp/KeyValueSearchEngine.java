@@ -23,8 +23,6 @@ public class KeyValueSearchEngine extends AbstractSearchEngine implements Search
     private Map<String, Map<String, Set<KeyValueIndexBuilder.IndexInfo>>> keyValueIndexMap;
     private Map<Long, ContextIndexBuilder.ContextInfo> contextIndexMap;
 
-    public KeyValueSearchEngine() {
-    }
 
     public KeyValueSearchEngine(Map<String, Map<String, Set<KeyValueIndexBuilder.IndexInfo>>> keyValueIndexMap, Map<Long, ContextIndexBuilder.ContextInfo> contextIndexMap, SearchCondition searchCondition) throws Exception {
         this.keyValueIndexMap = keyValueIndexMap;
