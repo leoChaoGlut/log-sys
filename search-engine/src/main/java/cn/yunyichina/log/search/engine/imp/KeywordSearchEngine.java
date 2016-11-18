@@ -1,10 +1,10 @@
 package cn.yunyichina.log.search.engine.imp;
 
+import cn.yunyichina.log.common.entity.dto.SearchCondition;
 import cn.yunyichina.log.index.builder.imp.ContextIndexBuilder;
 import cn.yunyichina.log.index.builder.imp.KeywordIndexBuilder;
 import cn.yunyichina.log.search.engine.AbstractSearchEngine;
 import cn.yunyichina.log.search.engine.SearchEngine;
-import cn.yunyichina.log.search.engine.entity.SearchCondition;
 import org.springframework.util.CollectionUtils;
 
 import java.util.HashSet;
@@ -23,6 +23,9 @@ public class KeywordSearchEngine extends AbstractSearchEngine implements SearchE
 
     private Map<String, Set<KeywordIndexBuilder.IndexInfo>> keywordIndexMap;
     private Map<Long, ContextIndexBuilder.ContextInfo> contextIndexMap;
+
+    public KeywordSearchEngine() {
+    }
 
     public KeywordSearchEngine(Map<String, Set<KeywordIndexBuilder.IndexInfo>> keywordIndexMap, Map<Long, ContextIndexBuilder.ContextInfo> contextIndexMap, SearchCondition searchCondition) throws Exception {
         this.keywordIndexMap = keywordIndexMap;
@@ -44,7 +47,7 @@ public class KeywordSearchEngine extends AbstractSearchEngine implements SearchE
                 Long contextCount = indexInfo.getContextCount();
                 ContextIndexBuilder.ContextInfo contextInfo = contextIndexMap.get(contextCount);
                 if (inDateTimeRange(contextInfo)) {
-                    System.err.println(contextCount);
+//                    System.err.println(contextCount);
                     matchedContextInfoSet.add(contextInfo);
                 } else {
                 }

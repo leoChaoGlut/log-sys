@@ -1,10 +1,10 @@
 package cn.yunyichina.log.search.engine.imp;
 
+import cn.yunyichina.log.common.entity.dto.SearchCondition;
 import cn.yunyichina.log.index.builder.imp.ContextIndexBuilder;
 import cn.yunyichina.log.index.builder.imp.KeyValueIndexBuilder;
 import cn.yunyichina.log.search.engine.AbstractSearchEngine;
 import cn.yunyichina.log.search.engine.SearchEngine;
-import cn.yunyichina.log.search.engine.entity.SearchCondition;
 import org.springframework.util.CollectionUtils;
 
 import java.util.HashSet;
@@ -23,9 +23,15 @@ public class KeyValueSearchEngine extends AbstractSearchEngine implements Search
     private Map<String, Map<String, Set<KeyValueIndexBuilder.IndexInfo>>> keyValueIndexMap;
     private Map<Long, ContextIndexBuilder.ContextInfo> contextIndexMap;
 
-    public KeyValueSearchEngine(Map<String, Map<String, Set<KeyValueIndexBuilder.IndexInfo>>> keyValueIndexMap, Map<Long, ContextIndexBuilder.ContextInfo> contextIndexMap, SearchCondition searchCondition) {
+    public KeyValueSearchEngine() {
+    }
+
+    public KeyValueSearchEngine(Map<String, Map<String, Set<KeyValueIndexBuilder.IndexInfo>>> keyValueIndexMap, Map<Long, ContextIndexBuilder.ContextInfo> contextIndexMap, SearchCondition searchCondition) throws Exception {
         this.keyValueIndexMap = keyValueIndexMap;
         this.contextIndexMap = contextIndexMap;
+        if (searchCondition.getBeginDateTime().after(searchCondition.getEndDateTime())) {
+            throw new Exception("开始时间不能小于结束时间");
+        }
         this.searchCondition = searchCondition;
     }
 

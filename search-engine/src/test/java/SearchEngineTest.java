@@ -2,11 +2,11 @@ import cn.yunyichina.log.aggregator.index.imp.ContextIndexAggregator;
 import cn.yunyichina.log.aggregator.index.imp.KeyValueIndexAggregator;
 import cn.yunyichina.log.aggregator.index.imp.KeywordIndexAggregator;
 import cn.yunyichina.log.aggregator.log.LogAggregator;
+import cn.yunyichina.log.common.entity.dto.SearchCondition;
 import cn.yunyichina.log.index.builder.imp.ContextIndexBuilder;
 import cn.yunyichina.log.index.builder.imp.KeyValueIndexBuilder;
 import cn.yunyichina.log.index.builder.imp.KeywordIndexBuilder;
 import cn.yunyichina.log.index.util.LogFileScanner;
-import cn.yunyichina.log.search.engine.entity.SearchCondition;
 import cn.yunyichina.log.search.engine.imp.KeyValueSearchEngine;
 import cn.yunyichina.log.search.engine.imp.KeywordSearchEngine;
 import com.alibaba.fastjson.JSON;
@@ -75,7 +75,7 @@ public class SearchEngineTest {
 
         SearchCondition searchCondition = new SearchCondition();
         searchCondition.setBeginDateTime(sdf.parse("2016-11-15 14:23"));
-        searchCondition.setEndDateTime(sdf.parse("2016-11-15 14:24"));
+        searchCondition.setEndDateTime(sdf.parse("2016-11-15 14:25"));
         searchCondition.setKeyword("pat_card_no");
 
         KeywordSearchEngine searchEngine = new KeywordSearchEngine(keywordIndexMap, contextIndexMap, searchCondition);
@@ -84,6 +84,11 @@ public class SearchEngineTest {
         Set<ContextIndexBuilder.ContextInfo> contextInfoSet = searchEngine.search();
         System.out.println(JSON.toJSONString(contextInfoSet, true));
         System.out.println(contextInfoSet.size());
+//        for (ContextIndexBuilder.ContextInfo contextInfo : contextInfoSet) {
+//            String contextStr = LogAggregator.aggregate(contextInfo);
+//            System.out.println(contextStr);
+//            TimeUnit.SECONDS.sleep(5);
+//        }
 
     }
 

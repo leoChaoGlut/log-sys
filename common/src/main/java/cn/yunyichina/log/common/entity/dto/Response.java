@@ -1,7 +1,7 @@
-package cn.yunyichina.log.collection.entity.dto;
+package cn.yunyichina.log.common.entity.dto;
 
 
-import cn.yunyichina.log.collection.constant.Status;
+import cn.yunyichina.log.common.constant.Status;
 
 /**
  * @Author: Leo
@@ -15,18 +15,17 @@ public class Response {
 
     private String msg;
 
-    private String result;
-
+    private Object result;
 
     public static Response success() {
         return new Response(Status.SUCCESS_NO_DATA, null);
     }
 
-    public static Response success(String result) {
+    public static Response success(Object result) {
         return new Response(Status.SUCCESS, result);
     }
 
-    public static Response success(Status status, String result) {
+    public static Response success(Status status, Object result) {
         return new Response(status, result);
     }
 
@@ -43,7 +42,7 @@ public class Response {
         this.msg = msg;
     }
 
-    public Response(Status status, String result) {
+    public Response(Status status, Object result) {
         this.code = String.valueOf(status.getCode());
         this.msg = status.getMsg();
         this.result = result;
@@ -65,11 +64,11 @@ public class Response {
         this.msg = msg;
     }
 
-    public String getResult() {
+    public Object getResult() {
         return result;
     }
 
-    public void setResult(String result) {
+    public void setResult(Object result) {
         this.result = result;
     }
 }

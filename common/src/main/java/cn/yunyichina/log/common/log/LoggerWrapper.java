@@ -1,4 +1,4 @@
-package cn.yunyichina.log.collection.util;
+package cn.yunyichina.log.common.log;
 
 import cn.yunyichina.log.common.constant.Tag;
 import org.slf4j.Logger;

@@ -1,4 +1,4 @@
-package cn.yunyichina.log.search.engine.entity;
+package cn.yunyichina.log.common.entity.dto;
 
 import java.util.Date;
 
@@ -9,6 +9,12 @@ import java.util.Date;
  * @Description:
  */
 public class SearchCondition {
+    /**
+     * @See cn.yunyichina.log.search.center.constant.SearchEngineType
+     */
+    private int searchEngineType;
+    private boolean fuzzy;
+
     private Date beginDateTime;
     private Date endDateTime;
     private String keyword;
@@ -92,4 +98,21 @@ public class SearchCondition {
         return this;
     }
 
+    public int getSearchEngineType() {
+        return searchEngineType;
+    }
+
+    public SearchCondition setSearchEngineType(int searchEngineType) {
+        this.searchEngineType = searchEngineType;
+        return this;
+    }
+
+    public boolean isFuzzy() {
+        return fuzzy;
+    }
+
+    public SearchCondition setFuzzy(boolean fuzzy) {
+        this.fuzzy = fuzzy;
+        return this;
+    }
 }

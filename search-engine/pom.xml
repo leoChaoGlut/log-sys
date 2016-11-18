@@ -29,6 +29,12 @@
             <scope>test</scope>
         </dependency>
 
+        <dependency>
+            <groupId>cn.yy</groupId>
+            <artifactId>common</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+
     </dependencies>
 
 

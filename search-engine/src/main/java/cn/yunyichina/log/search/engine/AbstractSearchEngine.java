@@ -1,7 +1,7 @@
 package cn.yunyichina.log.search.engine;
 
+import cn.yunyichina.log.common.entity.dto.SearchCondition;
 import cn.yunyichina.log.index.builder.imp.ContextIndexBuilder;
-import cn.yunyichina.log.search.engine.entity.SearchCondition;
 
 import java.io.File;
 import java.text.ParseException;

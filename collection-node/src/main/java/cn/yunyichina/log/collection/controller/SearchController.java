@@ -1,6 +1,6 @@
 package cn.yunyichina.log.collection.controller;
 
-import cn.yunyichina.log.collection.entity.dto.Response;
+import cn.yunyichina.log.common.entity.dto.Response;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
