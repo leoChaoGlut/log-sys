@@ -2,9 +2,7 @@ package cn.yunyichina.log.search.center.controller;
 
 import cn.yunyichina.log.common.entity.dto.Response;
 import cn.yunyichina.log.common.entity.dto.SearchCondition;
-import cn.yunyichina.log.search.center.constant.SearchEngineType;
-import cn.yunyichina.log.search.center.service.imp.KeyValueSearchService;
-import cn.yunyichina.log.search.center.service.imp.KeywordSearchService;
+import cn.yunyichina.log.search.center.service.SearchService;
 import com.alibaba.fastjson.JSON;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,9 +22,7 @@ import java.util.List;
 public class SearchController {
 
     @Autowired
-    KeywordSearchService keywordSearchService;
-    @Autowired
-    KeyValueSearchService keyValueSearchService;
+    SearchService searchService;
 
     @PostMapping("/history")
     public Response search(String json) {
@@ -36,17 +32,7 @@ public class SearchController {
             System.err.println("==========");
             System.out.println(JSON.toJSONString(searchCondition));
             System.err.println("==========");
-            List<String> contextList;
-            switch (searchCondition.getSearchEngineType()) {
-                case SearchEngineType.KEYWORD:
-                    contextList = keywordSearchService.search(searchCondition);
-                    break;
-                case SearchEngineType.KEY_VALUE:
-                    contextList = keyValueSearchService.search(searchCondition);
-                    break;
-                default:
-                    throw new Exception("不支持的搜索引擎类型");
-            }
+            List<String> contextList = searchService.search(searchCondition);
             return Response.success(contextList);
         } catch (Exception e) {
             e.printStackTrace();
