@@ -49,3 +49,6 @@ his:
 sign:
   key: 02af49858e6a4cdeb4ebe9aac8656b4b
   validated: false
+
+logIndex:
+  lastTime: 2016-11-15 14:23
