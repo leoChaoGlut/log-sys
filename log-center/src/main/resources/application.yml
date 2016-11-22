@@ -1,5 +1,0 @@
-#spring Configuration 目前只有一个配置文件,如果有需要,可以分为dev和prod,然后再通过spring.profiles.active=prod 来切换生产或开发环境的配置文件.
-spring:
-  profiles:
-#    active: test
-    active: dev

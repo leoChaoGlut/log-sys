@@ -2,18 +2,20 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>log-sys</artifactId>
+        <groupId>cn.yunyichina</groupId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>cn.yunyichina</groupId>
-    <artifactId>log-sys</artifactId>
+    <artifactId>component</artifactId>
     <packaging>pom</packaging>
-    <version>1.0-SNAPSHOT</version>
-
     <modules>
-        <module>common</module>
-        <module>component</module>
-        <module>service</module>
-        <module>service-center</module>
+        <module>aggregator</module>
+        <module>index-builder</module>
+        <module>search-engine</module>
+        <module>schedule-task</module>
     </modules>
 
 
