@@ -17,7 +17,7 @@ import java.util.Set;
  */
 public abstract class AbstractSearchEngine {
 
-    protected SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddhhmm");
+    protected SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmm");
 
     /**
      * 是否模糊搜索

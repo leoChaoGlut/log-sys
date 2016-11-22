@@ -35,6 +35,8 @@ public class MyTest {
         nvps.add(new BasicNameValuePair("beginDateTime", "2016-11-15 14:23"));
         nvps.add(new BasicNameValuePair("endDateTime", "2016-11-15 14:25"));
         nvps.add(new BasicNameValuePair("keyword", "pat_card_no"));
+        nvps.add(new BasicNameValuePair("key", "pat_card_no"));
+        nvps.add(new BasicNameValuePair("value", "0000426117"));
 
         post.setEntity(new UrlEncodedFormEntity(nvps));
         CloseableHttpResponse response = httpsClient.execute(post);

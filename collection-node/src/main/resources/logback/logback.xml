@@ -20,7 +20,7 @@
     <appender name="ALL_YY"
               class="ch.qos.logback.core.rolling.RollingFileAppender">
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>${log.path}/%d{yyyy/MM/dd/hh/mm, aux}/%d{yyyyMMddhhmm}.log
+            <fileNamePattern>${log.path}/%d{yyyy/MM/dd/HH/mm, aux}/%d{yyyyMMddHHmm}.log
             </fileNamePattern>
         </rollingPolicy>
         <encoder>
