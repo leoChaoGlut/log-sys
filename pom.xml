@@ -67,10 +67,6 @@
         </dependency>
         <dependency>
             <groupId>${springBoot.groupId}</groupId>
-            <artifactId>spring-boot-starter-cache</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>${springBoot.groupId}</groupId>
             <artifactId>spring-boot-devtools</artifactId>
             <optional>true</optional>
         </dependency>
