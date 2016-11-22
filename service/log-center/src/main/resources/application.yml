@@ -1,12 +1,6 @@
 spring:
   application:
     name: log-center
-  cloud:
-    config:
-      enabled: true
-      discovery:
-        enabled: true
-        serviceId: config
 eureka:
   client:
     serviceUrl:

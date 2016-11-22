@@ -9,4 +9,6 @@ server:
   port: 10300
 zuul:
   routes:
-    #fproducer: /producer/**
+    log-center: /log/center/**
+    collection-node: /collection/node/**
+

@@ -11,11 +11,36 @@
 
     <artifactId>service-center</artifactId>
     <packaging>pom</packaging>
+
     <modules>
         <module>config</module>
         <module>registry</module>
         <module>gateway</module>
     </modules>
 
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>Camden.SR2</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <dependencies>
+        <!--Spring Cloud Begin-->
+        <dependency>
+            <groupId>${springCloud.groupId}</groupId>
+            <artifactId>spring-cloud-starter-config</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${springCloud.groupId}</groupId>
+            <artifactId>spring-cloud-starter-eureka</artifactId>
+        </dependency>
+        <!--Spring Cloud End-->
+    </dependencies>
 
 </project>

@@ -1,8 +1,8 @@
 package cn.yunyichina.log.service.logCenter;
 
 import org.springframework.boot.SpringApplication;
-import org.springframework.cloud.client.SpringCloudApplication;
-import org.springframework.context.annotation.ComponentScan;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 /**
@@ -12,8 +12,8 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
  * @Description:
  */
 @EnableWebMvc
-@ComponentScan(basePackages = {"cn.yunyichina.log.service.logCenter"})
-@SpringCloudApplication
+@EnableEurekaClient
+@SpringBootApplication(scanBasePackages = "cn.yunyichina.log.service.logCenter")
 public class Bootstrap {
 
     public static void main(String[] args) {

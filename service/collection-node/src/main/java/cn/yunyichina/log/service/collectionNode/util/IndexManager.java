@@ -7,7 +7,6 @@ import cn.yunyichina.log.component.indexBuilder.imp.ContextIndexBuilder;
 import cn.yunyichina.log.component.indexBuilder.imp.KeyValueIndexBuilder;
 import cn.yunyichina.log.component.indexBuilder.imp.KeywordIndexBuilder;
 import cn.yunyichina.log.component.indexBuilder.util.LogFileScanner;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -26,7 +25,8 @@ import java.util.Set;
 @Component
 public class IndexManager {
 
-    @Value("${logIndex.lastTime}")
+    //    @Value("${logIndex.lastTime}")
+//
     private String logIndexLastTime;
 
     Map<Long, ContextIndexBuilder.ContextInfo> contextIndexMap;
