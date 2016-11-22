@@ -1,10 +1,10 @@
-import cn.yunyichina.log.aggregator.index.imp.ContextIndexAggregator;
-import cn.yunyichina.log.aggregator.index.imp.KeyValueIndexAggregator;
-import cn.yunyichina.log.aggregator.index.imp.KeywordIndexAggregator;
-import cn.yunyichina.log.index.builder.imp.ContextIndexBuilder;
-import cn.yunyichina.log.index.builder.imp.KeyValueIndexBuilder;
-import cn.yunyichina.log.index.builder.imp.KeywordIndexBuilder;
-import cn.yunyichina.log.index.util.LogFileScanner;
+import cn.yunyichina.log.component.aggregator.index.imp.ContextIndexAggregator;
+import cn.yunyichina.log.component.aggregator.index.imp.KeyValueIndexAggregator;
+import cn.yunyichina.log.component.aggregator.index.imp.KeywordIndexAggregator;
+import cn.yunyichina.log.component.indexBuilder.imp.ContextIndexBuilder;
+import cn.yunyichina.log.component.indexBuilder.imp.KeyValueIndexBuilder;
+import cn.yunyichina.log.component.indexBuilder.imp.KeywordIndexBuilder;
+import cn.yunyichina.log.component.indexBuilder.util.LogFileScanner;
 import com.alibaba.fastjson.JSON;
 import org.junit.Test;
 

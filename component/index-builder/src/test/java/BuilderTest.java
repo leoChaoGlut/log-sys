@@ -1,6 +1,6 @@
-import cn.yunyichina.log.index.builder.imp.ContextIndexBuilder;
-import cn.yunyichina.log.index.builder.imp.KeyValueIndexBuilder;
-import cn.yunyichina.log.index.builder.imp.KeywordIndexBuilder;
+import cn.yunyichina.log.component.indexBuilder.imp.ContextIndexBuilder;
+import cn.yunyichina.log.component.indexBuilder.imp.KeyValueIndexBuilder;
+import cn.yunyichina.log.component.indexBuilder.imp.KeywordIndexBuilder;
 import com.alibaba.fastjson.JSON;
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
@@ -24,7 +24,7 @@ public class BuilderTest {
     public void contextIndexBuilderTest() throws IOException {
         ContextIndexBuilder builder = new ContextIndexBuilder(new File("D:\\tmp\\2016\\11\\15\\14\\25\\201611151425.log"));
         Map<Long, ContextIndexBuilder.ContextInfo> map = builder.build();
-        Files.write(JSON.toJSONString(map), new File("D://context.index"), Charsets.UTF_8);
+        Files.write(JSON.toJSONString(map), new File("D://context.indexBuilder"), Charsets.UTF_8);
         System.out.println(JSON.toJSONString(map, true));
     }
 

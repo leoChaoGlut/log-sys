@@ -11,5 +11,11 @@
 
     <artifactId>registry</artifactId>
 
+    <dependencies>
+        <dependency>
+            <groupId>${springCloud.groupId}</groupId>
+            <artifactId>spring-cloud-starter-eureka-server</artifactId>
+        </dependency>
+    </dependencies>
 
 </project>

@@ -1,4 +1,4 @@
-import cn.yunyichina.log.index.util.LogFileScanner;
+import cn.yunyichina.log.component.indexBuilder.util.LogFileScanner;
 import com.alibaba.fastjson.JSON;
 import org.junit.Test;
 
