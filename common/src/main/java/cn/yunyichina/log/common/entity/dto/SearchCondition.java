@@ -28,6 +28,8 @@ public class SearchCondition {
     private String className;
     private String methodName;
 
+    private String hospitalLetter;
+
 
     public Date getBeginDateTime() {
         return beginDateTime;
@@ -116,6 +118,15 @@ public class SearchCondition {
 
     public SearchCondition setFuzzy(boolean fuzzy) {
         this.fuzzy = fuzzy;
+        return this;
+    }
+
+    public String getHospitalLetter() {
+        return hospitalLetter;
+    }
+
+    public SearchCondition setHospitalLetter(String hospitalLetter) {
+        this.hospitalLetter = hospitalLetter;
         return this;
     }
 }

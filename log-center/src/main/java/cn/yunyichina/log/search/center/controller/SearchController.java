@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -27,11 +29,7 @@ public class SearchController {
     @PostMapping("/history")
     public Response search(String json) {
         try {
-            System.err.println("==========");
             SearchCondition searchCondition = JSON.parseObject(json, SearchCondition.class);
-            System.err.println("==========");
-            System.out.println(JSON.toJSONString(searchCondition));
-            System.err.println("==========");
             List<String> contextList = searchService.search(searchCondition);
             return Response.success(contextList);
         } catch (Exception e) {
@@ -40,5 +38,14 @@ public class SearchController {
         }
     }
 
+    @PostMapping("/realtime")
+    public void realtime(String json, HttpServletResponse resp) throws IOException {
+        SearchCondition searchCondition = JSON.parseObject(json, SearchCondition.class);
+        String hospitalLetter = searchCondition.getHospitalLetter();
+//        TODO 根据医院拼音首字母,转发到对应的前置机,让前置机来做实时日志查询
+//        TODO 根据医院拼音首字母,转发到对应的前置机,让前置机来做实时日志查询
+//        TODO 根据医院拼音首字母,转发到对应的前置机,让前置机来做实时日志查询
+        resp.sendRedirect("");
+    }
 
 }
