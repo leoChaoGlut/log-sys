@@ -1,8 +1,8 @@
 package cn.yunyichina.log.component.searchEngine.imp;
 
 import cn.yunyichina.log.common.entity.dto.SearchCondition;
-import cn.yunyichina.log.component.indexBuilder.imp.ContextIndexBuilder;
-import cn.yunyichina.log.component.indexBuilder.imp.KeywordIndexBuilder;
+import cn.yunyichina.log.component.index.builder.imp.ContextIndexBuilder;
+import cn.yunyichina.log.component.index.builder.imp.KeywordIndexBuilder;
 import cn.yunyichina.log.component.searchEngine.AbstractSearchEngine;
 import cn.yunyichina.log.component.searchEngine.SearchEngine;
 import org.springframework.util.CollectionUtils;

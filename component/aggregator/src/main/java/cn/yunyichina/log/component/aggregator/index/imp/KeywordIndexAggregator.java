@@ -1,7 +1,7 @@
 package cn.yunyichina.log.component.aggregator.index.imp;
 
 import cn.yunyichina.log.component.aggregator.index.AbstractIndexAggregator;
-import cn.yunyichina.log.component.indexBuilder.imp.KeywordIndexBuilder;
+import cn.yunyichina.log.component.index.builder.imp.KeywordIndexBuilder;
 import org.springframework.util.CollectionUtils;
 
 import java.util.HashMap;

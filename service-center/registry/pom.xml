@@ -4,28 +4,14 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>service-center</artifactId>
-        <groupId>cn.yunyichina</groupId>
+        <groupId>cn.yunyichina.log.service.center</groupId>
         <version>1.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
+    <groupId>cn.yunyichina.log.service.center</groupId>
     <artifactId>registry</artifactId>
+    <version>1.0-SNAPSHOT</version>
 
-    <build>
-        <finalName>${artifactId}</finalName>
-        <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-            </plugin>
-        </plugins>
-    </build>
-
-    <dependencies>
-        <dependency>
-            <groupId>${springCloud.groupId}</groupId>
-            <artifactId>spring-cloud-starter-eureka-server</artifactId>
-        </dependency>
-    </dependencies>
 
 </project>

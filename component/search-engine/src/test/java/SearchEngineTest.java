@@ -3,10 +3,10 @@ import cn.yunyichina.log.component.aggregator.index.imp.ContextIndexAggregator;
 import cn.yunyichina.log.component.aggregator.index.imp.KeyValueIndexAggregator;
 import cn.yunyichina.log.component.aggregator.index.imp.KeywordIndexAggregator;
 import cn.yunyichina.log.component.aggregator.log.LogAggregator;
-import cn.yunyichina.log.component.indexBuilder.imp.ContextIndexBuilder;
-import cn.yunyichina.log.component.indexBuilder.imp.KeyValueIndexBuilder;
-import cn.yunyichina.log.component.indexBuilder.imp.KeywordIndexBuilder;
-import cn.yunyichina.log.component.indexBuilder.util.LogFileScanner;
+import cn.yunyichina.log.component.index.builder.imp.ContextIndexBuilder;
+import cn.yunyichina.log.component.index.builder.imp.KeyValueIndexBuilder;
+import cn.yunyichina.log.component.index.builder.imp.KeywordIndexBuilder;
+import cn.yunyichina.log.component.index.scanner.imp.LogFileScanner;
 import cn.yunyichina.log.component.searchEngine.imp.KeyValueSearchEngine;
 import cn.yunyichina.log.component.searchEngine.imp.KeywordSearchEngine;
 import com.alibaba.fastjson.JSON;
@@ -21,7 +21,10 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Created by Jonven on 2016/11/14.
+ * @Author: Leo
+ * @Blog: http://blog.csdn.net/lc0817
+ * @CreateTime: 2016/11/23 16:45
+ * @Description:
  */
 public class SearchEngineTest {
 
@@ -133,5 +136,4 @@ public class SearchEngineTest {
         }
 
     }
-
 }

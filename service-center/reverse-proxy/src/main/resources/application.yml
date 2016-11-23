@@ -1,0 +1,13 @@
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:10100/eureka/
+spring:
+  application:
+    name: reverse-proxy
+server:
+  port: 10300
+zuul:
+  routes:
+    test: /test/**
+

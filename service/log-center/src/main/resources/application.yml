@@ -1,9 +1,0 @@
-spring:
-  application:
-    name: log-center
-eureka:
-  client:
-    serviceUrl:
-      defaultZone: http://localhost:10100/eureka/
-server:
-  port: 10400

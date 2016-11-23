@@ -1,8 +1,8 @@
 package cn.yunyichina.log.component.aggregator.log;
 
 import cn.yunyichina.log.common.constant.Constant;
-import cn.yunyichina.log.component.indexBuilder.imp.ContextIndexBuilder;
-import cn.yunyichina.log.component.indexBuilder.util.LogFileScanner;
+import cn.yunyichina.log.component.index.builder.imp.ContextIndexBuilder;
+import cn.yunyichina.log.component.index.scanner.imp.LogFileScanner;
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 

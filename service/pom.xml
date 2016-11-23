@@ -3,18 +3,19 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>log-sys</artifactId>
-        <groupId>cn.yunyichina</groupId>
+        <artifactId>root</artifactId>
+        <groupId>cn.yunyichina.log</groupId>
         <version>1.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
+    <groupId>cn.yunyichina.log.service</groupId>
     <artifactId>service</artifactId>
     <packaging>pom</packaging>
+    <version>1.0-SNAPSHOT</version>
     <modules>
-        <module>log-center</module>
-        <module>collection-node</module>
-        <module>store-node</module>
+        <module>collector-node</module>
+        <module>search-node</module>
     </modules>
 
     <dependencyManagement>
@@ -30,18 +31,48 @@
     </dependencyManagement>
 
     <dependencies>
+        <dependency>
+            <groupId>cn.yunyichina.log</groupId>
+            <artifactId>common</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>cn.yunyichina.log.component</groupId>
+            <artifactId>index</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>cn.yunyichina.log.component</groupId>
+            <artifactId>search-engine</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>cn.yunyichina.log.component</groupId>
+            <artifactId>aggregator</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+
         <!--Spring Boot Begin-->
-        <!--<dependency>-->
-        <!--<groupId>${springBoot.groupId}</groupId>-->
-        <!--<artifactId>spring-boot-starter</artifactId>-->
-        <!--</dependency>-->
-        <!--<dependency>-->
-        <!--<groupId>${springBoot.groupId}</groupId>-->
-        <!--<artifactId>spring-boot-starter-web</artifactId>-->
-        <!--</dependency>-->
+        <dependency>
+            <groupId>${springBoot.groupId}</groupId>
+            <artifactId>spring-boot-starter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${springBoot.groupId}</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${springBoot.groupId}</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${springBoot.groupId}</groupId>
+            <artifactId>spring-boot-devtools</artifactId>
+            <optional>true</optional>
+        </dependency>
         <!--Spring Boot End-->
 
-        <!--Spring Cloud Begin-->
+        <!--Spring Clouc Begin-->
         <dependency>
             <groupId>${springCloud.groupId}</groupId>
             <artifactId>spring-cloud-starter-config</artifactId>
@@ -50,7 +81,11 @@
             <groupId>${springCloud.groupId}</groupId>
             <artifactId>spring-cloud-starter-eureka</artifactId>
         </dependency>
-        <!--Spring Cloud End-->
+        <dependency>
+            <groupId>${springCloud.groupId}</groupId>
+            <artifactId>spring-cloud-starter-eureka</artifactId>
+        </dependency>
+        <!--Spring Clouc End-->
     </dependencies>
 
 </project>
