@@ -1,8 +1,8 @@
-package cn.yunyichina.log.service.collectionNode.controller;
+package cn.yunyichina.log.service.searcherNode.controller;
 
 import cn.yunyichina.log.common.entity.dto.Response;
 import cn.yunyichina.log.common.entity.dto.SearchCondition;
-import cn.yunyichina.log.service.collectionNode.service.SearchService;
+import cn.yunyichina.log.service.searcherNode.service.SearchService;
 import com.alibaba.fastjson.JSON;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;

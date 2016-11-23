@@ -1,4 +1,4 @@
-package cn.yunyichina.log.service.searchNode.util;
+package cn.yunyichina.log.service.searcherNode.util;
 
 import cn.yunyichina.log.component.aggregator.index.imp.ContextIndexAggregator;
 import cn.yunyichina.log.component.aggregator.index.imp.KeyValueIndexAggregator;

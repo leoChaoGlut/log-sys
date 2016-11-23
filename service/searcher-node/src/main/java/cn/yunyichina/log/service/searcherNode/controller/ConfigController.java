@@ -1,4 +1,4 @@
-package cn.yunyichina.log.service.searchNode.controller;
+package cn.yunyichina.log.service.searcherNode.controller;
 
 import cn.yunyichina.log.common.entity.dto.Response;
 import org.springframework.web.bind.annotation.PutMapping;

@@ -1,12 +1,12 @@
-package cn.yunyichina.log.service.collectionNode.service;
+package cn.yunyichina.log.service.searcherNode.service;
 
 import cn.yunyichina.log.common.entity.dto.SearchCondition;
 import cn.yunyichina.log.component.aggregator.log.LogAggregator;
-import cn.yunyichina.log.component.indexBuilder.imp.ContextIndexBuilder;
+import cn.yunyichina.log.component.index.builder.imp.ContextIndexBuilder;
 import cn.yunyichina.log.component.searchEngine.imp.KeyValueSearchEngine;
 import cn.yunyichina.log.component.searchEngine.imp.KeywordSearchEngine;
-import cn.yunyichina.log.service.collectionNode.constant.SearchEngineType;
-import cn.yunyichina.log.service.collectionNode.util.IndexManager;
+import cn.yunyichina.log.service.searcherNode.constant.SearchEngineType;
+import cn.yunyichina.log.service.searcherNode.util.IndexManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

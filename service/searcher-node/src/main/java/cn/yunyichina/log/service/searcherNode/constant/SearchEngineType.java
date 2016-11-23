@@ -1,4 +1,4 @@
-package cn.yunyichina.log.service.searchNode.constant;
+package cn.yunyichina.log.service.searcherNode.constant;
 
 /**
  * @Author: Leo
