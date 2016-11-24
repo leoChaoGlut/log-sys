@@ -32,6 +32,11 @@
     </dependencyManagement>
 
     <dependencies>
+        <dependency>
+            <groupId>${springBoot.groupId}</groupId>
+            <artifactId>spring-boot-devtools</artifactId>
+            <optional>true</optional>
+        </dependency>
         <!--Spring Cloud Begin-->
         <dependency>
             <groupId>${springCloud.groupId}</groupId>

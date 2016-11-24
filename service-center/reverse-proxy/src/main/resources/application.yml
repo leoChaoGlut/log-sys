@@ -9,5 +9,9 @@ server:
   port: 10300
 zuul:
   routes:
-    test: /test/**
-
+    collector-gateway: ${service.route.collector-gateway}/**
+    searcher-gateway: ${service.route.searcher-gateway}/**
+service:
+  route:
+    collector-gateway: /collector/node
+    searcher-gateway: /searcher/node

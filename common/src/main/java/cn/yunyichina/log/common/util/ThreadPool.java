@@ -1,5 +1,7 @@
 package cn.yunyichina.log.common.util;
 
+import org.springframework.stereotype.Component;
+
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -9,6 +11,7 @@ import java.util.concurrent.Executors;
  * @CreateTime: 2016/9/30 10:12
  * @Description:
  */
+@Component
 public class ThreadPool {
     /**
      * 据我了解,我们的业务类型,偏I/O.

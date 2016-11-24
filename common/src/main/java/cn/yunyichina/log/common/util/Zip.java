@@ -56,11 +56,4 @@ public class Zip {
         }
     }
 
-    public static void main(String[] args) {
-        File[] files = new File[3];
-        files[0] = new File("E:\\testLog1\\2016\\11\\15\\14\\21\\201611151421.log");
-        files[1] = new File("E:\\testLog1\\2016\\11\\15\\14\\23\\201611151423.log");
-        files[2] = new File("E:\\testLog1\\2016\\11\\15\\14\\25\\201611151425.log");
-        Zip.zip(files, "E:\\testLog.zip");
-    }
 }

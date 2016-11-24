@@ -1,6 +1,6 @@
 spring:
   application:
-    name: collector-node
+    name: searcher-gateway
 eureka:
   client:
     serviceUrl:

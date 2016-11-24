@@ -1,4 +1,4 @@
-package cn.yunyichina.log.service.searcherNode;
+package cn.yunyichina.log.service.searcherGateway;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -8,12 +8,12 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 /**
  * @Author: Leo
  * @Blog: http://blog.csdn.net/lc0817
- * @CreateTime: 2016/11/14 18:13
+ * @CreateTime: 2016/11/24 14:26
  * @Description:
  */
 @EnableWebMvc
+@SpringBootApplication(scanBasePackages = "cn.yunyichina.log.service.searcherGateway")
 @EnableEurekaClient
-@SpringBootApplication(scanBasePackages = {"cn.yunyichina.log.service.searcherNode"})
 public class Bootstrap {
 
     public static void main(String[] args) {
