@@ -26,7 +26,7 @@ public class SearchService {
     @Autowired
     IndexManager indexManager;
 
-    public List<String> search(SearchCondition searchCondition) throws Exception {
+    public List<String> history(SearchCondition searchCondition) throws Exception {
         Set<ContextIndexBuilder.ContextInfo> contextInfoSet;
         switch (searchCondition.getSearchEngineType()) {
             case SearchEngineType.KEYWORD:
@@ -36,7 +36,7 @@ public class SearchService {
                 contextInfoSet = new KeyValueSearchEngine(indexManager.getKeyValueIndexMap(), indexManager.getContextIndexMap(), searchCondition).search();
                 break;
             default:
-                throw new Exception("不支持的搜索引擎类型");
+                throw new Exception("不支持的搜索引擎类型:" + searchCondition.getSearchEngineType());
         }
         if (contextInfoSet == null) {
             return null;
@@ -50,4 +50,7 @@ public class SearchService {
         }
     }
 
+    public List<String> realtime(SearchCondition searchCondition) throws Exception {
+        return null;
+    }
 }

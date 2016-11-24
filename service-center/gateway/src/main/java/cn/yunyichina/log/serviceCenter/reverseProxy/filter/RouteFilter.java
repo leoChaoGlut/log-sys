@@ -5,11 +5,8 @@ import com.netflix.zuul.ZuulFilter;
 import com.netflix.zuul.context.RequestContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.concurrent.Callable;
-import java.util.concurrent.Future;
 
 /**
  * @Author: Leo
@@ -17,7 +14,7 @@ import java.util.concurrent.Future;
  * @CreateTime: 2016/11/24 10:33
  * @Description:
  */
-@Component
+//@Component
 public class RouteFilter extends ZuulFilter {
 
     @Value("${service.route.collector-node}")
@@ -31,7 +28,7 @@ public class RouteFilter extends ZuulFilter {
 
     @Override
     public String filterType() {
-        return "route";
+        return "pre";
     }
 
     @Override
@@ -50,13 +47,7 @@ public class RouteFilter extends ZuulFilter {
         HttpServletRequest req = ctx.getRequest();
         String uri = req.getRequestURI();
         if (uri.startsWith(collectorNodeRoute)) {
-            Future<Object> future = threadPool.getThreadPool().submit(new Callable<Object>() {
-                @Override
-                public Object call() throws Exception {
-                    return null;
-                }
-            });
-//            Object o = future.get();
+
         } else if (uri.startsWith(searcherNodeRoute)) {
 
         } else {

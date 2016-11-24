@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @Description:
  */
 @RestController
-public class GatewayController {
+public class DispatchController {
 
 
 }

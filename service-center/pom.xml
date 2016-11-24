@@ -15,7 +15,7 @@
     <version>1.0-SNAPSHOT</version>
     <modules>
         <module>registry</module>
-        <module>reverse-proxy</module>
+        <module>gateway</module>
     </modules>
 
 
