@@ -11,7 +11,7 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
  * @CreateTime: 2016/11/24 14:34
  * @Description:
  */
-@SpringBootApplication(scanBasePackages = "cn.yunyichina.log.service.collectorGateway")
+@SpringBootApplication(scanBasePackages = "cn.yunyichina.log.task.collectorGateway")
 @EnableWebMvc
 @EnableEurekaClient
 public class Bootstrap {

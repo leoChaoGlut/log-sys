@@ -1,6 +1,6 @@
 package cn.yunyichina.log.service.searcherNode.controller;
 
-import cn.yunyichina.log.common.util.UnZip;
+import cn.yunyichina.log.common.util.ZipUtil;
 import com.google.common.io.Files;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,7 +29,7 @@ public class FileUploadController {
                     return "文件不存在";
                 }
                 String zipFilePath = dir + File.separator + file.getName() + ".zip";
-                String destDir = "E:\\深三";
+                String destDir = "E:\\uploads\\";
                 BufferedOutputStream stream = new BufferedOutputStream(
                         new FileOutputStream(zipFilePath));
                 stream.write(bytes);
@@ -51,7 +51,11 @@ public class FileUploadController {
      * 解压品并处理上传的文件
      */
     private void handleZip(String zipFilePath, String destDir) throws IOException {
-        UnZip.unzip(zipFilePath, destDir);
+        try {
+            ZipUtil.unzip(zipFilePath, destDir);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         File file = new File(destDir);
         if (!file.exists()) {
             return;

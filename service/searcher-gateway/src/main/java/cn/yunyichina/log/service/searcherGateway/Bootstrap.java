@@ -12,7 +12,7 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
  * @Description:
  */
 @EnableWebMvc
-@SpringBootApplication(scanBasePackages = "cn.yunyichina.log.service.searcherGateway")
+@SpringBootApplication(scanBasePackages = "cn.yunyichina.log.task.searcherGateway")
 @EnableEurekaClient
 public class Bootstrap {
 

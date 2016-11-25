@@ -2,7 +2,7 @@ package cn.yunyichina.log.service.collectorNode.util;
 
 
 import cn.yunyichina.log.common.util.NetworkUtil;
-import cn.yunyichina.log.common.util.Zip;
+import cn.yunyichina.log.common.util.ZipUtil;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -19,7 +19,7 @@ public class FileZipUpload {
 
     public static void uploadFile(File[] files, String basePath) throws Exception {
 
-        Zip.zip(files, basePath);
+        ZipUtil.zip(basePath,files);
         File file = new File(basePath);
 
         if (!file.exists()) {
@@ -28,7 +28,7 @@ public class FileZipUpload {
 
         CloseableHttpClient httpsClient = NetworkUtil.createHttpsClient();
 //      TODO URL改为Https
-        HttpPost post = new HttpPost("http://localhost:10500/file/upload");
+        HttpPost post = new HttpPost("http://localhost:10401/file/upload");
         HttpEntity httpEntity = MultipartEntityBuilder.create()
                 .addBinaryBody("file", file).build();
         post.setEntity(httpEntity);

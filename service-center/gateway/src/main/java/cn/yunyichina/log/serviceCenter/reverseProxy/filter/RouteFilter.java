@@ -17,10 +17,10 @@ import javax.servlet.http.HttpServletRequest;
 //@Component
 public class RouteFilter extends ZuulFilter {
 
-    @Value("${service.route.collector-node}")
+    @Value("${task.route.collector-node}")
     private String collectorNodeRoute;
 
-    @Value("${service.route.searcher-node}")
+    @Value("${task.route.searcher-node}")
     private String searcherNodeRoute;
 
     @Autowired
