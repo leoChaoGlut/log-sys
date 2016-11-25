@@ -11,17 +11,16 @@
     </parent>
 
     <groupId>cn.yunyichina.log.service</groupId>
-    <artifactId>root</artifactId>
+    <artifactId>service</artifactId>
     <packaging>pom</packaging>
     <version>1.0-SNAPSHOT</version>
 
     <modules>
         <module>collector-gateway</module>
-        <module>searcher-gateway</module>
         <module>collector-node</module>
+        <module>searcher-gateway</module>
         <module>searcher-node</module>
     </modules>
-
 
     <properties>
         <java.version>1.7</java.version>
@@ -55,6 +54,5 @@
             <artifactId>spring-cloud-starter-eureka</artifactId>
         </dependency>
     </dependencies>
-
 
 </project>
