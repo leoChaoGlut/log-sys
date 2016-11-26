@@ -10,7 +10,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 
 /**
  * Created by Jonven on 2016/11/22.
@@ -19,28 +18,29 @@ import java.io.IOException;
 @RequestMapping("/file")
 public class FileUploadController {
 
+    private String uploadDir = "E:\\zTest\\uploads";
+
     @PostMapping("/upload")
     public String upload(MultipartFile file) {
         if (!file.isEmpty()) {
             try {
                 byte[] bytes = file.getBytes();
-                File dir = new File("E:\\zTest\\uploads");
+                File dir = new File(uploadDir);
                 if (!dir.exists()) {
-                    return "文件不存在";
+                    dir.mkdirs();
                 }
                 String zipFilePath = dir + File.separator + file.getName() + ".zip";
-                String destDir = "E:\\zTest\\uploads\\";
                 BufferedOutputStream stream = new BufferedOutputStream(
                         new FileOutputStream(zipFilePath));
                 stream.write(bytes);
                 stream.flush();
 //                Files.write();
                 stream.close();
-                handleZip(zipFilePath, destDir);
-                return "success";
+                handleZip(zipFilePath, uploadDir);
+                return "upload success";
             } catch (Exception e) {
                 e.printStackTrace();
-                return "fail" + e.getMessage();
+                return "upload fail" + e.getMessage();
             }
         } else {
             return "file is empty";
@@ -50,21 +50,14 @@ public class FileUploadController {
     /**
      * 解压品并处理上传的文件
      */
-    private void handleZip(String zipFilePath, String destDir) throws IOException {
-        try {
-            ZipUtil.unzip(zipFilePath, destDir);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    private void handleZip(String zipFilePath, String destDir) throws Exception {
+        ZipUtil.unzip(zipFilePath, destDir);
         File file = new File(destDir);
-        if (!file.exists()) {
-            return;
-        }
         File[] files = file.listFiles();
         if (files != null) {
             for (File logFile : files) {
-                if(logFile.isFile()) {
-                    if(logFile.getName().contains(".log")){
+                if(logFile.isFile()) {//只处理文件、不处理文件夹
+                    if(logFile.getName().contains(".log")){//只处理.log日志文件
                         String resultDir = destDir + File.separator + logFile.getName().substring(0, 4) +
                                 File.separator + logFile.getName().substring(4, 6) +
                                 File.separator + logFile.getName().substring(6, 8) +

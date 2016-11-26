@@ -64,7 +64,6 @@ public class ZipUtil {
         } finally {
             if (zipFile != null) {
                 zipFile.close();
-                System.err.println(inputZipFilePath);
                 try{
                     new File(inputZipFilePath).delete();
                 }catch (Exception e){
