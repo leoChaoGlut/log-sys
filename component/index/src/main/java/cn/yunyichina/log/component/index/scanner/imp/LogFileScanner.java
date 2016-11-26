@@ -16,7 +16,7 @@ import java.util.TreeMap;
  */
 public class LogFileScanner implements Scanner<Map<String, File>> {
 
-    private String baseDir;
+    private String rootDir;
     private String beginDatetime;
     private String endDatetime;
 
@@ -27,31 +27,31 @@ public class LogFileScanner implements Scanner<Map<String, File>> {
      *
      * @param beginDateTime yyyy-MM-dd HH:mm
      * @param endDateTime   yyyy-MM-dd HH:mm
-     * @param baseDir       注意文件分隔符,\\ 和 / 的差异,会导致找不到文件.切记要使用File.separator
+     * @param rootDir       注意文件分隔符,\\ 和 / 的差异,会导致找不到文件.切记要使用File.separator
      */
-    public LogFileScanner(String beginDateTime, String endDateTime, String baseDir) {
-        this.beginDatetime = baseDir + File.separator + beginDateTime.replace("-", File.separator).replace(" ", File.separator).replace(":", File.separator);
-        this.endDatetime = baseDir + File.separator + endDateTime.replace("-", File.separator).replace(" ", File.separator).replace(":", File.separator);
-        this.baseDir = baseDir;
+    public LogFileScanner(String beginDateTime, String endDateTime, String rootDir) {
+        this.beginDatetime = rootDir + File.separator + beginDateTime.replace("-", File.separator).replace(" ", File.separator).replace(":", File.separator);
+        this.endDatetime = rootDir + File.separator + endDateTime.replace("-", File.separator).replace(" ", File.separator).replace(":", File.separator);
+        this.rootDir = rootDir;
     }
 
     /**
      * @param beginLogFile yyyyMMddHHmm
      * @param endLogFile   yyyyMMddHHmm
-     * @param baseDir
+     * @param rootDir
      */
-    public LogFileScanner(File beginLogFile, File endLogFile, String baseDir) {
+    public LogFileScanner(File beginLogFile, File endLogFile, String rootDir) {
         String beginFileName = beginLogFile.getName().substring(0, beginLogFile.getName().lastIndexOf("."));
         String endFileName = endLogFile.getName().substring(0, endLogFile.getName().lastIndexOf("."));
-        this.beginDatetime = baseDir + File.separator + beginFileName.substring(0, 4) + File.separator + beginFileName.substring(4, 6) + File.separator + beginFileName.substring(6, 8) + File.separator + beginFileName.substring(8, 10) + File.separator + beginFileName.substring(10, 12);
-        this.endDatetime = baseDir + File.separator + endFileName.substring(0, 4) + File.separator + endFileName.substring(4, 6) + File.separator + endFileName.substring(6, 8) + File.separator + endFileName.substring(8, 10) + File.separator + endFileName.substring(10, 12);
-        this.baseDir = baseDir;
+        this.beginDatetime = rootDir + File.separator + beginFileName.substring(0, 4) + File.separator + beginFileName.substring(4, 6) + File.separator + beginFileName.substring(6, 8) + File.separator + beginFileName.substring(8, 10) + File.separator + beginFileName.substring(10, 12);
+        this.endDatetime = rootDir + File.separator + endFileName.substring(0, 4) + File.separator + endFileName.substring(4, 6) + File.separator + endFileName.substring(6, 8) + File.separator + endFileName.substring(8, 10) + File.separator + endFileName.substring(10, 12);
+        this.rootDir = rootDir;
     }
 
     @Override
     public Map<String, File> scan() {
-        File baseDir = new File(this.baseDir);
-        File[] files = baseDir.listFiles();
+        File rootDir = new File(this.rootDir);
+        File[] files = rootDir.listFiles();
         if (files != null) {
             for (File file : files) {
                 dfs(file, 0);

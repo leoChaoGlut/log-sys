@@ -41,6 +41,7 @@ public class IndexManager {
     }
 
     private void buildKeyValueIndexMap() {
+//        TODO  rootDir不能写死
         LogFileScanner logFileScanner = new LogFileScanner("2016-11-15 14:23", "2016-11-15 14:25", "D:\\tmp");
         Map<String, File> fileMap = logFileScanner.scan();
         Collection<File> files = fileMap.values();

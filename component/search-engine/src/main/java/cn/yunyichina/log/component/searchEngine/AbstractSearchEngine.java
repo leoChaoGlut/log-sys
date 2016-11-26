@@ -34,7 +34,7 @@ public abstract class AbstractSearchEngine {
      * false:反之.
      */
     protected boolean exactlyBetweenTimeRange = false;
-    protected String baseDir;
+    protected String rootDir;
     protected SearchCondition searchCondition;
     protected Set<ContextIndexBuilder.ContextInfo> matchedContextInfoSet;
 
@@ -121,12 +121,12 @@ public abstract class AbstractSearchEngine {
         return this;
     }
 
-    public String getBaseDir() {
-        return baseDir;
+    public String getRootDir() {
+        return rootDir;
     }
 
-    public AbstractSearchEngine setBaseDir(String baseDir) {
-        this.baseDir = baseDir;
+    public AbstractSearchEngine setRootDir(String rootDir) {
+        this.rootDir = rootDir;
         return this;
     }
 
