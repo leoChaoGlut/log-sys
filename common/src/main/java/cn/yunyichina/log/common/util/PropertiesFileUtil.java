@@ -1,4 +1,4 @@
-package cn.yunyichina.log.service.collectorNode.util;
+package cn.yunyichina.log.common.util;
 
 import java.io.*;
 import java.util.Map;
@@ -28,6 +28,22 @@ public class PropertiesFileUtil {
 
     public String getValue(String key){
         return (String)props.get(key);
+    }
+
+    public Boolean setValue(String key,String value){
+
+        OutputStream fos = null;
+        try {
+            fos = new FileOutputStream(profilepath);
+            props.setProperty(key,value);
+            props.store(fos, "update");
+            fos.close();
+            is.close();
+            return true;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
     /**
@@ -62,7 +78,9 @@ public class PropertiesFileUtil {
         try {
             fos = new FileOutputStream(profilepath);
             for (File file : files) {
-                props.setProperty(file.getName(),file.getPath());
+                if(file.getName().contains(".log")) {
+                    props.setProperty(file.getName(), file.getPath());
+                }
             }
             props.store(fos, "update");
             fos.close();

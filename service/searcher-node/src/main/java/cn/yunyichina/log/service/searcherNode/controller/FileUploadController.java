@@ -24,12 +24,12 @@ public class FileUploadController {
         if (!file.isEmpty()) {
             try {
                 byte[] bytes = file.getBytes();
-                File dir = new File("E:\\uploads");
+                File dir = new File("E:\\zTest\\uploads");
                 if (!dir.exists()) {
                     return "文件不存在";
                 }
                 String zipFilePath = dir + File.separator + file.getName() + ".zip";
-                String destDir = "E:\\uploads\\";
+                String destDir = "E:\\zTest\\uploads\\";
                 BufferedOutputStream stream = new BufferedOutputStream(
                         new FileOutputStream(zipFilePath));
                 stream.write(bytes);
@@ -63,17 +63,23 @@ public class FileUploadController {
         File[] files = file.listFiles();
         if (files != null) {
             for (File logFile : files) {
-                String resultDir = destDir + File.separator + logFile.getName().substring(0, 4) +
-                        File.separator + logFile.getName().substring(4, 6) +
-                        File.separator + logFile.getName().substring(6, 8) +
-                        File.separator + logFile.getName().substring(8, 10) +
-                        File.separator + logFile.getName().substring(10, 12) +
-                        File.separator + logFile.getName();
+                if(logFile.isFile()) {
+                    if(logFile.getName().contains(".log")){
+                        String resultDir = destDir + File.separator + logFile.getName().substring(0, 4) +
+                                File.separator + logFile.getName().substring(4, 6) +
+                                File.separator + logFile.getName().substring(6, 8) +
+                                File.separator + logFile.getName().substring(8, 10) +
+                                File.separator + logFile.getName().substring(10, 12) +
+                                File.separator + logFile.getName();
 
-                File resultFile = new File(resultDir);
-                if (!resultFile.exists()) {
-                    Files.createParentDirs(resultFile);
-                    Files.move(logFile, resultFile);
+                        File resultFile = new File(resultDir);
+                        if (!resultFile.exists()) {
+                            Files.createParentDirs(resultFile);
+                            Files.move(logFile, resultFile);
+                        } else {
+                            logFile.delete();
+                        }
+                    }
                 }
             }
         }

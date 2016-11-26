@@ -1,8 +1,6 @@
-package cn.yunyichina.log.service.collectorNode.util;
+package cn.yunyichina.log.common.util;
 
 
-import cn.yunyichina.log.common.util.NetworkUtil;
-import cn.yunyichina.log.common.util.ZipUtil;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -15,9 +13,9 @@ import java.io.File;
 /**
  * Created by Jonven on 2016/11/21.
  */
-public class FileZipUpload {
+public class UploadUtil {
 
-    public static void uploadFile(File[] files, String basePath) throws Exception {
+    public static Boolean uploadFile(File[] files, String basePath) throws Exception {
 
         ZipUtil.zip(basePath,files);
         File file = new File(basePath);
@@ -37,8 +35,13 @@ public class FileZipUpload {
             response = httpsClient.execute(post);
             if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
 //              TODO 文件传输成功
+                new File(basePath).delete();
+                System.err.println("文件传输成功");
+                return true;
             } else {
 //              TODO 文件传输失败
+                System.err.println("文件传输失败");
+                return false;
             }
         } finally {
             if (response != null) {

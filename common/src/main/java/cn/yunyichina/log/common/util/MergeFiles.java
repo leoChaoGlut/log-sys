@@ -1,4 +1,4 @@
-package cn.yunyichina.log.service.collectorNode.util;
+package cn.yunyichina.log.common.util;
 
 import java.io.File;
 
