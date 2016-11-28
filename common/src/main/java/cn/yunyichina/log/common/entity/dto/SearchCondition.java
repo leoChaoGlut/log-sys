@@ -1,5 +1,6 @@
 package cn.yunyichina.log.common.entity.dto;
 
+import cn.yunyichina.log.common.entity.po.Collector;
 import com.alibaba.fastjson.annotation.JSONField;
 
 import java.util.Date;
@@ -29,6 +30,8 @@ public class SearchCondition {
     private String methodName;
 
     private String hospitalLetter;
+
+    private Collector collector;
 
 
     public Date getBeginDateTime() {
@@ -127,6 +130,15 @@ public class SearchCondition {
 
     public SearchCondition setHospitalLetter(String hospitalLetter) {
         this.hospitalLetter = hospitalLetter;
+        return this;
+    }
+
+    public Collector getCollector() {
+        return collector;
+    }
+
+    public SearchCondition setCollector(Collector collector) {
+        this.collector = collector;
         return this;
     }
 }

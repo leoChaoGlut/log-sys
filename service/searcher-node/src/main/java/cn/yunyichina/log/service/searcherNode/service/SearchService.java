@@ -50,7 +50,4 @@ public class SearchService {
         }
     }
 
-    public List<String> realtime(SearchCondition searchCondition) throws Exception {
-        return null;
-    }
 }

@@ -1,9 +1,30 @@
 spring:
   application:
-    name: searcher-gateway
+    name: gateway-searcher
+  datasource:
+    url: jdbc:mysql://192.168.75.129:3306/log_system?useUnicode=true&amp;characterEncoding=UTF-8&amp;useSSL=false
+    username: root
+    password: 123
+    driver-class-name: com.mysql.jdbc.Driver
+    tomcat:
+      initial-size: 3
+      min-idle: 100
+      max-active: 300
+      max-wait: 60000
+      time-between-eviction-runs-millis: 60000
+      min-evictable-idle-time-millis: 300000
+      validation-query: SELECT 'x'
+      test-while-idle: false
+      test-on-return: false
+
 eureka:
   client:
     serviceUrl:
       defaultZone: http://localhost:10100/eureka/
 server:
   port: 10400
+  context-path: /gateway/searcher
+mybatis:
+  mapper-locations: classpath:mapper/*Mapper.xml
+
+

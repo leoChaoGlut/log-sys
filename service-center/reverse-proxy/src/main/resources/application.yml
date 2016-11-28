@@ -10,8 +10,8 @@ server:
 zuul:
   routes:
     collector-gateway: ${service.route.collector-gateway}/**
-    searcher-gateway: ${service.route.searcher-gateway}/**
+    gateway-searcher: ${service.route.gateway-searcher}/**
 service:
   route:
-    collector-gateway: /collector/gateway
-    searcher-gateway: /searcher/gateway
+    collector-gateway: /gateway/collector
+    gateway-searcher: /gateway/searcher

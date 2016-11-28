@@ -26,7 +26,7 @@ import java.util.Set;
 public class IndexManager {
 
     //    @Value("${logIndex.lastTime}")
-//
+
     private String logIndexLastTime;
 
     Map<Long, ContextIndexBuilder.ContextInfo> contextIndexMap;

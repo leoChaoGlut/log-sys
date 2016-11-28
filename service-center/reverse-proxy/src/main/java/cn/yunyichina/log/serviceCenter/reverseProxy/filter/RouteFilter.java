@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletRequest;
  * @Author: Leo
  * @Blog: http://blog.csdn.net/lc0817
  * @CreateTime: 2016/11/24 10:33
- * @Description:
+ * @Description: not be used yet
  */
 //@Component
 public class RouteFilter extends ZuulFilter {

@@ -17,6 +17,10 @@ public class Response {
 
     private Object result;
 
+    public Response() {
+
+    }
+
     public static Response success() {
         return new Response(Status.SUCCESS_NO_DATA, null);
     }
