@@ -20,14 +20,15 @@ public class FileUploadController {
 
     @PostMapping("/upload")
     public Response upload(MultipartFile file) {
-        if(!file.isEmpty()){
-            try {
-                return Response.success(uploadService.uploadFile(file));
-            } catch (Exception e) {
-                return Response.failure(e.getLocalizedMessage());
+        try {
+            if (!file.isEmpty()) {
+                String result = uploadService.uploadFile(file);
+                return Response.success(result);
+            } else {
+                return Response.failure("upload file is empty");
             }
-        }else{
-            return Response.failure("upload file is empty");
+        } catch (Exception e) {
+            return Response.failure(e.getLocalizedMessage());
         }
     }
 }
