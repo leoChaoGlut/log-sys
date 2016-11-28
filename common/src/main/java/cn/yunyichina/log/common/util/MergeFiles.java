@@ -7,6 +7,12 @@ import java.io.File;
  */
 public class MergeFiles {
 
+    /**
+     * 合并两个File[]文件数组
+     * @param oldFiles
+     * @param newFiles
+     * @return
+     */
     public static File[] merge(File[] oldFiles,File[] newFiles){
         File[] files = null;
         int oldFilesLength = 0;

@@ -26,6 +26,18 @@ public class AggregatorUtil {
     private static String KEY_VALUE_INDEX_DIR = "E:\\zTest\\index\\keyValue.index";
     private static String BASE_DIR = "E:\\zTest\\index\\";
 
+    static {
+        File file = new File(BASE_DIR);
+        if (!file.exists()){
+            file.mkdirs();
+        }
+    }
+
+    /**
+     * 获取所有索引，包括(context索引,keyword索引,keyvalue索引)
+     * @param files
+     * @return
+     */
     public static File[] getAllIndex(File[] files){
         /********************聚合索引 contextIndex******************************/
         ContextIndexAggregator contextAggregator = new ContextIndexAggregator();

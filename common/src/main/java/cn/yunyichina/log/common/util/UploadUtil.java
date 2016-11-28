@@ -15,13 +15,20 @@ import java.io.File;
  */
 public class UploadUtil {
 
+    /**
+     * 上传文件(单文件)
+     * @param files 文件数组
+     * @param basePath 上传的文件路径
+     * @return
+     * @throws Exception
+     */
     public static Boolean uploadFile(File[] files, String basePath) throws Exception {
 
         ZipUtil.zip(basePath,files);
         File file = new File(basePath);
 
         if (!file.exists()) {
-            throw new Exception("文件不存在！");
+            throw new Exception("压缩文件集合失败！");
         }
 
         CloseableHttpClient httpsClient = NetworkUtil.createHttpsClient();
