@@ -22,7 +22,7 @@ public class UploadUtil {
      * @return
      * @throws Exception
      */
-    public static Boolean uploadFile(File[] files, String basePath) throws Exception {
+    public static boolean uploadFile(File[] files, String basePath) throws Exception {
 
         ZipUtil.zip(basePath,files);
         File file = new File(basePath);

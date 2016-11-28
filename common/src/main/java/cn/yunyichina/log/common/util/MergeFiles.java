@@ -9,29 +9,30 @@ public class MergeFiles {
 
     /**
      * 合并两个File[]文件数组
+     *
      * @param oldFiles
      * @param newFiles
      * @return
      */
-    public static File[] merge(File[] oldFiles,File[] newFiles){
+    public static File[] merge(File[] oldFiles, File[] newFiles) {
         File[] files = null;
         int oldFilesLength = 0;
         int newFilesLength = 0;
-        if (oldFiles!=null){
+        if (oldFiles != null) {
             oldFilesLength = oldFiles.length;
         }
-        if(newFiles!=null){
+        if (newFiles != null) {
             newFilesLength = newFiles.length;
         }
-        files = new File[oldFilesLength+newFilesLength];
-        if (oldFilesLength>0){
-            for(int i=0;i<oldFilesLength;i++){
+        files = new File[oldFilesLength + newFilesLength];
+        if (oldFilesLength > 0) {
+            for (int i = 0; i < oldFilesLength; i++) {
                 files[i] = oldFiles[i];
             }
         }
-        if (newFilesLength>0){
+        if (newFilesLength > 0) {
             int j = oldFilesLength;
-            for(int i=0;i<newFilesLength;i++){
+            for (int i = 0; i < newFilesLength; i++) {
                 files[j] = newFiles[i];
                 j++;
             }

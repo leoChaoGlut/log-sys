@@ -1,6 +1,6 @@
 spring:
   application:
-    name: gateway-searcher
+    name: searcher-gateway
   datasource:
     url: jdbc:mysql://192.168.75.129:3306/log_system?useUnicode=true&amp;characterEncoding=UTF-8&amp;useSSL=false
     username: root
@@ -23,7 +23,7 @@ eureka:
       defaultZone: http://localhost:10100/eureka/
 server:
   port: 10400
-  context-path: /gateway/searcher
+  context-path: /searcher/gateway
 mybatis:
   mapper-locations: classpath:mapper/*Mapper.xml
 

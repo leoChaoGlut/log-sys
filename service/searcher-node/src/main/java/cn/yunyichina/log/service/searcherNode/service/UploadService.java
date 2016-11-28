@@ -13,9 +13,9 @@ import java.io.File;
 @Service
 public class UploadService {
 
-    private static String ZIP_SUFFIX = ".zip";
-    private static String UPLOAD_LOG_DIR = "E:\\zTest\\uploads\\log\\";
-    private static String UPLOAD_INDX_DIR = "E:\\zTest\\uploads\\index\\";
+    private String ZIP_SUFFIX = ".zip";
+    private String UPLOAD_LOG_DIR = "E:\\zTest\\uploads\\log\\";
+    private String UPLOAD_INDEX_DIR = "E:\\zTest\\uploads\\index\\";
 
     public String uploadFile(MultipartFile file) throws Exception {
         byte[] bytes = file.getBytes();
@@ -29,7 +29,7 @@ public class UploadService {
 //        stream.write(bytes);
 //        stream.flush();
         Files.write(bytes, new File(zipFilePath));
-        HandleZip.getFolder(zipFilePath, UPLOAD_LOG_DIR, UPLOAD_INDX_DIR);
+        HandleZip.getFolder(zipFilePath, UPLOAD_LOG_DIR, UPLOAD_INDEX_DIR);
         return "success";
     }
 }
