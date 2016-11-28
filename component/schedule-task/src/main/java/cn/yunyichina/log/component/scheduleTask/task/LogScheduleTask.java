@@ -5,6 +5,7 @@ import cn.yunyichina.log.common.util.PropertiesFileUtil;
 import cn.yunyichina.log.common.util.UploadUtil;
 import cn.yunyichina.log.component.aggregator.util.AggregatorUtil;
 import cn.yunyichina.log.component.index.scanner.imp.LogFileScanner;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -22,15 +23,22 @@ import java.util.Map;
 @Service
 public class LogScheduleTask {
 
+    @Value("${filePath.cursorPropPath}")
+    private String cursorProp;
+    @Value("${filePath.filesPropPath}")
+    private String filesProp;
+    @Value("${filePath.logPath}")
+    private String logDir;
+    @Value("${filePath.uploadFilePath}")
+    private String uploadFilePath;
+    @Value("${constant.cursorKey}")
+    private String cursorKey;
+    private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+
     // TODO: 2016/11/26 测试定时为为5秒
     @Scheduled(cron = "0/5 * *  * * ? ")
     public void getLog() {
-        String cursorProp = "E:\\zTest\\cursor.properties";
-        String filesProp = "E:\\zTest\\files.properties";
-        String logDir = "E:\\zTest\\testLog1";
-
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-        String beginTime = new PropertiesFileUtil(cursorProp).getValue("last_end_time");
+        String beginTime = new PropertiesFileUtil(cursorProp).getValue(cursorKey);
         Date endDate = new Date();
         String endTime = sdf.format(endDate);
         if (beginTime == null) {
@@ -57,11 +65,11 @@ public class LogScheduleTask {
 
             if (logFiles != null) {
                 try {
-                    if (UploadUtil.uploadFile(logFiles, "E:\\zTest\\testLog.zip")) {//上传成功
+                    if (UploadUtil.uploadFile(logFiles, uploadFilePath)) {//上传成功
                         //清空记录上传失败日志的properties文件
                         new PropertiesFileUtil(filesProp).clearFilesProperties();
                         //更新上传的时间游标
-                        new PropertiesFileUtil(cursorProp).setValue("last_end_time", endTime);
+                        new PropertiesFileUtil(cursorProp).setValue(cursorKey, endTime);
                     } else {//上传失败
                         //记录上传失败的日志到properties文件
                         new PropertiesFileUtil(filesProp).updateFilesProperties(logFiles);
