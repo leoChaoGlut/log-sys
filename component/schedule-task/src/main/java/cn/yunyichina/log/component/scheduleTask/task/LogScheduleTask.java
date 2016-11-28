@@ -6,6 +6,7 @@ import cn.yunyichina.log.common.util.UploadUtil;
 import cn.yunyichina.log.component.aggregator.util.AggregatorUtil;
 import cn.yunyichina.log.component.index.scanner.imp.LogFileScanner;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -21,6 +22,7 @@ import java.util.Map;
  * Created by Jonven on 2016/11/25.
  */
 @Service
+@PropertySource("classpath:application.properties")
 public class LogScheduleTask {
 
     @Value("${filePath.cursorPropPath}")
@@ -38,6 +40,7 @@ public class LogScheduleTask {
     // TODO: 2016/11/26 测试定时为为5秒
     @Scheduled(cron = "0/5 * *  * * ? ")
     public void getLog() {
+        System.err.println(cursorProp);
         String beginTime = new PropertiesFileUtil(cursorProp).getValue(cursorKey);
         Date endDate = new Date();
         String endTime = sdf.format(endDate);

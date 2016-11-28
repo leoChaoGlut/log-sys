@@ -9,7 +9,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
  * Created by Jonven on 2016/11/25.
  */
 @Configuration
-@ComponentScan(basePackages = "cn.yunyichina.log.component.scheduleTask.")
+@ComponentScan(basePackages = "cn.yunyichina.log.component.scheduleTask")
 @EnableScheduling
 public class Bootstrap {
     public static void main(String[] args) {
