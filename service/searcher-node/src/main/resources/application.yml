@@ -7,3 +7,14 @@ eureka:
       defaultZone: http://localhost:10100/eureka/
 server:
   port: 10401
+constants:
+  upload:
+    logSuffix: .log
+    indexSuffix: .index
+    zipIndex: .zip
+    logRootDir: /log
+    indexRootDir: /index
+  index:
+    rootDir: /root
+
+

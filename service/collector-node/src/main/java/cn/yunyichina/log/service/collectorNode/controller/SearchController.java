@@ -25,14 +25,13 @@ public class SearchController {
     @Autowired
     SearchService searchService;
 
-    @PostMapping("history")
+    @PostMapping("realtime")
     public Response history(@RequestBody String jsonParam) {
         try {
             SearchCondition condition = JSON.parseObject(jsonParam, SearchCondition.class);
             List<String> contextList = searchService.history(condition);
             return Response.success(contextList);
         } catch (Exception e) {
-            e.printStackTrace();
             return Response.failure(e.getLocalizedMessage());
         }
     }

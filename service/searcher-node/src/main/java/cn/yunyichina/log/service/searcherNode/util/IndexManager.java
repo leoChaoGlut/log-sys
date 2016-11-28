@@ -1,18 +1,12 @@
 package cn.yunyichina.log.service.searcherNode.util;
 
-import cn.yunyichina.log.component.aggregator.index.imp.ContextIndexAggregator;
-import cn.yunyichina.log.component.aggregator.index.imp.KeyValueIndexAggregator;
-import cn.yunyichina.log.component.aggregator.index.imp.KeywordIndexAggregator;
 import cn.yunyichina.log.component.index.builder.imp.ContextIndexBuilder;
 import cn.yunyichina.log.component.index.builder.imp.KeyValueIndexBuilder;
 import cn.yunyichina.log.component.index.builder.imp.KeywordIndexBuilder;
-import cn.yunyichina.log.component.index.scanner.imp.LogFileScanner;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import java.io.File;
-import java.util.Collection;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -25,80 +19,28 @@ import java.util.Set;
 @Component
 public class IndexManager {
 
-    //    @Value("${logIndex.lastTime}")
-
-    private String logIndexLastTime;
-
     Map<Long, ContextIndexBuilder.ContextInfo> contextIndexMap;
     Map<String, Set<KeywordIndexBuilder.IndexInfo>> keywordIndexMap;
     Map<String, Map<String, Set<KeyValueIndexBuilder.IndexInfo>>> keyValueIndexMap;
 
+    @Value("${constants.index.rootDir}")
+    private String ROOT_DIR;
+
     @PostConstruct
     public void init() {
-        buildContextIndexMap();
-        buildKeywordIndexMap();
-        buildKeyValueIndexMap();
+        buildContextIndex();
+        buildKeywordIndex();
+        buildKeyValueIndex();
     }
 
-    private void buildKeyValueIndexMap() {
-//        TODO  rootDir不能写死
-        LogFileScanner logFileScanner = new LogFileScanner("2016-11-15 14:23", "2016-11-15 14:25", "D:\\tmp");
-        Map<String, File> fileMap = logFileScanner.scan();
-        Collection<File> files = fileMap.values();
-        KeyValueIndexAggregator aggregator = new KeyValueIndexAggregator();
 
-        Set<KeyValueIndexBuilder.KvTag> kvTagSet = new HashSet<>();
-
-        kvTagSet.add(new KeyValueIndexBuilder.KvTag("pat_card_no", "\"pat_card_no\":\"", "\""));
-        kvTagSet.add(new KeyValueIndexBuilder.KvTag("pat_id_no", "\"pat_id_no\":\"", "\""));
-        kvTagSet.add(new KeyValueIndexBuilder.KvTag("patName", "<patName>", "</patName>"));
-
-        for (File file : files) {
-            KeyValueIndexBuilder builder = new KeyValueIndexBuilder(kvTagSet, file);
-            Map<String, Map<String, Set<KeyValueIndexBuilder.IndexInfo>>> map = builder.build();
-            aggregator.aggregate(map);
-        }
-
-        keyValueIndexMap = aggregator.getAggregatedCollection();
+    private void buildKeyValueIndex() {
     }
 
-    private void buildKeywordIndexMap() {
-        LogFileScanner logFileScanner = new LogFileScanner("2016-11-15 14:23", "2016-11-15 14:25", "D:\\tmp");
-        Map<String, File> fileMap = logFileScanner.scan();
-        Collection<File> files = fileMap.values();
-
-        Set<String> keywordSet = new HashSet<>();
-
-        keywordSet.add("pat_card_no");
-
-        KeywordIndexAggregator aggregator = new KeywordIndexAggregator();
-
-        for (File file : files) {
-            KeywordIndexBuilder builder = new KeywordIndexBuilder(file, keywordSet);
-            Map<String, Set<KeywordIndexBuilder.IndexInfo>> map = builder.build();
-            aggregator.aggregate(map);
-        }
-
-        keywordIndexMap = aggregator.getAggregatedCollection();
+    private void buildKeywordIndex() {
     }
 
-    private void buildContextIndexMap() {
-
-        if (logIndexLastTime == null || "".equals(logIndexLastTime)) {
-            logIndexLastTime = "2016-11-15 14:23";
-        }
-
-        LogFileScanner logFileScanner = new LogFileScanner(logIndexLastTime, "2016-11-15 14:25", "D:\\tmp");
-        Map<String, File> fileMap = logFileScanner.scan();
-        Collection<File> values = fileMap.values();
-        ContextIndexAggregator aggregator = new ContextIndexAggregator();
-        for (File f : values) {
-            ContextIndexBuilder builder = new ContextIndexBuilder(f);
-            Map<Long, ContextIndexBuilder.ContextInfo> map = builder.build();
-            aggregator.aggregate(map);
-        }
-
-        contextIndexMap = aggregator.getAggregatedCollection();
+    private void buildContextIndex() {
     }
 
     public Map<Long, ContextIndexBuilder.ContextInfo> getContextIndexMap() {

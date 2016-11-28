@@ -26,17 +26,17 @@ public class SearchService {
     @Autowired
     IndexManager indexManager;
 
-    public List<String> history(SearchCondition searchCondition) throws Exception {
+    public List<String> history(SearchCondition condition) throws Exception {
         Set<ContextIndexBuilder.ContextInfo> contextInfoSet;
-        switch (searchCondition.getSearchEngineType()) {
+        switch (condition.getSearchEngineType()) {
             case SearchEngineType.KEYWORD:
-                contextInfoSet = new KeywordSearchEngine(indexManager.getKeywordIndexMap(), indexManager.getContextIndexMap(), searchCondition).search();
+                contextInfoSet = new KeywordSearchEngine(indexManager.getKeywordIndexMap(), indexManager.getContextIndexMap(), condition).search();
                 break;
             case SearchEngineType.KEY_VALUE:
-                contextInfoSet = new KeyValueSearchEngine(indexManager.getKeyValueIndexMap(), indexManager.getContextIndexMap(), searchCondition).search();
+                contextInfoSet = new KeyValueSearchEngine(indexManager.getKeyValueIndexMap(), indexManager.getContextIndexMap(), condition).search();
                 break;
             default:
-                throw new Exception("不支持的搜索引擎类型:" + searchCondition.getSearchEngineType());
+                throw new Exception("不支持的搜索引擎类型:" + condition.getSearchEngineType());
         }
         if (contextInfoSet == null) {
             return null;
