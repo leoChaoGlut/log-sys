@@ -16,7 +16,6 @@
     <version>1.0-SNAPSHOT</version>
 
     <modules>
-        <module>collector-gateway</module>
         <module>collector-node</module>
         <module>searcher-gateway</module>
         <module>searcher-node</module>

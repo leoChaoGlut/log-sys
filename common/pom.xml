@@ -23,6 +23,11 @@
             <version>4.5.2</version>
         </dependency>
         <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpmime</artifactId>
+            <version>4.5.2</version>
+        </dependency>
+        <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
             <version>20.0</version>
@@ -47,11 +52,6 @@
             <artifactId>junit</artifactId>
             <version>4.12</version>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>fakepath</groupId>
-            <artifactId>httpmime</artifactId>
-            <version>4.3.4</version>
         </dependency>
     </dependencies>
 
