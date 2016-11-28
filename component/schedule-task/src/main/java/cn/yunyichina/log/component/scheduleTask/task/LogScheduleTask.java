@@ -72,6 +72,8 @@ public class LogScheduleTask {
                     e.printStackTrace();
                 }
             }
+        }else{
+            System.out.println("当前已经是最新日志");
         }
     }
 }
