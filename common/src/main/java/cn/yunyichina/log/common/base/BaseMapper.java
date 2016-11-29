@@ -1,5 +1,7 @@
 package cn.yunyichina.log.common.base;
 
+import java.util.List;
+
 /**
  * @Author: Leo
  * @Blog: http://blog.csdn.net/lc0817
@@ -9,6 +11,8 @@ package cn.yunyichina.log.common.base;
 public interface BaseMapper<T> {
 
     T selectOne(T t);
+
+    List<T> selectAll();
 
 
 }

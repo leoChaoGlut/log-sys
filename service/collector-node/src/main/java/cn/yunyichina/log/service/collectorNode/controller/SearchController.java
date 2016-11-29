@@ -26,10 +26,10 @@ public class SearchController {
     SearchService searchService;
 
     @PostMapping("realtime")
-    public Response history(@RequestBody String jsonParam) {
+    public Response realtime(@RequestBody String jsonParam) {
         try {
             SearchCondition condition = JSON.parseObject(jsonParam, SearchCondition.class);
-            List<String> contextList = searchService.history(condition);
+            List<String> contextList = searchService.realtime(condition);
             return Response.success(contextList);
         } catch (Exception e) {
             return Response.failure(e.getLocalizedMessage());
