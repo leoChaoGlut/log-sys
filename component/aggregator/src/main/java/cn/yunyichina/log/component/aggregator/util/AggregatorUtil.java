@@ -96,6 +96,7 @@ public class AggregatorUtil {
 
         Map<String, Map<String, Set<KeyValueIndexBuilder.IndexInfo>>> keyValueAggregatedCollection = keyValueAggregator.getAggregatedCollection();
         try {
+            // TODO: 2016/11/28 ObjectoutputStream
             Files.write(JSON.toJSONString(keyValueAggregatedCollection), new File(KEY_VALUE_INDEX_DIR), Charsets.UTF_8);
         } catch (IOException e) {
             e.printStackTrace();

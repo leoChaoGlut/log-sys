@@ -38,9 +38,8 @@ public class LogScheduleTask {
     private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 
     // TODO: 2016/11/26 测试定时为为5秒
-    @Scheduled(cron = "0/5 * *  * * ? ")
+    @Scheduled(cron = "${taskTime}")
     public void getLog() {
-//        System.err.println(cursorProp);
         String beginTime = new PropertiesFileUtil(cursorProp).getValue(cursorKey);
         Date endDate = new Date();
         String endTime = sdf.format(endDate);

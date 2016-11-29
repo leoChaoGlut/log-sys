@@ -28,4 +28,10 @@ eureka:
 server:
   port: 10301
 
+constants:
+  cursorKey: last_end_time
+  filePath:
+    cursorPropPath: E:\\zTest\\cursor.properties
+    logPath: "D:\\tmp"
+
 

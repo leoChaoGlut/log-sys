@@ -9,6 +9,7 @@ import cn.yunyichina.log.component.index.builder.imp.ContextIndexBuilder;
 import cn.yunyichina.log.component.index.builder.imp.KeyValueIndexBuilder;
 import cn.yunyichina.log.component.index.builder.imp.KeywordIndexBuilder;
 import cn.yunyichina.log.component.index.scanner.imp.LogFileScanner;
+import cn.yunyichina.log.service.collectorNode.constants.Constants;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -22,20 +23,10 @@ import java.util.Set;
  * @CreateTime: 2016/11/18 11:10
  * @Description:
  */
-public class IndexManager {
-    //    @Value("${filePath.cursorPropPath}")
-    private String cursorProp = "E:\\zTest\\cursor.properties";
-    //    @Value("${filePath.logPath}")
-    private String logPath = "E:\\zTest\\testLog1";
-    //    @Value("${constant.cursorKey}")
-    private String cursorKey = "last_end_time";
-
-    private String beginTime;
-    private String endTime;
-
+public class IndexManager{
+    private Collection<File> files;
     private Set<KeyValueIndexBuilder.KvTag> kvTagSet;
     private Set<String> keywordSet;
-
     private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 
     Map<Long, ContextIndexBuilder.ContextInfo> contextIndexMap;
@@ -45,19 +36,23 @@ public class IndexManager {
     public IndexManager(SearchCondition searchCondition,
                         Set<KeyValueIndexBuilder.KvTag> kvTagSet,
                         Set<String> keywordSet) {
-        beginTime = new PropertiesFileUtil(cursorProp).getValue(cursorKey);
-        endTime = sdf.format(searchCondition.getEndDateTime());
+
+        Constants constants = (Constants) SpringContextUtil.getBean("constants");
+
+        String beginTime = new PropertiesFileUtil(constants.cursorPropPath).getValue(constants.cursorKey);
+        String endTime = sdf.format(searchCondition.getEndDateTime());
         this.kvTagSet = kvTagSet;
         this.keywordSet = keywordSet;
+        LogFileScanner logFileScanner = new LogFileScanner(beginTime, endTime, constants.logPath);
+        Map<String, File> fileMap = logFileScanner.scan();
+        files = fileMap.values();
+
         buildContextIndexMap();
         buildKeywordIndexMap();
         buildKeyValueIndexMap();
     }
 
     private void buildKeyValueIndexMap() {
-        LogFileScanner logFileScanner = new LogFileScanner(beginTime, endTime, logPath);
-        Map<String, File> fileMap = logFileScanner.scan();
-        Collection<File> files = fileMap.values();
         KeyValueIndexAggregator aggregator = new KeyValueIndexAggregator();
 
         for (File file : files) {
@@ -70,9 +65,7 @@ public class IndexManager {
     }
 
     private void buildKeywordIndexMap() {
-        LogFileScanner logFileScanner = new LogFileScanner(beginTime, endTime, logPath);
-        Map<String, File> fileMap = logFileScanner.scan();
-        Collection<File> files = fileMap.values();
+
 
         KeywordIndexAggregator aggregator = new KeywordIndexAggregator();
 
@@ -86,12 +79,8 @@ public class IndexManager {
     }
 
     private void buildContextIndexMap() {
-
-        LogFileScanner logFileScanner = new LogFileScanner(beginTime, endTime, logPath);
-        Map<String, File> fileMap = logFileScanner.scan();
-        Collection<File> values = fileMap.values();
         ContextIndexAggregator aggregator = new ContextIndexAggregator();
-        for (File f : values) {
+        for (File f : files) {
             ContextIndexBuilder builder = new ContextIndexBuilder(f);
             Map<Long, ContextIndexBuilder.ContextInfo> map = builder.build();
             aggregator.aggregate(map);
