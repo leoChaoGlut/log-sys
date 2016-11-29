@@ -40,7 +40,7 @@ public class LogScheduleTask {
     // TODO: 2016/11/26 测试定时为为5秒
     @Scheduled(cron = "0/5 * *  * * ? ")
     public void getLog() {
-        System.err.println(cursorProp);
+//        System.err.println(cursorProp);
         String beginTime = new PropertiesFileUtil(cursorProp).getValue(cursorKey);
         Date endDate = new Date();
         String endTime = sdf.format(endDate);
@@ -55,7 +55,9 @@ public class LogScheduleTask {
         LogFileScanner logFileScanner = new LogFileScanner(beginTime, endTime, logDir);
         Map<String, File> fileMap = logFileScanner.scan();
 
-        if (!CollectionUtils.isEmpty(fileMap)) {
+        if (CollectionUtils.isEmpty(fileMap)) {
+            System.out.println("当前已经是最新日志");
+        } else {
             Collection<File> files = fileMap.values();
             File[] logFiles = new File[files.size()];
             files.toArray(logFiles);
@@ -83,8 +85,6 @@ public class LogScheduleTask {
                     e.printStackTrace();
                 }
             }
-        }else{
-            System.out.println("当前已经是最新日志");
         }
     }
 }
