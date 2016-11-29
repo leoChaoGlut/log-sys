@@ -11,11 +11,6 @@ CREATE TABLE `keyword` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
--- Records of keyword
--- ----------------------------
-INSERT INTO `keyword` VALUES ('1', 'pat_card_no');
-
--- ----------------------------
 -- Table structure for `kvtag`
 -- ----------------------------
 DROP TABLE IF EXISTS `kvtag`;
@@ -26,10 +21,3 @@ CREATE TABLE `kvtag` (
   `VALUE_END_TAG` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
--- ----------------------------
--- Records of kvtag
--- ----------------------------
-INSERT INTO `kvtag` VALUES ('1', 'patName', '<patName>', '</patName>');
-INSERT INTO `kvtag` VALUES ('2', 'pat_card_no', '\\\"pat_card_no\\\":\\\"', '\\\"');
-INSERT INTO `kvtag` VALUES ('3', 'pat_id_no', '\\\"pat_id_no\\\":\\\"', '\\\"');
