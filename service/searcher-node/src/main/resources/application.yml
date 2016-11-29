@@ -11,6 +11,7 @@ constants:
   upload:
     logSuffix: .log
     indexSuffix: .index
+    bakSuffix: .bak
     zipIndex: .zip
     logRootDir: /log
     indexRootDir: /index
