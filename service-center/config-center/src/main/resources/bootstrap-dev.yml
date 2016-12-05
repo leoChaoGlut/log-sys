@@ -1,15 +1,13 @@
-eureka:
-  client:
-    serviceUrl:
-      defaultZone: http://localhost:10100/eureka/
 spring:
-  application:
-    name: config-center
   cloud:
     config:
       server:
         git:
           uri: file:///${user.home}/config-repo
           searchPaths: '{application}'
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:10100/eureka/
 server:
   port: 10210

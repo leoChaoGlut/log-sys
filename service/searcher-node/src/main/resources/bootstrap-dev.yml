@@ -1,12 +1,10 @@
-spring:
-  application:
-    name: searcher-node
 eureka:
   client:
     serviceUrl:
       defaultZone: http://localhost:10100/eureka/
 server:
   port: 10401
+#
 constants:
   upload:
     logSuffix: .log
@@ -17,5 +15,3 @@ constants:
     indexRootDir: /index
   index:
     rootDir: /root
-
-

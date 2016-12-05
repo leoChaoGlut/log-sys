@@ -17,7 +17,6 @@ public class ConfigController {
 
     @PutMapping("/update")
     public Response updateConfig() {
-
         return Response.failure("");
     }
 

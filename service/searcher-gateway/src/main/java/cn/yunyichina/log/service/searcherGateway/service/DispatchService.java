@@ -11,6 +11,7 @@ import org.apache.http.client.fluent.Request;
 import org.apache.http.entity.ContentType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 
@@ -21,11 +22,13 @@ import java.io.IOException;
  * @Description:
  */
 @Service
+@Transactional(rollbackFor = {Throwable.class, Exception.class, RuntimeException.class})
 public class DispatchService {
 
     @Autowired
     StoreRecordMapper storeRecordMapper;
 
+    @Transactional(readOnly = true)
     public Response dispatch(SearchCondition condition) throws IOException {
         StoreRecord storeRecordParam = new StoreRecord();
         storeRecordParam.setCollector_id(condition.getCollector().getId());

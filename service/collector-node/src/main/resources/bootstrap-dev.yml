@@ -1,6 +1,4 @@
 spring:
-  application:
-    name: collector-node
   datasource:
     url: jdbc:mysql://localhost:3306/log-sys?useUnicode=true&amp;characterEncoding=UTF-8&amp;useSSL=false
     username: root
@@ -16,11 +14,8 @@ spring:
       validation-query: SELECT 'x'
       test-while-idle: false
       test-on-return: false
-
-# Mybatis Configuration
 mybatis:
   mapper-locations: classpath:mapper/*Mapper.xml
-
 eureka:
   client:
     serviceUrl:
@@ -33,5 +28,3 @@ constants:
   filePath:
     cursorPropPath: E:\\zTest\\cursor.properties
     logPath: "D:\\tmp"
-
-

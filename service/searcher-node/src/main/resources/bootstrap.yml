@@ -1,0 +1,5 @@
+spring:
+  application:
+    name: searcher-node
+  profiles:
+    active: dev

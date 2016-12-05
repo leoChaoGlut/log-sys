@@ -39,44 +39,44 @@ public class UploadService {
     private String ZIP_SUFFIX;
 
     @Value("${constants.upload.logRootDir}")
-    private String LOG_ROOT_DIR;
+    private String UPLOADED_LOG_ROOT_DIR;
 
     @Value("${constants.upload.indexRootDir}")
     private String INDEX_ROOT_DIR;
 
     public void uploadFile(MultipartFile file) throws Exception {
         byte[] bytes = file.getBytes();
-        File dir = new File(LOG_ROOT_DIR);
+        File dir = new File(UPLOADED_LOG_ROOT_DIR);
         if (!dir.exists()) {
             dir.mkdirs();
         }
         String zipFilePath = dir + File.separator + file.getName() + ZIP_SUFFIX;
         Files.write(bytes, new File(zipFilePath));
-        ZipUtil.unzip(zipFilePath, LOG_ROOT_DIR);
+        ZipUtil.unzip(zipFilePath, UPLOADED_LOG_ROOT_DIR);
         rebuildLogDirStructureAndUpdateIndex();
     }
 
     private void rebuildLogDirStructureAndUpdateIndex() throws Exception {
-        File[] logFiles = new File(LOG_ROOT_DIR).listFiles();
-        if (logFiles != null) {
-            for (File file : logFiles) {
-                if (file.isFile()) {
-                    String fileName = file.getName();
+        File[] uploadedLogFiles = new File(UPLOADED_LOG_ROOT_DIR).listFiles();
+        if (uploadedLogFiles != null) {
+            for (File uploadedLogFile : uploadedLogFiles) {
+                if (uploadedLogFile.isFile()) {
+                    String fileName = uploadedLogFile.getName();
                     String fileSuffix = fileName.substring(fileName.lastIndexOf("."));
                     fileName = fileName.substring(0, fileName.lastIndexOf("."));
                     if (Objects.equal(fileSuffix, LOG_SUFFIX)) {
                         String oldLogFilePath = buildOldLogFilePath(fileName, fileSuffix);
                         File oldLogFile = new File(oldLogFilePath);
                         if (oldLogFile.exists()) {
-                            file.delete();
+                            uploadedLogFile.delete();
                         } else {
                             Files.createParentDirs(oldLogFile);
-                            Files.move(file, oldLogFile);
+                            Files.move(uploadedLogFile, oldLogFile);
                         }
                     } else if (Objects.equal(fileSuffix, INDEX_SUFFIX)) {
                         ObjectInputStream ois = null;
                         try {
-                            ois = new ObjectInputStream(new FileInputStream(file));
+                            ois = new ObjectInputStream(new FileInputStream(uploadedLogFile));
                             switch (fileName) {
                                 case IndexType.CONTEXT:
                                     Map<Long, ContextIndexBuilder.ContextInfo> contextIndexMap = (Map<Long, ContextIndexBuilder.ContextInfo>) ois.readObject();
@@ -97,7 +97,7 @@ public class UploadService {
                                     throw new Exception("不支持的索引类型");
                             }
                         } finally {
-                            file.delete();
+                            uploadedLogFile.delete();
                             if (ois != null) {
                                 ois.close();
                             }
@@ -111,7 +111,7 @@ public class UploadService {
     }
 
     private String buildOldLogFilePath(String fileName, String fileSuffix) {
-        return LOG_ROOT_DIR + File.separator + fileName.substring(0, 4) +
+        return UPLOADED_LOG_ROOT_DIR + File.separator + fileName.substring(0, 4) +
                 File.separator + fileName.substring(4, 6) +
                 File.separator + fileName.substring(6, 8) +
                 File.separator + fileName.substring(8, 10) +
@@ -119,6 +119,13 @@ public class UploadService {
                 File.separator + fileName + fileSuffix;
     }
 
+    /**
+     * 将索引文件备份并替换
+     *
+     * @param fileName
+     * @param obj
+     * @throws IOException
+     */
     private void backupAndReplace(String fileName, Object obj) throws IOException {
         File oldIndexFile = new File(INDEX_ROOT_DIR + fileName + INDEX_SUFFIX);
         if (oldIndexFile.exists()) {

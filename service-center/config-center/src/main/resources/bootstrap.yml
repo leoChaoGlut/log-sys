@@ -1,0 +1,6 @@
+spring:
+  application:
+    name: config-center
+  profiles:
+    active: dev
+

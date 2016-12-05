@@ -20,23 +20,23 @@ import java.util.concurrent.locks.ReentrantLock;
  * @Author: Leo
  * @Blog: http://blog.csdn.net/lc0817
  * @CreateTime: 2016/11/18 11:10
- * @Description:
+ * @Description: TODO 这个地方的设计,我感觉比较糟糕,待优化
  */
 @Component
 public class IndexManager {
 
-    private Map<Long, ContextIndexBuilder.ContextInfo> contextIndexMap;
-    private Map<String, Set<KeywordIndexBuilder.IndexInfo>> keywordIndexMap;
-    private Map<String, Map<String, Set<KeyValueIndexBuilder.IndexInfo>>> keyValueIndexMap;
+    private volatile Map<Long, ContextIndexBuilder.ContextInfo> contextIndexMap;
+    private volatile Map<String, Set<KeywordIndexBuilder.IndexInfo>> keywordIndexMap;
+    private volatile Map<String, Map<String, Set<KeyValueIndexBuilder.IndexInfo>>> keyValueIndexMap;
     /**
      * 假设有一个线程正在读索引数据,此时如果正好有upload请求,并且upload在update index,就可能会出现Hashmap并发问题
      * Hashmap在存在写线程的情况下,可能会出现读死循环的问题,所以不能使用ReadWriteLock,只能强行加锁.
-     * 或者,可以把数据结构改为ConcurrentHashMap....有缘人看到此处可以改改~
+     * 或者,可以把数据结构改为ConcurrentHashMap....有缘人看到此处可以改改~ 前提是你了解了整个模块的职责.
      */
     private Lock lock = new ReentrantLock();
 
     @Value("${constants.index.rootDir}")
-    private String ROOT_DIR;
+    private String INDEX_ROOT_DIR;
 
     @PostConstruct
     public void init() {

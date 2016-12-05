@@ -1,6 +1,4 @@
 spring:
-  application:
-    name: searcher-gateway
   datasource:
     url: jdbc:mysql://192.168.75.129:3306/log_system?useUnicode=true&amp;characterEncoding=UTF-8&amp;useSSL=false
     username: root
@@ -16,7 +14,6 @@ spring:
       validation-query: SELECT 'x'
       test-while-idle: false
       test-on-return: false
-
 eureka:
   client:
     serviceUrl:
@@ -26,5 +23,3 @@ server:
   context-path: /searcher/gateway
 mybatis:
   mapper-locations: classpath:mapper/*Mapper.xml
-
-

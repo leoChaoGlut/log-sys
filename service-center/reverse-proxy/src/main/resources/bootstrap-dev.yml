@@ -1,0 +1,6 @@
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:10100/eureka/
+server:
+  port: 10200
