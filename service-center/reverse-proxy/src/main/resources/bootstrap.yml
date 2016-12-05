@@ -3,9 +3,3 @@ spring:
     name: reverse-proxy
   profiles:
     active: dev
-zuul:
-  routes:
-    searcher-gateway: ${service.route.searcher-gateway}/**
-service:
-  route:
-    searcher-gateway: /searcher/gateway

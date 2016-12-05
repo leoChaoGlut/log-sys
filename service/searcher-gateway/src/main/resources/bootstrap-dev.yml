@@ -14,12 +14,11 @@ spring:
       validation-query: SELECT 'x'
       test-while-idle: false
       test-on-return: false
+mybatis:
+  mapper-locations: classpath:mapper/*Mapper.xml
 eureka:
   client:
     serviceUrl:
       defaultZone: http://localhost:10100/eureka/
 server:
   port: 10400
-  context-path: /searcher/gateway
-mybatis:
-  mapper-locations: classpath:mapper/*Mapper.xml

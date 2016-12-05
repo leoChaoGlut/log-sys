@@ -92,4 +92,9 @@ public class AggregatorTest {
         System.out.println(JSON.toJSONString(aggregatedCollection, true));
 
     }
+
+    @Test
+    public void test() {
+        System.out.println(File.separator);
+    }
 }

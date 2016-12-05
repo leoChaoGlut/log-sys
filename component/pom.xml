@@ -12,7 +12,6 @@
     <modules>
         <module>aggregator</module>
         <module>index</module>
-        <module>schedule-task</module>
         <module>search-engine</module>
     </modules>
 

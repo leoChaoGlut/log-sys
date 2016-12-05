@@ -6,8 +6,11 @@ import cn.yunyichina.log.component.index.builder.imp.ContextIndexBuilder;
 import cn.yunyichina.log.component.index.builder.imp.KeyValueIndexBuilder;
 import cn.yunyichina.log.component.searchEngine.imp.KeyValueSearchEngine;
 import cn.yunyichina.log.component.searchEngine.imp.KeywordSearchEngine;
+import cn.yunyichina.log.service.collectorNode.constants.Config;
+import cn.yunyichina.log.service.collectorNode.util.CacheManager;
 import cn.yunyichina.log.service.collectorNode.util.IndexManager;
 import cn.yunyichina.log.service.searcherNode.constant.SearchEngineType;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -23,16 +26,22 @@ import java.util.Set;
 @Service
 public class SearchService {
 
+    private final String LAST_MODIFY_TIME = "lastModifyTime";
+
+    @Autowired
+    Config config;
+
+    @Autowired
+    CacheManager cacheManager;
+
     public List<String> realtime(SearchCondition searchCondition) throws Exception {
-        Set<ContextIndexBuilder.ContextInfo> contextInfoSet;
+        Set<KeyValueIndexBuilder.KvTag> kvTagSet = (Set<KeyValueIndexBuilder.KvTag>) cacheManager.getCacheMap().get("kvTagSet");
+        Set<String> keywordSet = (Set<String>) cacheManager.getCacheMap().get("keywordSet");
+        String beginDatetime = (String) cacheManager.getCacheMap().get(LAST_MODIFY_TIME);
+        IndexManager indexManager = new IndexManager(searchCondition, kvTagSet, keywordSet, beginDatetime, config.getLogRootDir());
 
-        Set<KeyValueIndexBuilder.KvTag> kvTagSet = null;
-//          TODO kvTagSet
+        Set<ContextIndexBuilder.ContextInfo> contextInfoSet = null;
 
-        Set<String> keywordSet = null;
-//          TODO keywordSet
-
-        IndexManager indexManager = new IndexManager(searchCondition, kvTagSet, keywordSet);
         switch (searchCondition.getSearchEngineType()) {
             case SearchEngineType.KEYWORD:
                 contextInfoSet = new KeywordSearchEngine(indexManager.getKeywordIndexMap(), indexManager.getContextIndexMap(), searchCondition).search();
@@ -43,6 +52,7 @@ public class SearchService {
             default:
                 throw new Exception("不支持的搜索引擎类型:" + searchCondition.getSearchEngineType());
         }
+
         if (contextInfoSet == null) {
             return null;
         } else {

@@ -21,7 +21,7 @@ eureka:
     serviceUrl:
       defaultZone: http://localhost:10100/eureka/
 server:
-  port: 10301
+  port: 10600
 
 constants:
   cursorKey: last_end_time

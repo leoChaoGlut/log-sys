@@ -27,6 +27,7 @@ public class DispatchController {
     @PostMapping("dispatch")
     public Response dispatch(@RequestBody String jsonParam) {
         try {
+            logger.info("搜索网关接收到请求:" + jsonParam);
             SearchCondition condition = JSON.parseObject(jsonParam, SearchCondition.class);
             Response response = dispatchService.dispatch(condition);
             return response;

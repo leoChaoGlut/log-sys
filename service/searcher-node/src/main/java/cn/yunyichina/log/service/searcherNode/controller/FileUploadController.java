@@ -19,13 +19,13 @@ public class FileUploadController {
     UploadService uploadService;
 
     @PostMapping("/upload")
-    public Response upload(MultipartFile file) {
+    public Response upload(MultipartFile zipFile) {
         try {
-            if (file != null && !file.isEmpty()) {
-                uploadService.uploadFile(file);
+            if (zipFile != null && !zipFile.isEmpty()) {
+                uploadService.uploadFile(zipFile);
                 return Response.success();
             } else {
-                return Response.failure("The file which to be uploaded is null or empty");
+                return Response.failure("The zipFile which to be uploaded is null or empty");
             }
         } catch (Exception e) {
             return Response.failure(e.getLocalizedMessage());

@@ -1,7 +1,6 @@
 package cn.yunyichina.log.service.collectorNode.util;
 
 import cn.yunyichina.log.common.entity.dto.SearchCondition;
-import cn.yunyichina.log.common.util.PropertiesFileUtil;
 import cn.yunyichina.log.component.aggregator.index.imp.ContextIndexAggregator;
 import cn.yunyichina.log.component.aggregator.index.imp.KeyValueIndexAggregator;
 import cn.yunyichina.log.component.aggregator.index.imp.KeywordIndexAggregator;
@@ -9,7 +8,6 @@ import cn.yunyichina.log.component.index.builder.imp.ContextIndexBuilder;
 import cn.yunyichina.log.component.index.builder.imp.KeyValueIndexBuilder;
 import cn.yunyichina.log.component.index.builder.imp.KeywordIndexBuilder;
 import cn.yunyichina.log.component.index.scanner.imp.LogFileScanner;
-import cn.yunyichina.log.service.collectorNode.constants.Constants;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -33,17 +31,11 @@ public class IndexManager {
     Map<String, Set<KeywordIndexBuilder.IndexInfo>> keywordIndexMap;
     Map<String, Map<String, Set<KeyValueIndexBuilder.IndexInfo>>> keyValueIndexMap;
 
-    public IndexManager(SearchCondition searchCondition,
-                        Set<KeyValueIndexBuilder.KvTag> kvTagSet,
-                        Set<String> keywordSet) {
-
-        Constants constants = (Constants) SpringContextUtil.getBean("constants");
-
-        String beginTime = new PropertiesFileUtil(constants.cursorPropPath).getValue(constants.cursorKey);
-        String endTime = sdf.format(searchCondition.getEndDateTime());
+    public IndexManager(SearchCondition searchCondition, Set<KeyValueIndexBuilder.KvTag> kvTagSet, Set<String> keywordSet, String beginDatetime, String logRootDir) {
+        String endDatetime = sdf.format(searchCondition.getEndDateTime());
         this.kvTagSet = kvTagSet;
         this.keywordSet = keywordSet;
-        LogFileScanner logFileScanner = new LogFileScanner(beginTime, endTime, constants.logPath);
+        LogFileScanner logFileScanner = new LogFileScanner(beginDatetime, endDatetime, logRootDir);
         Map<String, File> fileMap = logFileScanner.scan();
         logFiles = fileMap.values();
 

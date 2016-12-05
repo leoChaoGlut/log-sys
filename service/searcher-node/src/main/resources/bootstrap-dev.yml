@@ -3,7 +3,7 @@ eureka:
     serviceUrl:
       defaultZone: http://localhost:10100/eureka/
 server:
-  port: 10401
+  port: 10500
 #
 constants:
   upload:

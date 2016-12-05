@@ -3,4 +3,7 @@ eureka:
     serviceUrl:
       defaultZone: http://localhost:10100/eureka/
 server:
-  port: 10200
+  port: 10300
+#zuul:
+#  routes:
+#    searcher-gateway: /searcher/gateway/**

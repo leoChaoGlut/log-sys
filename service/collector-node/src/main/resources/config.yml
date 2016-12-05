@@ -1,0 +1,9 @@
+cron: 0/5 * *  * * ?
+fixedRate: 3000
+dir:
+  logRoot: D:\\tmp
+  tmpZip: D:\\tmp
+cache:
+  path: D:\\cache.cache
+url:
+  uploadServer: localhost:8080
