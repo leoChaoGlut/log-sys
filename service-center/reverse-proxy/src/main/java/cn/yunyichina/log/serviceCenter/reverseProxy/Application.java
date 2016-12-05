@@ -15,7 +15,7 @@ import org.springframework.cloud.netflix.zuul.EnableZuulProxy;
 @SpringBootApplication
 //@SpringBootApplication(scanBasePackages = "cn.yunyichina.log.serviceCenter.reverseProxy")
 @EnableEurekaClient
-public class Bootstrap {
+public class Application {
 
 //    @Bean
 //    public RouteFilter routeFilter() {
@@ -23,6 +23,6 @@ public class Bootstrap {
 //    }
 
     public static void main(String[] args) {
-        SpringApplication.run(Bootstrap.class, args);
+        SpringApplication.run(Application.class, args);
     }
 }

@@ -23,8 +23,8 @@ import java.util.Set;
  * @CreateTime: 2016/11/18 11:10
  * @Description:
  */
-public class IndexManager{
-    private Collection<File> files;
+public class IndexManager {
+    private Collection<File> logFiles;
     private Set<KeyValueIndexBuilder.KvTag> kvTagSet;
     private Set<String> keywordSet;
     private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
@@ -45,7 +45,7 @@ public class IndexManager{
         this.keywordSet = keywordSet;
         LogFileScanner logFileScanner = new LogFileScanner(beginTime, endTime, constants.logPath);
         Map<String, File> fileMap = logFileScanner.scan();
-        files = fileMap.values();
+        logFiles = fileMap.values();
 
         buildContextIndexMap();
         buildKeywordIndexMap();
@@ -55,8 +55,8 @@ public class IndexManager{
     private void buildKeyValueIndexMap() {
         KeyValueIndexAggregator aggregator = new KeyValueIndexAggregator();
 
-        for (File file : files) {
-            KeyValueIndexBuilder builder = new KeyValueIndexBuilder(kvTagSet, file);
+        for (File logFile : logFiles) {
+            KeyValueIndexBuilder builder = new KeyValueIndexBuilder(kvTagSet, logFile);
             Map<String, Map<String, Set<KeyValueIndexBuilder.IndexInfo>>> map = builder.build();
             aggregator.aggregate(map);
         }
@@ -65,12 +65,10 @@ public class IndexManager{
     }
 
     private void buildKeywordIndexMap() {
-
-
         KeywordIndexAggregator aggregator = new KeywordIndexAggregator();
 
-        for (File file : files) {
-            KeywordIndexBuilder builder = new KeywordIndexBuilder(file, keywordSet);
+        for (File logFile : logFiles) {
+            KeywordIndexBuilder builder = new KeywordIndexBuilder(logFile, keywordSet);
             Map<String, Set<KeywordIndexBuilder.IndexInfo>> map = builder.build();
             aggregator.aggregate(map);
         }
@@ -80,8 +78,8 @@ public class IndexManager{
 
     private void buildContextIndexMap() {
         ContextIndexAggregator aggregator = new ContextIndexAggregator();
-        for (File f : files) {
-            ContextIndexBuilder builder = new ContextIndexBuilder(f);
+        for (File logFile : logFiles) {
+            ContextIndexBuilder builder = new ContextIndexBuilder(logFile);
             Map<Long, ContextIndexBuilder.ContextInfo> map = builder.build();
             aggregator.aggregate(map);
         }

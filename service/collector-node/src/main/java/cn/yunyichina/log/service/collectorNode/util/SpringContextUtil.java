@@ -8,9 +8,13 @@ import org.springframework.context.ApplicationContext;
 public class SpringContextUtil {
 
     private static ApplicationContext applicationContext;
+    private static boolean hasInit = false;
 
     public static void setApplicationContext(ApplicationContext applicationContext) {
-        SpringContextUtil.applicationContext = applicationContext;
+        if (!hasInit) {
+            SpringContextUtil.applicationContext = applicationContext;
+            hasInit = true;
+        }
     }
 
     public static Object getBean(String beanId) {

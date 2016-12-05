@@ -18,9 +18,9 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 @SpringBootApplication(scanBasePackages = "cn.yunyichina.log.service.collectorNode")
 @MapperScan(basePackages = "cn.yunyichina.log.service.collectorNode.mapper")
 @EnableEurekaClient
-public class Bootstrap{
+public class Application {
     public static void main(String[] args) {
-        ApplicationContext applicationContext = SpringApplication.run(Bootstrap.class, args);
+        ApplicationContext applicationContext = SpringApplication.run(Application.class, args);
         SpringContextUtil.setApplicationContext(applicationContext);
     }
 }

@@ -8,7 +8,6 @@ import cn.yunyichina.log.component.searchEngine.imp.KeyValueSearchEngine;
 import cn.yunyichina.log.component.searchEngine.imp.KeywordSearchEngine;
 import cn.yunyichina.log.service.collectorNode.util.IndexManager;
 import cn.yunyichina.log.service.searcherNode.constant.SearchEngineType;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -24,20 +23,16 @@ import java.util.Set;
 @Service
 public class SearchService {
 
-    @Autowired
-    KvTagService kvTagService;
-
-    @Autowired
-    KeywordService keywordService;
-
     public List<String> realtime(SearchCondition searchCondition) throws Exception {
         Set<ContextIndexBuilder.ContextInfo> contextInfoSet;
 
-        Set<KeyValueIndexBuilder.KvTag> kvTagSet = kvTagService.findAll();
+        Set<KeyValueIndexBuilder.KvTag> kvTagSet = null;
+//          TODO kvTagSet
 
-        Set<String> keywordSet = keywordService.findAll();
+        Set<String> keywordSet = null;
+//          TODO keywordSet
 
-        IndexManager indexManager = new IndexManager(searchCondition,kvTagSet,keywordSet);
+        IndexManager indexManager = new IndexManager(searchCondition, kvTagSet, keywordSet);
         switch (searchCondition.getSearchEngineType()) {
             case SearchEngineType.KEYWORD:
                 contextInfoSet = new KeywordSearchEngine(indexManager.getKeywordIndexMap(), indexManager.getContextIndexMap(), searchCondition).search();
