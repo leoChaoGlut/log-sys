@@ -7,6 +7,7 @@ import com.google.common.io.Files;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.*;
 
 /**
@@ -15,7 +16,7 @@ import java.util.*;
  * @CreateTime: 2016/11/6 0:33
  * @Description: 键值对索引构造器
  */
-public class KeyValueIndexBuilder implements IndexBuilder<Map<String, Map<String, Set<KeyValueIndexBuilder.IndexInfo>>>> {
+public class KeyValueIndexBuilder implements IndexBuilder<Map<String, Map<String, Set<KeyValueIndexBuilder.IndexInfo>>>>,Serializable {
 
     private Set<KvTag> kvTagSet;
     private File logFile;
@@ -67,7 +68,7 @@ public class KeyValueIndexBuilder implements IndexBuilder<Map<String, Map<String
         return keyValueIndexMap;
     }
 
-    public static class IndexInfo {
+    public static class IndexInfo implements Serializable{
         private File logFile;
         private int indexOfLogFile;
         private Long contextCount;
@@ -91,7 +92,7 @@ public class KeyValueIndexBuilder implements IndexBuilder<Map<String, Map<String
         }
     }
 
-    public static class KvTag {
+    public static class KvTag implements Serializable{
         private String key;
         private String keyTag;
         private String valueEndTag;
@@ -137,6 +138,7 @@ public class KeyValueIndexBuilder implements IndexBuilder<Map<String, Map<String
                     Objects.equals(keyTag, kvTag.keyTag) &&
                     Objects.equals(valueEndTag, kvTag.valueEndTag);
         }
+
 
         @Override
         public int hashCode() {

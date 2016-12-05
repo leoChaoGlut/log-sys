@@ -29,7 +29,8 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.*;
-
+import static cn.yunyichina.log.component.index.builder.imp.KeyValueIndexBuilder.KvTag;
+import static cn.yunyichina.log.component.index.builder.imp.KeyValueIndexBuilder.IndexInfo;
 /**
  * @Author: Leo
  * @Blog: http://blog.csdn.net/lc0817
@@ -56,7 +57,8 @@ public class ScheduleTask {
 
     @Scheduled(fixedRate = 3000)
     public void execute() {
-        List<File> fileList = null;
+        System.err.println("=========start");
+        Set<File> fileSet = null;
 
         try {
             String beginDatetime = (String) cacheManager.getCacheMap().get(LAST_MODIFY_TIME);
@@ -71,54 +73,54 @@ public class ScheduleTask {
             if (CollectionUtils.isEmpty(fileMap)) {
 //            没有需要上传的日志文件
             } else {
-                List<File> uploadFailedFileList = (List<File>) cacheManager.getCacheMap().get(UPLOAD_FAILED_FILE_LIST);//获取上传失败的文件
-                int uploadFailedFileSize = uploadFailedFileList == null ? 0 : uploadFailedFileList.size();
+                Set<File> uploadFailedFileSet = (Set<File>) cacheManager.getCacheMap().get(UPLOAD_FAILED_FILE_LIST);//获取上传失败的文件
+                int uploadFailedFileSize = uploadFailedFileSet == null ? 0 : uploadFailedFileSet.size();
                 Collection<File> fileCollection = fileMap.values();
-                fileList = new ArrayList<>(fileCollection.size() + uploadFailedFileSize);
-                fileList.addAll(fileCollection);
+                fileSet = new HashSet<>(fileCollection.size() + uploadFailedFileSize);
+                fileSet.addAll(fileCollection);
 
-                if (uploadFailedFileList != null) {
-                    fileList.addAll(uploadFailedFileList);
+                if (uploadFailedFileSet != null) {
+                    fileSet.addAll(uploadFailedFileSet);
                 }
 
-                buildIndexAndFlushToDisk(fileList);
-                boolean uploadSucceed = uploadFiles(fileList);
+                buildIndexAndFlushToDisk(fileSet);
+                boolean uploadSucceed = uploadFiles(fileSet);
                 if (uploadSucceed) {
                     cacheManager.getCacheMap().remove(UPLOAD_FAILED_FILE_LIST);
                     cacheManager.getCacheMap().put(LAST_MODIFY_TIME, endDatetime);
                 } else {
-                    cacheManager.getCacheMap().put(UPLOAD_FAILED_FILE_LIST, fileList);
+                    cacheManager.getCacheMap().put(UPLOAD_FAILED_FILE_LIST, fileSet);
                 }
             }
         } catch (Exception e) {
-            if (fileList != null) {
-                cacheManager.getCacheMap().put(UPLOAD_FAILED_FILE_LIST, fileList);
+            if (fileSet != null) {
+                cacheManager.getCacheMap().put(UPLOAD_FAILED_FILE_LIST, fileSet);
             }
             e.printStackTrace();
         }
     }
 
-    private void buildIndexAndFlushToDisk(List<File> fileList) throws IOException {
-        Map<Long, ContextIndexBuilder.ContextInfo> contextInfoMap = buildContextIndexByFiles(fileList);
-        Map<String, Set<KeywordIndexBuilder.IndexInfo>> keywordIndexMap = buildKeywordIndexByFiles(fileList);
-        Map<String, Map<String, Set<KeyValueIndexBuilder.IndexInfo>>> keyValueIndexMap = buildKeyValueIndexByFiles(fileList);
+    private void buildIndexAndFlushToDisk(Set<File> fileSet) throws IOException {
+        Map<Long, ContextIndexBuilder.ContextInfo> contextInfoMap = buildContextIndexByFiles(fileSet);
+        Map<String, Set<KeywordIndexBuilder.IndexInfo>> keywordIndexMap = buildKeywordIndexByFiles(fileSet);
+        Map<String, Map<String, Set<KeyValueIndexBuilder.IndexInfo>>> keyValueIndexMap = buildKeyValueIndexByFiles(fileSet);
 
         File contextIndexFile = new File(config.getTmpZipDir() + File.separator + CONTEXT_INFO_INDEX_FILE_NAME);
         indexPersistence(contextIndexFile, contextInfoMap);
-        fileList.add(contextIndexFile);
+        fileSet.add(contextIndexFile);
 
         File keywordIndexFile = new File(config.getTmpZipDir() + File.separator + KEYWORD_INDEX_FILE_NAME);
         indexPersistence(keywordIndexFile, keywordIndexMap);
-        fileList.add(keywordIndexFile);
+        fileSet.add(keywordIndexFile);
 
         File keyValueIndexFile = new File(config.getTmpZipDir() + File.separator + KEY_VALUE_INDEX_FILE_NAME);
         indexPersistence(keyValueIndexFile, keyValueIndexMap);
-        fileList.add(keyValueIndexFile);
+        fileSet.add(keyValueIndexFile);
     }
 
-    private boolean uploadFiles(List<File> fileList) throws Exception {
+    private boolean uploadFiles(Set<File> fileSet) throws Exception {
         String zipFilePath = config.getTmpZipDir() + ZIP_FILE_NAME;
-        ZipUtil.zip(zipFilePath, fileList.toArray(new File[0]));
+        ZipUtil.zip(zipFilePath, fileSet.toArray(new File[0]));
         File zipFile = new File(zipFilePath);
         if (zipFile.exists()) {
             CloseableHttpClient httpClient = HttpClients.createDefault();
@@ -147,22 +149,22 @@ public class ScheduleTask {
         }
     }
 
-    private Map<String, Map<String, Set<KeyValueIndexBuilder.IndexInfo>>> buildKeyValueIndexByFiles(List<File> fileList) {
+    private Map<String, Map<String, Set<KeyValueIndexBuilder.IndexInfo>>> buildKeyValueIndexByFiles(Set<File> fileSet) {
         KeyValueIndexAggregator aggregator = new KeyValueIndexAggregator();
-        Set<KeyValueIndexBuilder.KvTag> kvTagSet = (Set<KeyValueIndexBuilder.KvTag>) cacheManager.getCacheMap().get("kvTagSet");
-        for (File file : fileList) {
+        Set<KvTag> kvTagSet = (Set<KvTag>) cacheManager.getCacheMap().get("kvTagSet");
+        for (File file : fileSet) {
             KeyValueIndexBuilder builder = new KeyValueIndexBuilder(kvTagSet, file);
-            Map<String, Map<String, Set<KeyValueIndexBuilder.IndexInfo>>> keyValueIndexMap = builder.build();
+            Map<String, Map<String, Set<IndexInfo>>> keyValueIndexMap = builder.build();
             aggregator.aggregate(keyValueIndexMap);
         }
         return aggregator.getAggregatedCollection();
     }
 
-    private Map<String, Set<KeywordIndexBuilder.IndexInfo>> buildKeywordIndexByFiles(List<File> fileList) {
+    private Map<String, Set<KeywordIndexBuilder.IndexInfo>> buildKeywordIndexByFiles(Set<File> fileSet) {
         KeywordIndexAggregator aggregator = new KeywordIndexAggregator();
 
         Set<String> keywordSet = (Set<String>) cacheManager.getCacheMap().get("keywordSet");
-        for (File file : fileList) {
+        for (File file : fileSet) {
             KeywordIndexBuilder builder = new KeywordIndexBuilder(file, keywordSet);
             Map<String, Set<KeywordIndexBuilder.IndexInfo>> keywordeIndexMap = builder.build();
             aggregator.aggregate(keywordeIndexMap);
@@ -170,9 +172,9 @@ public class ScheduleTask {
         return aggregator.getAggregatedCollection();
     }
 
-    private Map<Long, ContextIndexBuilder.ContextInfo> buildContextIndexByFiles(List<File> fileList) {
+    private Map<Long, ContextIndexBuilder.ContextInfo> buildContextIndexByFiles(Set<File> fileSet) {
         ContextIndexAggregator aggregator = new ContextIndexAggregator();
-        for (File file : fileList) {
+        for (File file : fileSet) {
             ContextIndexBuilder builder = new ContextIndexBuilder(file);
             Map<Long, ContextIndexBuilder.ContextInfo> contextInfoMap = builder.build();
             aggregator.aggregate(contextInfoMap);
