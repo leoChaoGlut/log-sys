@@ -2,7 +2,6 @@ package cn.yunyichina.log.service.collectorNode.constants;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
 
 /**
  * @Author: Leo
@@ -11,7 +10,6 @@ import org.springframework.context.annotation.PropertySource;
  * @Description:
  */
 @Configuration
-@PropertySource("classpath:config.yml")
 public class Config {
 
     @Value("${cron}")
