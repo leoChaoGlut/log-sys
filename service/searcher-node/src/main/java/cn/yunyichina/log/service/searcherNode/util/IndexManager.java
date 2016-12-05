@@ -13,8 +13,7 @@ import javax.annotation.PostConstruct;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
  * @Author: Leo
@@ -33,7 +32,9 @@ public class IndexManager {
      * Hashmap在存在写线程的情况下,可能会出现读死循环的问题,所以不能使用ReadWriteLock,只能强行加锁.
      * 或者,可以把数据结构改为ConcurrentHashMap....有缘人看到此处可以改改~ 前提是你了解了整个模块的职责.
      */
-    private Lock lock = new ReentrantLock();
+    private ReentrantReadWriteLock readWriteLock = new ReentrantReadWriteLock();
+    private ReentrantReadWriteLock.ReadLock readLock = readWriteLock.readLock();
+    private ReentrantReadWriteLock.WriteLock writeLock = readWriteLock.writeLock();
 
     @Value("${constants.index.rootDir}")
     private String INDEX_ROOT_DIR;
@@ -47,7 +48,7 @@ public class IndexManager {
 
 
     public void appendKeyValueIndex(Map<String, Map<String, Set<KeyValueIndexBuilder.IndexInfo>>> keyValueIndexMap) {
-        lock.lock();
+        writeLock.lock();
         try {
             if (this.keyValueIndexMap == null) {
                 if (keyValueIndexMap == null) {
@@ -62,12 +63,12 @@ public class IndexManager {
                 this.keyValueIndexMap = aggregator.getAggregatedCollection();
             }
         } finally {
-            lock.unlock();
+            writeLock.unlock();
         }
     }
 
     public void appendKeywordIndex(Map<String, Set<KeywordIndexBuilder.IndexInfo>> keywordIndexMap) {
-        lock.lock();
+        writeLock.lock();
         try {
             if (this.keywordIndexMap == null) {
                 if (keywordIndexMap == null) {
@@ -82,12 +83,12 @@ public class IndexManager {
                 this.keywordIndexMap = aggregator.getAggregatedCollection();
             }
         } finally {
-            lock.unlock();
+            writeLock.unlock();
         }
     }
 
     public void appendContextIndex(Map<Long, ContextIndexBuilder.ContextInfo> contextIndexMap) {
-        lock.lock();
+        writeLock.lock();
         try {
             if (this.contextIndexMap == null) {
                 if (contextIndexMap == null) {
@@ -102,34 +103,34 @@ public class IndexManager {
                 this.contextIndexMap = aggregator.getAggregatedCollection();
             }
         } finally {
-            lock.unlock();
+            writeLock.unlock();
         }
     }
 
     public Map<Long, ContextIndexBuilder.ContextInfo> getContextIndexMap() {
-        lock.lock();
+        readLock.lock();
         try {
             return contextIndexMap;
         } finally {
-            lock.unlock();
+            readLock.unlock();
         }
     }
 
     public Map<String, Set<KeywordIndexBuilder.IndexInfo>> getKeywordIndexMap() {
-        lock.lock();
+        readLock.lock();
         try {
             return keywordIndexMap;
         } finally {
-            lock.unlock();
+            readLock.unlock();
         }
     }
 
     public Map<String, Map<String, Set<KeyValueIndexBuilder.IndexInfo>>> getKeyValueIndexMap() {
-        lock.lock();
+        readLock.lock();
         try {
             return keyValueIndexMap;
         } finally {
-            lock.unlock();
+            readLock.unlock();
         }
     }
 }

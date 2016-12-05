@@ -54,10 +54,9 @@ public class ScheduleTask {
     @Autowired
     private CacheManager cacheManager;
 
-    @Scheduled(fixedRate = 3000)
+    @Scheduled(cron = "${cron}")
     public void execute() {
         List<File> fileList = null;
-
         try {
             String beginDatetime = (String) cacheManager.getCacheMap().get(LAST_MODIFY_TIME);
             Date now = new Date();
