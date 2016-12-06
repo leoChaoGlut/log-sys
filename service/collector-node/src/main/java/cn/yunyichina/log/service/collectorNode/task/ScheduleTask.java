@@ -127,10 +127,8 @@ public class ScheduleTask {
                 response = httpClient.execute(post);
                 if (response.getStatusLine().getStatusCode() == HttpStatus.OK.value()) {
                     zipFile.delete();
-                    System.err.println("========true=======");
                     return true;
                 } else {
-                    System.err.println("========false=======");
                     return false;
                 }
             } finally {
