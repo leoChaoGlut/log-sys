@@ -7,6 +7,7 @@ import com.google.common.io.Files;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.*;
 
 /**
@@ -15,7 +16,7 @@ import java.util.*;
  * @CreateTime: 2016/11/3 15:53
  * @Description: 关键词索引构造器
  */
-public class KeywordIndexBuilder implements IndexBuilder<Map<String, Set<KeywordIndexBuilder.IndexInfo>>> {
+public class KeywordIndexBuilder implements IndexBuilder<Map<String, Set<KeywordIndexBuilder.IndexInfo>>>, Serializable {
     private File logFile;
     /**
      * set保证关键词不重复
@@ -30,7 +31,12 @@ public class KeywordIndexBuilder implements IndexBuilder<Map<String, Set<Keyword
         this.logFile = logFile;
         this.keywordSet = keywordSet;
         try {
-            logContent = Files.asCharSource(logFile, Charsets.UTF_8).read();
+            String logFileName = this.logFile.getName();
+            if (logFileName.lastIndexOf(".log") == -1) {
+                logContent = "";
+            } else {
+                logContent = Files.asCharSource(logFile, Charsets.UTF_8).read();
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -65,10 +71,13 @@ public class KeywordIndexBuilder implements IndexBuilder<Map<String, Set<Keyword
         return keywordIndexMap;
     }
 
-    public static class IndexInfo {
+    public static class IndexInfo implements Serializable {
         private File logFile;
         private int indexOfLogFile;
         private Long contextCount;
+
+        public IndexInfo() {
+        }
 
         public IndexInfo(File logFile, int indexOfLogFile, Long contextCount) {
             this.logFile = logFile;
@@ -86,6 +95,21 @@ public class KeywordIndexBuilder implements IndexBuilder<Map<String, Set<Keyword
 
         public Long getContextCount() {
             return contextCount;
+        }
+
+        public IndexInfo setLogFile(File logFile) {
+            this.logFile = logFile;
+            return this;
+        }
+
+        public IndexInfo setIndexOfLogFile(int indexOfLogFile) {
+            this.indexOfLogFile = indexOfLogFile;
+            return this;
+        }
+
+        public IndexInfo setContextCount(Long contextCount) {
+            this.contextCount = contextCount;
+            return this;
         }
 
         @Override

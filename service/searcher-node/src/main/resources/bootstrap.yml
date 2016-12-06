@@ -2,4 +2,10 @@ spring:
   application:
     name: searcher-node
   profiles:
-    active: dev
+    active: dev,extra
+  cloud:
+    config:
+      enabled: true
+      discovery:
+        serviceId: config-center
+        enabled: true

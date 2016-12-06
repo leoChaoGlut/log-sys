@@ -33,8 +33,8 @@ public class IndexManager {
 
     public IndexManager(SearchCondition searchCondition, Set<KeyValueIndexBuilder.KvTag> kvTagSet, Set<String> keywordSet, String beginDatetime, String logRootDir) {
         String endDatetime = sdf.format(searchCondition.getEndDateTime());
-        this.kvTagSet = kvTagSet;
         this.keywordSet = keywordSet;
+        this.kvTagSet = kvTagSet;
         LogFileScanner logFileScanner = new LogFileScanner(beginDatetime, endDatetime, logRootDir);
         Map<String, File> fileMap = logFileScanner.scan();
         logFiles = fileMap.values();

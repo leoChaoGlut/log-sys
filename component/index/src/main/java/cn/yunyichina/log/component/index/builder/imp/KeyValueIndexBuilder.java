@@ -16,7 +16,7 @@ import java.util.*;
  * @CreateTime: 2016/11/6 0:33
  * @Description: 键值对索引构造器
  */
-public class KeyValueIndexBuilder implements IndexBuilder<Map<String, Map<String, Set<KeyValueIndexBuilder.IndexInfo>>>>,Serializable {
+public class KeyValueIndexBuilder implements IndexBuilder<Map<String, Map<String, Set<KeyValueIndexBuilder.IndexInfo>>>>, Serializable {
 
     private Set<KvTag> kvTagSet;
     private File logFile;
@@ -28,7 +28,12 @@ public class KeyValueIndexBuilder implements IndexBuilder<Map<String, Map<String
         this.kvTagSet = kvTagSet;
         this.logFile = logFile;
         try {
-            logContent = Files.asCharSource(logFile, Charsets.UTF_8).read();
+            String logFileName = this.logFile.getName();
+            if (logFileName.lastIndexOf(".log") == -1) {
+                logContent = "";
+            } else {
+                logContent = Files.asCharSource(logFile, Charsets.UTF_8).read();
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -68,10 +73,13 @@ public class KeyValueIndexBuilder implements IndexBuilder<Map<String, Map<String
         return keyValueIndexMap;
     }
 
-    public static class IndexInfo implements Serializable{
+    public static class IndexInfo implements Serializable {
         private File logFile;
         private int indexOfLogFile;
         private Long contextCount;
+
+        public IndexInfo() {
+        }
 
         public IndexInfo(File logFile, int indexOfLogFile, Long contextCount) {
             this.logFile = logFile;
@@ -90,13 +98,32 @@ public class KeyValueIndexBuilder implements IndexBuilder<Map<String, Map<String
         public Long getContextCount() {
             return contextCount;
         }
+
+        public IndexInfo setLogFile(File logFile) {
+            this.logFile = logFile;
+            return this;
+        }
+
+        public IndexInfo setIndexOfLogFile(int indexOfLogFile) {
+            this.indexOfLogFile = indexOfLogFile;
+            return this;
+        }
+
+        public IndexInfo setContextCount(Long contextCount) {
+            this.contextCount = contextCount;
+            return this;
+        }
     }
 
-    public static class KvTag implements Serializable{
+    public static class KvTag implements Serializable {
         private String key;
         private String keyTag;
         private String valueEndTag;
         private int keyOffset;
+
+
+        public KvTag() {
+        }
 
         public KvTag(String key, String keyTag, String valueEndTag) {
             this.key = key;
@@ -127,6 +154,26 @@ public class KeyValueIndexBuilder implements IndexBuilder<Map<String, Map<String
 
         public int getKeyOffset() {
             return keyOffset;
+        }
+
+        public KvTag setKey(String key) {
+            this.key = key;
+            return this;
+        }
+
+        public KvTag setKeyTag(String keyTag) {
+            this.keyTag = keyTag;
+            return this;
+        }
+
+        public KvTag setValueEndTag(String valueEndTag) {
+            this.valueEndTag = valueEndTag;
+            return this;
+        }
+
+        public KvTag setKeyOffset(int keyOffset) {
+            this.keyOffset = keyOffset;
+            return this;
         }
 
         @Override

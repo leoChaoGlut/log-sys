@@ -53,7 +53,7 @@ public class ZipUtil {
                     byte[] bytes = ByteStreams.toByteArray(is);
                     is.close();
                     String entryName = zipEntry.getName();
-                    File file = new File(outputRootDir + entryName);
+                    File file = new File(outputRootDir + File.separator + entryName);
                     if (!file.exists()) {
                         Files.createParentDirs(file);
                         file.createNewFile();
@@ -64,9 +64,9 @@ public class ZipUtil {
         } finally {
             if (zipFile != null) {
                 zipFile.close();
-                try{
+                try {
                     new File(inputZipFilePath).delete();
-                }catch (Exception e){
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }

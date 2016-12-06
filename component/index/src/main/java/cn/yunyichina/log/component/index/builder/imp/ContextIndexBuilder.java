@@ -18,7 +18,7 @@ import java.util.Objects;
  * @CreateTime: 2016/11/3 14:23
  * @Description: 上下文索引构造器
  */
-public class ContextIndexBuilder implements IndexBuilder<Map<Long, ContextIndexBuilder.ContextInfo>> {
+public class ContextIndexBuilder implements IndexBuilder<Map<Long, ContextIndexBuilder.ContextInfo>>, Serializable {
 
     private File logFile;
 
@@ -33,7 +33,12 @@ public class ContextIndexBuilder implements IndexBuilder<Map<Long, ContextIndexB
     public ContextIndexBuilder(File logFile) {
         this.logFile = logFile;
         try {
-            logContent = Files.asCharSource(logFile, Charsets.UTF_8).read();
+            String logFileName = this.logFile.getName();
+            if (logFileName.lastIndexOf(".log") == -1) {
+                logContent = "";
+            } else {
+                logContent = Files.asCharSource(logFile, Charsets.UTF_8).read();
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -74,7 +79,7 @@ public class ContextIndexBuilder implements IndexBuilder<Map<Long, ContextIndexB
         }
     }
 
-    public static class ContextInfo {
+    public static class ContextInfo implements Serializable {
         private IndexInfo begin;
         private IndexInfo end;
 

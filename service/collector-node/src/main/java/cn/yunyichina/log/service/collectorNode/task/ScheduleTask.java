@@ -52,15 +52,14 @@ public class ScheduleTask {
     @Autowired
     private PropertiesUtil propUtil;
 
-    @Scheduled(fixedRate = 3000)
+    @Scheduled(cron = "${cron}")
     public void execute() {
         Set<File> fileSet = null;
-
         try {
             String beginDatetime = propUtil.get(Key.LAST_MODIFY_TIME);
             Date now = new Date();
             String endDatetime = sdf.format(now);
-            if (beginDatetime == null) {
+            if (beginDatetime == null || "".equals(beginDatetime.trim())) {
                 long fixedRateAgo = now.getTime() - config.getFixedRate();
                 beginDatetime = sdf.format(new Date(fixedRateAgo));
             }
@@ -69,14 +68,14 @@ public class ScheduleTask {
             if (CollectionUtils.isEmpty(fileMap)) {
 //            没有需要上传的日志文件
             } else {
-                Set<File> uploadFailedFileSet = JSON.parseObject(propUtil.get(Key.UPLOAD_FAILED_FILE_LIST), Set.class);//获取上传失败的文件
-                int uploadFailedFileSize = uploadFailedFileSet == null ? 0 : uploadFailedFileSet.size();
+                List<File> uploadFailedFileList = JSON.parseArray(propUtil.get(Key.UPLOAD_FAILED_FILE_LIST), File.class);//获取上传失败的文件
+                int uploadFailedFileSize = uploadFailedFileList == null ? 0 : uploadFailedFileList.size();
                 Collection<File> fileCollection = fileMap.values();
                 fileSet = new HashSet<>(fileCollection.size() + uploadFailedFileSize);
                 fileSet.addAll(fileCollection);
 
-                if (uploadFailedFileSet != null) {
-                    fileSet.addAll(uploadFailedFileSet);
+                if (!CollectionUtils.isEmpty(uploadFailedFileList)) {
+                    fileSet.addAll(uploadFailedFileList);
                 }
 
                 buildIndexAndFlushToDisk(fileSet);
@@ -115,7 +114,7 @@ public class ScheduleTask {
     }
 
     private boolean uploadFiles(Set<File> fileSet) throws Exception {
-        String zipFilePath = config.getTmpZipDir() + Key.ZIP_FILE_NAME;
+        String zipFilePath = config.getTmpZipDir() + File.separator + Key.ZIP_FILE_NAME;
         ZipUtil.zip(zipFilePath, fileSet.toArray(new File[0]));
         File zipFile = new File(zipFilePath);
         if (zipFile.exists()) {
@@ -128,8 +127,10 @@ public class ScheduleTask {
                 response = httpClient.execute(post);
                 if (response.getStatusLine().getStatusCode() == HttpStatus.OK.value()) {
                     zipFile.delete();
+                    System.err.println("========true=======");
                     return true;
                 } else {
+                    System.err.println("========false=======");
                     return false;
                 }
             } finally {
@@ -144,24 +145,34 @@ public class ScheduleTask {
 
     private Map<String, Map<String, Set<KeyValueIndexBuilder.IndexInfo>>> buildKeyValueIndexByFiles(Set<File> fileSet) {
         KeyValueIndexAggregator aggregator = new KeyValueIndexAggregator();
-        Set<KvTag> kvTagSet = JSON.parseObject(propUtil.get(Key.KV_TAG_SET), Set.class);
-        for (File file : fileSet) {
-            KeyValueIndexBuilder builder = new KeyValueIndexBuilder(kvTagSet, file);
-            Map<String, Map<String, Set<IndexInfo>>> keyValueIndexMap = builder.build();
-            aggregator.aggregate(keyValueIndexMap);
+        List<KvTag> kvTagList = JSON.parseArray(propUtil.get(Key.KV_TAG_SET), KvTag.class);
+        if (CollectionUtils.isEmpty(kvTagList)) {
+            return null;
+        } else {
+            Set<KvTag> kvTagSet = new HashSet<>(kvTagList);
+            for (File file : fileSet) {
+                KeyValueIndexBuilder builder = new KeyValueIndexBuilder(kvTagSet, file);
+                Map<String, Map<String, Set<IndexInfo>>> keyValueIndexMap = builder.build();
+                aggregator.aggregate(keyValueIndexMap);
+            }
+            return aggregator.getAggregatedCollection();
         }
-        return aggregator.getAggregatedCollection();
     }
 
     private Map<String, Set<KeywordIndexBuilder.IndexInfo>> buildKeywordIndexByFiles(Set<File> fileSet) {
         KeywordIndexAggregator aggregator = new KeywordIndexAggregator();
-        Set<String> keywordSet = JSON.parseObject(propUtil.get(Key.KEYWORD_SET), Set.class);
-        for (File file : fileSet) {
-            KeywordIndexBuilder builder = new KeywordIndexBuilder(file, keywordSet);
-            Map<String, Set<KeywordIndexBuilder.IndexInfo>> keywordeIndexMap = builder.build();
-            aggregator.aggregate(keywordeIndexMap);
+        List<String> keywordList = JSON.parseArray(propUtil.get(Key.KEYWORD_SET), String.class);
+        if (CollectionUtils.isEmpty(keywordList)) {
+            return null;
+        } else {
+            Set<String> keywordSet = new HashSet<>(keywordList);
+            for (File file : fileSet) {
+                KeywordIndexBuilder builder = new KeywordIndexBuilder(file, keywordSet);
+                Map<String, Set<KeywordIndexBuilder.IndexInfo>> keywordeIndexMap = builder.build();
+                aggregator.aggregate(keywordeIndexMap);
+            }
+            return aggregator.getAggregatedCollection();
         }
-        return aggregator.getAggregatedCollection();
     }
 
     private Map<Long, ContextIndexBuilder.ContextInfo> buildContextIndexByFiles(Set<File> fileSet) {

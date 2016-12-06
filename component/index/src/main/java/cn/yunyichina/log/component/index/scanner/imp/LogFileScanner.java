@@ -54,7 +54,10 @@ public class LogFileScanner implements Scanner<Map<String, File>> {
         File[] files = rootDir.listFiles();
         if (files != null) {
             for (File file : files) {
-                dfs(file, 0);
+                String fileName = file.getName();
+                if (fileName.lastIndexOf(".log") != -1 || file.isDirectory()) {
+                    dfs(file, 0);
+                }
             }
         }
         return fileMap;

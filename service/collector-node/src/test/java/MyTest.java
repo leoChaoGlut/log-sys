@@ -1,11 +1,20 @@
 import cn.yunyichina.log.component.index.builder.imp.KeyValueIndexBuilder;
+import cn.yunyichina.log.service.collectorNode.constants.Key;
 import cn.yunyichina.log.service.collectorNode.util.PropertiesUtil;
 import com.alibaba.fastjson.JSON;
 import org.apache.commons.collections.map.HashedMap;
+import org.junit.Before;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.util.CollectionUtils;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Properties;
@@ -15,7 +24,17 @@ import java.util.Set;
 /**
  * Created by Jonven on 2016/12/5.
  */
+@Configuration
+@ComponentScan("cn.yunyichina.log.service.collectorNode.util")
 public class MyTest {
+
+    @Autowired
+    PropertiesUtil propUtil;
+
+    @Before
+    public void before() {
+        AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext(MyTest.class);
+    }
 
     @Test
     public void testCache() throws IOException {
@@ -38,31 +57,10 @@ public class MyTest {
 
         cacheMap.put("kvTagSet", kvTagSet);
         cacheMap.put("keywordSet", keywordSet);
-//        String json = JSON.toJSONString(cacheMap);
-//        Files.write(json, new File("D:\\cache.cache"), Charsets.UTF_8);
 
 
-        try {
-//            Files.write(JSON.toJSONBytes(cacheMap),new File("E:\\zTest\\cache.cache"));
-            ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(new File("D:\\cache.cache")));
-            System.out.println(JSON.toJSONString(cacheMap, true));
-            oos.writeObject(cacheMap);
-            oos.flush();
-            oos.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
-    @Test
-    public void test2() throws IOException, ClassNotFoundException {
-        ObjectInputStream ois = new ObjectInputStream(new FileInputStream(new File("D:\\cache.cache")));
-        Map<String, Object> cacheMap = (Map<String, Object>) ois.readObject();
-        Set<KeyValueIndexBuilder.KvTag> kvTagSet = (Set<KeyValueIndexBuilder.KvTag>) cacheMap.get("kvTagSet");
-        for (KeyValueIndexBuilder.KvTag kvTag : kvTagSet) {
-            System.out.println(JSON.toJSONString(kvTag, true));
-        }
-    }
 
     @Test
     public void test3() throws Exception {
@@ -101,9 +99,30 @@ public class MyTest {
     }
 
     @Test
-    public void test5() {
-        PropertiesUtil propUtil = new PropertiesUtil();
-        System.out.println(propUtil.get("name"));
+    public void test5() throws Exception {
+        Set<File> fileSet = new HashSet<>();
+        fileSet.add(new File("D:\\tmp\\2016\\11\\15\\14\\21\\201611151421.log"));
+        fileSet.add(new File("D:\\tmp\\2016\\11\\15\\14\\23\\201611151423.log"));
+        fileSet.add(new File("D:\\tmp\\2016\\11\\15\\14\\25\\201611151425.log"));
+
+        Set<String> keywordSet = new HashSet<>();
+        keywordSet.add("<branchCode>");
+        keywordSet.add("patName");
+        keywordSet.add("pat_mobile");
+
+        Set<KeyValueIndexBuilder.KvTag> kvTagSet = new HashSet<>();
+        kvTagSet.add(new KeyValueIndexBuilder.KvTag("patCardNo", "<patCardNo>", "</patCardNo>"));
+
+        Properties prop = new Properties();
+        prop.load(new FileInputStream("D:\\1.properties"));
+
+        prop.setProperty(Key.LAST_MODIFY_TIME, "2016-10-29 16:27");
+        prop.setProperty(Key.UPLOAD_FAILED_FILE_LIST, JSON.toJSONString(fileSet));
+        prop.setProperty(Key.KEYWORD_SET, JSON.toJSONString(keywordSet));
+        prop.setProperty(Key.KV_TAG_SET, JSON.toJSONString(kvTagSet));
+
+        prop.store(new FileOutputStream("D:\\1.properties"), "");
+
     }
 
 }

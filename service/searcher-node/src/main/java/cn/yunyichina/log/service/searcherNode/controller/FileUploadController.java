@@ -20,8 +20,10 @@ public class FileUploadController {
 
     @PostMapping("/upload")
     public Response upload(MultipartFile zipFile) {
+        System.err.println("==========upload============");
         try {
             if (zipFile != null && !zipFile.isEmpty()) {
+                System.out.println(zipFile.getSize());
                 uploadService.uploadFile(zipFile);
                 return Response.success();
             } else {
