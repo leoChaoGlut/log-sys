@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Configuration;
  * @Author: Leo
  * @Blog: http://blog.csdn.net/lc0817
  * @CreateTime: 2016/12/5 14:06
- * @Description:
+ * @Description: 配置文件在配置中心, 不在本地
  */
 @Configuration
 public class Config {

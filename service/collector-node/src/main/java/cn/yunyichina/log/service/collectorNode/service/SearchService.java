@@ -7,9 +7,11 @@ import cn.yunyichina.log.component.index.builder.imp.KeyValueIndexBuilder;
 import cn.yunyichina.log.component.searchEngine.imp.KeyValueSearchEngine;
 import cn.yunyichina.log.component.searchEngine.imp.KeywordSearchEngine;
 import cn.yunyichina.log.service.collectorNode.constants.Config;
-import cn.yunyichina.log.service.collectorNode.util.CacheManager;
+import cn.yunyichina.log.service.collectorNode.constants.Key;
 import cn.yunyichina.log.service.collectorNode.util.IndexManager;
+import cn.yunyichina.log.service.collectorNode.util.PropertiesUtil;
 import cn.yunyichina.log.service.searcherNode.constant.SearchEngineType;
+import com.alibaba.fastjson.JSON;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,18 +28,16 @@ import java.util.Set;
 @Service
 public class SearchService {
 
-    private final String LAST_MODIFY_TIME = "lastModifyTime";
-
     @Autowired
     Config config;
 
     @Autowired
-    CacheManager cacheManager;
+    PropertiesUtil propUtil;
 
     public List<String> realtime(SearchCondition searchCondition) throws Exception {
-        Set<KeyValueIndexBuilder.KvTag> kvTagSet = (Set<KeyValueIndexBuilder.KvTag>) cacheManager.getCacheMap().get("kvTagSet");
-        Set<String> keywordSet = (Set<String>) cacheManager.getCacheMap().get("keywordSet");
-        String beginDatetime = (String) cacheManager.getCacheMap().get(LAST_MODIFY_TIME);
+        Set<KeyValueIndexBuilder.KvTag> kvTagSet = JSON.parseObject(propUtil.get(Key.KV_TAG_SET), Set.class);
+        Set<String> keywordSet = JSON.parseObject(propUtil.get(Key.KEYWORD_SET), Set.class);
+        String beginDatetime = propUtil.get(Key.LAST_MODIFY_TIME);
         IndexManager indexManager = new IndexManager(searchCondition, kvTagSet, keywordSet, beginDatetime, config.getLogRootDir());
 
         Set<ContextIndexBuilder.ContextInfo> contextInfoSet = null;
