@@ -1,5 +1,6 @@
 eureka:
   instance:
-    hostname: localhost
+    ip-address: 192.168.75.129
+    prefer-ip-address: true
 server:
   port: 10100

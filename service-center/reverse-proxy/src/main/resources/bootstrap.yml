@@ -2,4 +2,10 @@ spring:
   application:
     name: reverse-proxy
   profiles:
-    active: dev
+    active: dev,extra
+  cloud:
+    config:
+      enabled: true
+      discovery:
+        enabled: true
+        service-id: config-center

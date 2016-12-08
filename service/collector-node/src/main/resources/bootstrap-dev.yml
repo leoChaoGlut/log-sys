@@ -1,6 +1,4 @@
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://localhost:10100/eureka/
-server:
-  port: 10600
+      defaultZone: http://192.168.75.1:10100/eureka/

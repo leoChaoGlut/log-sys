@@ -4,10 +4,14 @@ spring:
       server:
         git:
           uri: file:///${user.home}/config-repo
-          searchPaths: '{application}'
+          search-paths: '{application}'
 eureka:
   client:
-    serviceUrl:
-      defaultZone: http://localhost:10100/eureka/
+    service-url:
+      defaultZone: http://192.168.75.129:10100/eureka/
+  instance:
+    prefer-ip-address: true
+    ip-address: 192.168.75.129
+    instance-id: ${random.value}
 server:
   port: 10200
