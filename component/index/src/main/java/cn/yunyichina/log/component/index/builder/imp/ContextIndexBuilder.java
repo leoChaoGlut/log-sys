@@ -79,6 +79,13 @@ public class ContextIndexBuilder implements IndexBuilder<Map<Long, ContextIndexB
         }
     }
 
+    /**
+     * 注意,begin和end是有可能为null的!!!!!!!!!!
+     * 注意,begin和end是有可能为null的!!!!!!!!!!
+     * 注意,begin和end是有可能为null的!!!!!!!!!!
+     *
+     * @return
+     */
     public static class ContextInfo implements Serializable {
         private IndexInfo begin;
         private IndexInfo end;

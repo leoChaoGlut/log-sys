@@ -34,6 +34,14 @@ public abstract class AbstractSearchEngine {
      * false:反之.
      */
     protected boolean exactlyBetweenTimeRange = false;
+    /**
+     * true:允许上下文的开始,或结束标记为空. 现阶段是不允许的,因为暂时无法解决上下文为空,定位上下文的问题.
+     * 当然,也有解决思路:一般情况下,可能会出现没有contextEnd的情况,因为在contextEnd之前抛出了没有捕获的异常.
+     * 这时候,其实这个没有捕获的异常也是会打印出contextCount的,所以可以通过找到这个标识作为上下文结束标识.
+     */
+    protected boolean allowIncompleteContextInfo = false;
+
+
     protected String rootDir;
     protected SearchCondition searchCondition;
     protected Set<ContextIndexBuilder.ContextInfo> matchedContextInfoSet;
@@ -49,6 +57,15 @@ public abstract class AbstractSearchEngine {
         try {
             if (contextInfo == null) {
                 return false;
+            } else if (contextInfo.getBegin() == null || contextInfo.getEnd() == null) {
+                if (allowIncompleteContextInfo) {
+//                    TODO 现阶段是不允许上下文的开始或结束标识为空的
+//                    TODO 现阶段是不允许上下文的开始或结束标识为空的
+//                    TODO 现阶段是不允许上下文的开始或结束标识为空的
+                    return false;
+                } else {
+                    return false;
+                }
             } else {
                 ContextIndexBuilder.IndexInfo contextInfoBegin = contextInfo.getBegin();
                 File contextInfoBeginLogFile = contextInfoBegin.getLogFile();

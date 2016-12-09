@@ -45,9 +45,7 @@ public class KeywordSearchEngine extends AbstractSearchEngine implements SearchE
                 Long contextCount = indexInfo.getContextCount();
                 ContextIndexBuilder.ContextInfo contextInfo = contextIndexMap.get(contextCount);
                 if (inDateTimeRange(contextInfo)) {
-//                    System.err.println(contextCount);
                     matchedContextInfoSet.add(contextInfo);
-                } else {
                 }
             }
         }
