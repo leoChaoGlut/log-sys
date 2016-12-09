@@ -40,12 +40,12 @@ public class ContextIndexAggregator extends AbstractIndexAggregator<Map<Long, Co
                 if (contextInfo == null) {
                     contextInfo = entry.getValue();
                 } else {
-                    ContextIndexBuilder.ContextInfo contextInfo1 = entry.getValue();
-                    if (contextInfo1 == null) {
+                    ContextIndexBuilder.ContextInfo inputConextInfo = entry.getValue();
+                    if (inputConextInfo == null) {
 
                     } else {
-                        ContextIndexBuilder.IndexInfo inputBegin = contextInfo1.getBegin();
-                        ContextIndexBuilder.IndexInfo inputEnd = contextInfo1.getEnd();
+                        ContextIndexBuilder.IndexInfo inputBegin = inputConextInfo.getBegin();
+                        ContextIndexBuilder.IndexInfo inputEnd = inputConextInfo.getEnd();
                         if (replaceOldValue) {
                             if (inputBegin != null) {
                                 contextInfo.setBegin(inputBegin);

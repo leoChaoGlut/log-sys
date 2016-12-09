@@ -25,8 +25,8 @@ public class LogAggregator {
     private ContextIndexBuilder.ContextInfo contextInfo;
 
     public static String aggregate(ContextIndexBuilder.ContextInfo contextInfo) {
-        LogAggregator aggregator = new LogAggregator(contextInfo);
         try {
+            LogAggregator aggregator = new LogAggregator(contextInfo);
             return aggregator.aggregate();
         } catch (Exception e) {
             e.printStackTrace();
@@ -34,11 +34,15 @@ public class LogAggregator {
         }
     }
 
-    protected LogAggregator(ContextIndexBuilder.ContextInfo contextInfo) {
+    protected LogAggregator(ContextIndexBuilder.ContextInfo contextInfo) throws Exception {
         this.contextInfo = contextInfo;
 
         ContextIndexBuilder.IndexInfo begin = contextInfo.getBegin();
         ContextIndexBuilder.IndexInfo end = contextInfo.getEnd();
+
+        if (begin == null || end == null) {
+            throw new Exception("日志聚合器无法聚合残缺的上下文.");
+        }
 
         this.beginIndex = begin.getIndexOfLogFile();
         this.endIndex = end.getIndexOfLogFile();
