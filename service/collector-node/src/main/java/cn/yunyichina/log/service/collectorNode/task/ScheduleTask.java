@@ -10,6 +10,7 @@ import cn.yunyichina.log.component.index.builder.imp.KeywordIndexBuilder;
 import cn.yunyichina.log.component.index.scanner.imp.LogFileScanner;
 import cn.yunyichina.log.service.collectorNode.constants.Config;
 import cn.yunyichina.log.service.collectorNode.constants.Key;
+import cn.yunyichina.log.service.collectorNode.service.ScheduleService;
 import cn.yunyichina.log.service.collectorNode.util.PropertiesUtil;
 import com.alibaba.fastjson.JSON;
 import com.google.common.io.Files;
@@ -51,6 +52,9 @@ public class ScheduleTask {
 
     @Autowired
     private PropertiesUtil propUtil;
+
+    @Autowired
+    private ScheduleService scheduleService;
 
     @Scheduled(cron = "${cron}")
     public void execute() {
@@ -97,6 +101,9 @@ public class ScheduleTask {
 
     private void buildIndexAndFlushToDisk(Set<File> fileSet) throws IOException {
         Map<Long, ContextIndexBuilder.ContextInfo> contextInfoMap = buildContextIndexByFiles(fileSet);
+
+        scheduleService.recordLastestContextCount(contextInfoMap);
+
         Map<String, Set<KeywordIndexBuilder.IndexInfo>> keywordIndexMap = buildKeywordIndexByFiles(fileSet);
         Map<String, Map<String, Set<KeyValueIndexBuilder.IndexInfo>>> keyValueIndexMap = buildKeyValueIndexByFiles(fileSet);
 
@@ -112,6 +119,7 @@ public class ScheduleTask {
         indexPersistence(keyValueIndexFile, keyValueIndexMap);
         fileSet.add(keyValueIndexFile);
     }
+
 
     private boolean uploadFiles(Set<File> fileSet) throws Exception {
         String zipFilePath = config.getTmpZipDir() + File.separator + Key.ZIP_FILE_NAME;
@@ -202,5 +210,6 @@ public class ScheduleTask {
             }
         }
     }
+
 
 }

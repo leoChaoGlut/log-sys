@@ -3,6 +3,7 @@ package cn.yunyichina.log.service.collectorNode;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
@@ -16,6 +17,7 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 @SpringBootApplication(scanBasePackages = "cn.yunyichina.log.service.collectorNode")
 @EnableEurekaClient
 @EnableScheduling
+@EnableAsync
 public class Application {
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);

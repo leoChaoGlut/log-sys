@@ -30,6 +30,11 @@ public class PropertiesUtil {
     @Value("${path.properties}")
     private String propertiesPath;
 
+    //不允许直接new,只能通过spring来使用,保证properties安全.
+    private PropertiesUtil() {
+
+    }
+
     @PostConstruct
     public void init() throws Exception {
         File propertiesFile = new File(propertiesPath);

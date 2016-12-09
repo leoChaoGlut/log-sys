@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
@@ -22,6 +23,8 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 public class LoggerWrapper {
     private static final AtomicLong counter = new AtomicLong();
+    private static final AtomicBoolean counterHasInit = new AtomicBoolean(false);
+
     private static final ConcurrentHashMap<String, Long> countMap = new ConcurrentHashMap<>(128);
     private Logger logger;
     private final int STACK_INDEX = 2;
@@ -73,6 +76,15 @@ public class LoggerWrapper {
      */
     public static Long getCount(String threadName) {
         return countMap.get(threadName);
+    }
+
+    public static void initCounter(long count) {
+        if (counterHasInit.get()) {
+
+        } else {
+            counter.set(count);
+            counterHasInit.set(true);
+        }
     }
 
     public static AtomicLong getCounter() {
