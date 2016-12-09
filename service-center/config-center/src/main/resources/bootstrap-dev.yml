@@ -8,10 +8,10 @@ spring:
 eureka:
   client:
     service-url:
-      defaultZone: http://192.168.75.129:10100/eureka/
+      defaultZone: http://127.0.0.1:10100/eureka/
   instance:
     prefer-ip-address: true
-    ip-address: 192.168.75.129
+    ip-address: 127.0.0.1
     instance-id: ${random.value}
 server:
   port: 10200

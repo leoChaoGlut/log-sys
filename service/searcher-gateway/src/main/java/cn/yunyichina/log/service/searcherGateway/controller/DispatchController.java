@@ -34,12 +34,14 @@ public class DispatchController {
     @PostMapping("dispatch")
     public Response dispatch(@RequestBody String jsonParam) {
         try {
-            logger.info("搜索网关接收到请求:" + jsonParam);
+            logger.contextBegin("搜索网关接收到请求:" + jsonParam);
             SearchCondition condition = JSON.parseObject(jsonParam, SearchCondition.class);
             Response response = dispatchService.dispatch(condition);
+            logger.contextEnd("搜索网关正常返回:" + JSON.toJSONString(response.getResult(), true));
             return response;
         } catch (Exception e) {
             logger.error(e.getLocalizedMessage(), e);
+            logger.contextEnd("搜索网关返回,但是出现异常:" + e.getLocalizedMessage());
             return Response.failure(e.getLocalizedMessage());
         }
     }

@@ -1,9 +1,9 @@
 eureka:
   instance:
-    ip-address: 127.0.0.1
+    ip-address: 120.76.230.134
     prefer-ip-address: true
 #    hostname: localhost
 server:
   port: 10100
 logging:
-  config: classpath:logback.xml
+  config: classpath:logback/logback.xml
