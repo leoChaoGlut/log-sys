@@ -26,7 +26,7 @@ import java.util.List;
 @RestController
 public class DispatchController {
 
-    final LoggerWrapper logger = LoggerWrapper.newInstance(DispatchController.class);
+    final LoggerWrapper logger = LoggerWrapper.getLogger(DispatchController.class);
 
     @Autowired
     DispatchService dispatchService;

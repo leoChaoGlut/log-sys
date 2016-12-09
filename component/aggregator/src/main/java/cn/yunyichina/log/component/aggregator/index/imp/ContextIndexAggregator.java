@@ -40,21 +40,26 @@ public class ContextIndexAggregator extends AbstractIndexAggregator<Map<Long, Co
                 if (contextInfo == null) {
                     contextInfo = entry.getValue();
                 } else {
-                    ContextIndexBuilder.IndexInfo inputBegin = entry.getValue().getBegin();
-                    ContextIndexBuilder.IndexInfo inputEnd = entry.getValue().getEnd();
-                    if (replaceOldValue) {
-                        if (inputBegin != null) {
-                            contextInfo.setBegin(inputBegin);
-                        }
-                        if (inputEnd != null) {
-                            contextInfo.setEnd(inputEnd);
-                        }
+                    ContextIndexBuilder.ContextInfo contextInfo1 = entry.getValue();
+                    if (contextInfo1 == null) {
+
                     } else {
-                        if (contextInfo.getBegin() == null) {
-                            contextInfo.setBegin(inputBegin);
-                        }
-                        if (contextInfo.getEnd() == null) {
-                            contextInfo.setEnd(inputEnd);
+                        ContextIndexBuilder.IndexInfo inputBegin = contextInfo1.getBegin();
+                        ContextIndexBuilder.IndexInfo inputEnd = contextInfo1.getEnd();
+                        if (replaceOldValue) {
+                            if (inputBegin != null) {
+                                contextInfo.setBegin(inputBegin);
+                            }
+                            if (inputEnd != null) {
+                                contextInfo.setEnd(inputEnd);
+                            }
+                        } else {
+                            if (contextInfo.getBegin() == null) {
+                                contextInfo.setBegin(inputBegin);
+                            }
+                            if (contextInfo.getEnd() == null) {
+                                contextInfo.setEnd(inputEnd);
+                            }
                         }
                     }
                 }

@@ -37,6 +37,7 @@ public class KeyValueSearchEngine extends AbstractSearchEngine implements Search
     public Set<ContextIndexBuilder.ContextInfo> search() throws Exception {
         Map<String, Set<KeyValueIndexBuilder.IndexInfo>> valueIndex = keyValueIndexMap.get(searchCondition.getKey());
         Set<KeyValueIndexBuilder.IndexInfo> indexInfoSet = null;
+
         if (fuzzySearch) {
             Set<String> valueSet = valueIndex.keySet();
             if (CollectionUtils.isEmpty(valueSet)) {
@@ -56,6 +57,7 @@ public class KeyValueSearchEngine extends AbstractSearchEngine implements Search
                 indexInfoSet = valueIndex.get(searchCondition.getValue());
             }
         }
+
         if (CollectionUtils.isEmpty(indexInfoSet)) {
 
         } else {
