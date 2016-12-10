@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 
-#@Author: Leo
-#@Blog: http://blog.csdn.net/lc0817
-#@CreateTime: 2016/12/10 15:07
-#@Description:
+#Author: Leo
+#Blog: http://blog.csdn.net/lc0817
+#CreateTime: 2016/12/10 15:07
+#Description:
 
 source /etc/profile
 
@@ -35,7 +35,7 @@ stop(){
     echo "$logOutputFormat Ready to stop $tag."
     runningJarCount=$(ps -ef | grep java | grep -w $tag | wc -l)
     if [ $runningJarCount -gt 0 ]; then
-        ps -ef | grep java | grep -w $tag | grep -v grep | awk "{print $2}" | xargs -n1 kill -9
+        ps -ef|grep java|grep -w $tag|grep -v grep|awk '{print $2}' |xargs -n1 kill -9
     fi
     echo "$logOutputFormat $tag was stopped."
 }
