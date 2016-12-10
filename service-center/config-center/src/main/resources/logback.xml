@@ -4,7 +4,7 @@
 <!--@Blog: http://blog.csdn.net/lc0817-->
 <configuration>
 
-    <property name="log.path" value="./log/serviceCenter/configCenter"></property>
+    <property name="log.path" value="./log"></property>
     <property name="log.context" value="serviceCenter.configCenter"></property>
 
     <!-- 设置上下文名称后,可以方便地区分来自不同应用程序的记录 -->

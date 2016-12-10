@@ -4,7 +4,7 @@
 <!--@Blog: http://blog.csdn.net/lc0817-->
 <configuration>
 
-    <property name="log.path" value="./log/serviceCenter/registry"></property>
+    <property name="log.path" value="./log"></property>
     <property name="log.context" value="serviceCenter.registry"></property>
 
     <!-- 设置上下文名称后,可以方便地区分来自不同应用程序的记录 -->
@@ -15,15 +15,6 @@
             <pattern>[%d{yyyy-MM-dd HH:mm:ss}][%-5level][%thread][%class.%method:%line]:%m%n</pattern>
         </encoder>
     </appender>
-
-    <!--<appender name="ALL" class="ch.qos.logback.core.rolling.RollingFileAppender">-->
-    <!--<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">-->
-    <!--<fileNamePattern>${log.path}/%d{yyyy/MM/dd/HH/mm, aux}/%d{yyyyMMddHHmm}.log</fileNamePattern>-->
-    <!--</rollingPolicy>-->
-    <!--<encoder>-->
-    <!--<pattern>[%d{yyyy-MM-dd HH:mm:ss}][%-5level][%thread][%class.%method:%line]:%m%n</pattern>-->
-    <!--</encoder>-->
-    <!--</appender>-->
 
     <appender name="ALL" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">

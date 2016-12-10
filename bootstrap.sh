@@ -8,8 +8,9 @@
 source /etc/profile
 
 #================Var Begin====================
-serviceDir="/data/log-sys/service-center"
+serviceDir="/data/log-sys/service-center/registry"
 jarName="registry.jar"
+mainClass="cn.yunyichina.log.serviceCenter.registry.Application"
 tag="log-serviceCenter-registry"
 libDir="$serviceDir/lib"
 consoleOutput="$serviceDir/console.out"
@@ -26,7 +27,7 @@ start(){
         echo "$logOutputFormat $tag is running."
     else
         cp /dev/null $consoleOutput
-        (nohup $JAVA_HOME/bin/java $jvmParam -Dir=$tag cn.yunyichina.log.serviceCenter.registry.Application &) &>$consoleOutput
+        (nohup $JAVA_HOME/bin/java $jvmParam -Dir=$tag $mainClass &) &>$consoleOutput
         echo "$logOutputFormat Ready to start $tag, if u wanna see the bootstrap process of $tag, please tail the console.out."
     fi
 }
