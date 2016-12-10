@@ -12,12 +12,24 @@
     <groupId>cn.yunyichina.log.service.center</groupId>
     <artifactId>registry</artifactId>
 
+    <build>
+        <finalName>${project.artifactId}</finalName>
+        <resources>
+            <resource>
+                <filtering>false</filtering>
+                <directory>/src/main/resources</directory>
+                <excludes>
+                    <exclude>**/*.*</exclude>
+                </excludes>
+            </resource>
+        </resources>
+    </build>
+
     <dependencies>
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-eureka-server</artifactId>
         </dependency>
     </dependencies>
-
 
 </project>
