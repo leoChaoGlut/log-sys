@@ -1,10 +1,10 @@
 package cn.yunyichina.log.service.searcherNode.service;
 
+import cn.yunyichina.log.common.constant.IndexType;
 import cn.yunyichina.log.common.util.ZipUtil;
 import cn.yunyichina.log.component.index.builder.imp.ContextIndexBuilder;
 import cn.yunyichina.log.component.index.builder.imp.KeyValueIndexBuilder;
 import cn.yunyichina.log.component.index.builder.imp.KeywordIndexBuilder;
-import cn.yunyichina.log.service.searcherNode.constant.IndexType;
 import cn.yunyichina.log.service.searcherNode.util.IndexManager;
 import com.google.common.base.Objects;
 import com.google.common.io.Files;

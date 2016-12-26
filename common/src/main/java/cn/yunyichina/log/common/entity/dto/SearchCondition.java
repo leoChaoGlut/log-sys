@@ -21,10 +21,12 @@ public class SearchCondition {
     private Date beginDateTime;
     @JSONField(format = "yyyy-MM-dd HH:mm")
     private Date endDateTime;
+    private String noIndexKeyword;
     private String keyword;
     private String key;
     private String value;
 
+    //Not been used yet
     private String threadName;
     private String className;
     private String methodName;
@@ -141,4 +143,15 @@ public class SearchCondition {
         this.collector = collector;
         return this;
     }
+
+    public String getNoIndexKeyword() {
+        return noIndexKeyword;
+    }
+
+    public SearchCondition setNoIndexKeyword(String noIndexKeyword) {
+        this.noIndexKeyword = noIndexKeyword;
+        return this;
+    }
+
+
 }

@@ -8,14 +8,17 @@
 source /etc/profile
 
 #================Var Begin====================
-serviceDir="/data/log-sys/service-center/registry"
-jarName="registry.jar"
-mainClass="cn.yunyichina.log.serviceCenter.registry.Application"
-tag="log-serviceCenter-registry"
-libDir="$serviceDir/lib"
+serviceGroup=$1
+serviceName=$2
+serviceRootDir="/data/logSystem"
+serviceDir="$serviceRootDir/$serviceGroup/$serviceName/"
+jarName="$serviceName.jar"
+mainClass="cn.yunyichina.log.$serviceGroup.$serviceName.Application"
+tag="log-$serviceGroup-$serviceName"
+commonLibDir="$serviceRootDir/commonLib"
 consoleOutput="$serviceDir/console.out"
 logOutputFormat=$(date +%b" "%d" "%H:%M:%S" "`hostname`)
-jvmParam="-Xmx2048M -Xms2048M -XX:PermSize=512M -XX:MaxPermSize=512M"
+jvmParam="-Xmx2048M -XX:PermSize=512M -XX:MaxPermSize=512M"
 #================Var End====================
 
 
@@ -48,7 +51,7 @@ if [ ! -f $serviceDir/$jarName ]; then
     exit
 fi
 
-for lib in $libDir/*.jar
+for lib in $commonLibDir/*.jar
 do
     libs=$lib:$libs
 done

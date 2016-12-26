@@ -8,6 +8,8 @@
             *
         FROM
             store_record
+        WHERE
+        collector_id = #{collector_id}
         ORDER BY
             create_time DESC
         LIMIT 1

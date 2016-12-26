@@ -5,7 +5,7 @@
 <configuration>
 
     <property name="log.path" value="./log"></property>
-    <property name="log.context" value="serviceCenter.configCenter"></property>
+    <property name="log.context" value="service.searcherGateway"></property>
 
     <!-- 设置上下文名称后,可以方便地区分来自不同应用程序的记录 -->
     <contextName>${log.context}</contextName>
@@ -32,6 +32,10 @@
     <!--如果在生产环境,则要把root中的appender注释掉.否则会打印到控制台 ,debug时可以打开.-->
     <logger name="cn.yunyichina.log" level="INFO">
         <appender-ref ref="ALL"/>
+        <!--<appender-ref ref="STDOUT"/>-->
+    </logger>
+
+    <logger name="cn.yunyichina.log.service.searcherGateway.mapper" level="DEBUG">
         <appender-ref ref="STDOUT"/>
     </logger>
 

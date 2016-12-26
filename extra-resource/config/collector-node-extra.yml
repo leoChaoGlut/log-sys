@@ -3,11 +3,14 @@ fixedRate: 300000
 dir:
   logRoot: D:${file.separator}logRoot
   tmpZip: D:${file.separator}tmpZip
-cache:
-  path: D:${file.separator}tmp${file.separator}cache.cache
 url:
   uploadServer: http://192.168.1.150:10300/searcher-node/file/upload
 path:
   properties: D:${file.separator}1.properties
 server:
   port: 10600
+eureka:
+  instance:
+    ip-address: 127.0.0.1
+    prefer-ip-address: true
+    instance-id: ${random.value}

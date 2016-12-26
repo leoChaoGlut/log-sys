@@ -13,8 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.IOException;
-
 /**
  * @Author: Leo
  * @Blog: http://blog.csdn.net/lc0817
@@ -29,24 +27,25 @@ public class DispatchService {
     StoreRecordMapper storeRecordMapper;
 
     @Transactional(readOnly = true)
-    public Response dispatch(SearchCondition condition) throws IOException {
+    public Response dispatch(SearchCondition condition) throws Exception {
         StoreRecord storeRecordParam = new StoreRecord();
         storeRecordParam.setCollector_id(condition.getCollector().getId());
+        StoreRecord storeRecordResult = storeRecordMapper.selectOne(storeRecordParam);
+        if (null == storeRecordResult) {
+            throw new Exception("无存储节点信息:" + JSON.toJSONString(condition, true));
+        } else {
+            String outerIp = storeRecordResult.getOuter_ip();
+            Integer outerPort = storeRecordResult.getOuter_port();
+            String url = "http://" + outerIp + ":" + outerPort + "/search/history";
 
-        StoreRecord storeRecord = storeRecordMapper.selectOne(storeRecordParam);
+            Content content = Request.Post(url)
+                    .bodyString(JSON.toJSONString(condition), ContentType.APPLICATION_JSON)
+                    .execute()
+                    .returnContent();
 
-        String outerIp = storeRecord.getOuter_ip();
-        Integer outerPort = storeRecord.getOuter_port();
-
-        String url = "http://" + outerIp + ":" + outerPort + "/search/history";
-
-        Content content = Request.Post(url)
-                .bodyString(JSON.toJSONString(condition), ContentType.APPLICATION_JSON)
-                .execute()
-                .returnContent();
-
-        String respJson = content.asString(Charsets.UTF_8);
-        return JSON.parseObject(respJson, Response.class);
+            String respJson = content.asString(Charsets.UTF_8);
+            return JSON.parseObject(respJson, Response.class);
+        }
     }
 
 }

@@ -6,4 +6,4 @@ eureka:
 server:
   port: 10100
 logging:
-  config: classpath:logback.xml
+  config: classpath:logback/logback-dev.xml

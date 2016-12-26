@@ -1,5 +1,6 @@
 package cn.yunyichina.log.service.collectorNode.service;
 
+import cn.yunyichina.log.common.constant.SearchEngineType;
 import cn.yunyichina.log.common.entity.dto.SearchCondition;
 import cn.yunyichina.log.component.aggregator.log.LogAggregator;
 import cn.yunyichina.log.component.index.builder.imp.ContextIndexBuilder;
@@ -10,7 +11,6 @@ import cn.yunyichina.log.service.collectorNode.constants.Config;
 import cn.yunyichina.log.service.collectorNode.constants.Key;
 import cn.yunyichina.log.service.collectorNode.util.IndexManager;
 import cn.yunyichina.log.service.collectorNode.util.PropertiesUtil;
-import cn.yunyichina.log.service.searcherNode.constant.SearchEngineType;
 import com.alibaba.fastjson.JSON;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
