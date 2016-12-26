@@ -6,7 +6,6 @@ import cn.yunyichina.log.component.aggregator.log.LogAggregator;
 import cn.yunyichina.log.component.index.builder.imp.ContextIndexBuilder;
 import cn.yunyichina.log.component.searchEngine.imp.KeyValueSearchEngine;
 import cn.yunyichina.log.component.searchEngine.imp.KeywordSearchEngine;
-import cn.yunyichina.log.component.searchEngine.imp.NoIndexSearchEngine;
 import cn.yunyichina.log.service.searcherNode.util.IndexManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -37,7 +36,7 @@ public class SearchService {
                 contextInfoSet = new KeyValueSearchEngine(indexManager.getKeyValueIndexMap(), indexManager.getContextIndexMap(), condition).search();
                 break;
             case SearchEngineType.NO_INDEX:
-                new NoIndexSearchEngine().search();
+//                new NoIndexSearchEngine().search();
                 break;
             default:
                 throw new Exception("不支持的搜索引擎类型:" + condition.getSearchEngineType());

@@ -106,6 +106,7 @@ public class NoIndexSearchEngine extends AbstractSearchEngine implements SearchE
 
             for (i = 0; i < blockContent.length(); ) {
                 int position = blockContent.substring(i).indexOf(keyword);
+
                 if (position != -1) {
                     i = i + position + keyword.length();
 //                    System.out.println("============="+i);

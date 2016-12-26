@@ -3,7 +3,8 @@ spring:
     config:
       server:
         git:
-          uri: file:///${user.home}/config-repo
+          uri: file:///D://gitRepo//gitHub//log-sys//extra-resource//config
+#          uri: file:///${user.home}/config-repo
           search-paths: '{application}'
 eureka:
   client:
