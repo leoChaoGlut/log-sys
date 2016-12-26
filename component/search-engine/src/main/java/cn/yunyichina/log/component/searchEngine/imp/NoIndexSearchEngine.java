@@ -88,7 +88,7 @@ public class NoIndexSearchEngine extends AbstractSearchEngine implements SearchE
         @Override
         public Set<KeywordIndexBuilder.IndexInfo> call() throws Exception {
 
-            Set<KeywordIndexBuilder.IndexInfo> indexInfoset = new HashSet<>();
+            Set<KeywordIndexBuilder.IndexInfo> indexInfoSet = new HashSet<>();
 
             int fileSize = logContent.length();
             int block = fileSize / threadNum;
@@ -104,28 +104,39 @@ public class NoIndexSearchEngine extends AbstractSearchEngine implements SearchE
 //                blockContent = logContent.substring(cursor * block, (cursor + 1) * block);
 //            }
 
-            for (i = 0; i < blockContent.length(); ) {
-                int position = blockContent.substring(i).indexOf(keyword);
-                if (position != -1) {
-                    i = i + position + keyword.length();
-//                    System.out.println("============="+i);
-
-                    int contextTagBegin = i + blockContent.substring(i).indexOf(Tag.ROW_END) + Tag.ROW_END.length();
-                    int contextTagEnd = i + blockContent.substring(i).indexOf(Tag.CONTEXT_COUNT_END);
-//                    System.out.println(contextTagBegin+"---"+contextTagEnd);
-
-                    String contextCount = blockContent.substring(contextTagBegin, contextTagEnd);
-
-//                    System.out.println("--->>>>>>>>>"+contextCount);
-                    KeywordIndexBuilder.IndexInfo indexInfo = new KeywordIndexBuilder.IndexInfo();
-                    indexInfo.setLogFile(file);
-                    indexInfo.setContextCount(Long.valueOf(contextCount));
-                    indexInfoset.add(indexInfo);
-                } else {
-                    break;
-                }
+            int keywordTagIndex = 0;
+            while (0 <= (keywordTagIndex = logContent.indexOf(keyword, keywordTagIndex))) {
+                int rowEndTagIndex = logContent.indexOf(Tag.ROW_END, keywordTagIndex + keyword.length());
+                int contextCountBeginTagIndex = rowEndTagIndex + Tag.ROW_END.length();
+                int contextCountEndTagIndex = logContent.indexOf(Tag.CONTEXT_COUNT_END, contextCountBeginTagIndex);
+                String count = logContent.substring(contextCountBeginTagIndex, contextCountEndTagIndex);
+                KeywordIndexBuilder.IndexInfo indexInfo = new KeywordIndexBuilder.IndexInfo(file, keywordTagIndex, Long.valueOf(count));
+                keywordTagIndex = contextCountEndTagIndex;
+                indexInfoSet.add(indexInfo);
             }
-            return indexInfoset;
+
+//            for (i = 0; i < blockContent.length(); ) {
+//                int position = blockContent.substring(i).indexOf(keyword);
+//                if (position != -1) {
+//                    i = i + position + keyword.length();
+////                    System.out.println("============="+i);
+//
+//                    int contextTagBegin = i + blockContent.substring(i).indexOf(Tag.ROW_END) + Tag.ROW_END.length();
+//                    int contextTagEnd = i + blockContent.substring(i).indexOf(Tag.CONTEXT_COUNT_END);
+////                    System.out.println(contextTagBegin+"---"+contextTagEnd);
+//
+//                    String contextCount = blockContent.substring(contextTagBegin, contextTagEnd);
+//
+////                    System.out.println("--->>>>>>>>>"+contextCount);
+//                    KeywordIndexBuilder.IndexInfo indexInfo = new KeywordIndexBuilder.IndexInfo();
+//                    indexInfo.setLogFile(file);
+//                    indexInfo.setContextCount(Long.valueOf(contextCount));
+//                    indexInfoset.add(indexInfo);
+//                } else {
+//                    break;
+//                }
+//            }
+            return indexInfoSet;
 
         }
     }
