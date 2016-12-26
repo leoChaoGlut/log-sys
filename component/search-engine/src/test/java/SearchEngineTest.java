@@ -9,11 +9,13 @@ import cn.yunyichina.log.component.index.builder.imp.KeywordIndexBuilder;
 import cn.yunyichina.log.component.index.scanner.imp.LogFileScanner;
 import cn.yunyichina.log.component.searchEngine.imp.KeyValueSearchEngine;
 import cn.yunyichina.log.component.searchEngine.imp.KeywordSearchEngine;
+import cn.yunyichina.log.component.searchEngine.imp.NoIndexSearchEngine;
 import com.alibaba.fastjson.JSON;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.File;
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.HashSet;
@@ -135,5 +137,26 @@ public class SearchEngineTest {
             System.out.println(contextStr);
         }
 
+    }
+
+    @Test
+    public void noIndexSearchEngineTest() {
+
+        LogFileScanner logFileScanner = new LogFileScanner("2016-11-15 14:23", "2016-11-15 14:24", "D:\\tmp");
+        Map<String, File> fileMap = logFileScanner.scan();
+        Collection<File> files = fileMap.values();
+
+        String keyword = "getMZPatient";
+
+        long start = System.nanoTime();
+        NoIndexSearchEngine searchEngine = new NoIndexSearchEngine(files, keyword);
+        try {
+            Set<KeywordIndexBuilder.IndexInfo> indexInfoSet = searchEngine.search();
+            System.out.println(JSON.toJSONString(indexInfoSet, true));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        System.out.println("总共消耗" + BigDecimal.valueOf(System.nanoTime() - start, 9));
     }
 }
