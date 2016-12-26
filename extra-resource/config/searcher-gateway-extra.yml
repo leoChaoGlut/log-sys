@@ -23,3 +23,7 @@ eureka:
     ip-address: 127.0.0.1
     prefer-ip-address: true
     instance-id: ${random.value}
+endpoints:
+  cors:
+    allowed-origins: http://localhost
+    allowed-methods: GET,POST

@@ -21,9 +21,6 @@ public class Config {
     @Value("${dir.tmpZip}")
     private String tmpZipDir;
 
-    @Value("${cache.path}")
-    private String cachePath;
-
     @Value("${fixedRate}")
     private long fixedRate;
 
@@ -40,10 +37,6 @@ public class Config {
 
     public String getTmpZipDir() {
         return tmpZipDir;
-    }
-
-    public String getCachePath() {
-        return cachePath;
     }
 
     public long getFixedRate() {

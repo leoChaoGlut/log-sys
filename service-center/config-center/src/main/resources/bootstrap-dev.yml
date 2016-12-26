@@ -15,3 +15,5 @@ eureka:
     instance-id: ${random.value}
 server:
   port: 10200
+logging:
+  config: classpath:logback/logback-dev.xml

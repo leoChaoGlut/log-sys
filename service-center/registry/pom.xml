@@ -12,17 +12,23 @@
     <groupId>cn.yunyichina.log.service.center</groupId>
     <artifactId>registry</artifactId>
 
+
     <build>
         <finalName>${project.artifactId}</finalName>
-        <resources>
-            <resource>
-                <filtering>false</filtering>
-                <directory>/src/main/resources</directory>
-                <excludes>
-                    <exclude>**/*.*</exclude>
-                </excludes>
-            </resource>
-        </resources>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.0.2</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <mainClass>cn.yunyichina.log.serviceCenter.reverseProxy.Application</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+        </plugins>
     </build>
 
     <dependencies>

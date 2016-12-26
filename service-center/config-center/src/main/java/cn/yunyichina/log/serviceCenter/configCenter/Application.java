@@ -15,7 +15,9 @@ import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 @EnableConfigServer
 @EnableEurekaClient
 public class Application {
-
+    //TODO 加git 密码
+    //TODO 加git 密码
+    //TODO 加git 密码
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
     }

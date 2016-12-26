@@ -1,9 +1,7 @@
 package cn.yunyichina.log.serviceCenter.reverseProxy.filter;
 
-import cn.yunyichina.log.common.util.ThreadPool;
 import com.netflix.zuul.ZuulFilter;
 import com.netflix.zuul.context.RequestContext;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
 import javax.servlet.http.HttpServletRequest;
@@ -22,9 +20,6 @@ public class RouteFilter extends ZuulFilter {
 
     @Value("${task.route.searcher-node}")
     private String searcherNodeRoute;
-
-    @Autowired
-    ThreadPool threadPool;
 
     @Override
     public String filterType() {
