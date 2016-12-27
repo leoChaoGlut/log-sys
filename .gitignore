@@ -3,4 +3,4 @@ yylog/
 .idea/
 */*.iml
 *.iml
-log/
+*.log
