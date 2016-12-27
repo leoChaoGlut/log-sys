@@ -142,17 +142,17 @@ public class SearchEngineTest {
     @Test
     public void noIndexSearchEngineTest() {
 
-        LogFileScanner logFileScanner = new LogFileScanner("2016-11-15 14:23", "2016-11-15 14:23", "D:\\tmp");
+        LogFileScanner logFileScanner = new LogFileScanner("2016-11-15 14:24", "2016-11-15 14:24", "D:\\tmp");
         Map<String, File> fileMap = logFileScanner.scan();
         Collection<File> files = fileMap.values();
 
         String keyword = "getMZPatient";
 
         long start = System.nanoTime();
-        NoIndexSearchEngine searchEngine = new NoIndexSearchEngine(files, keyword);
+        NoIndexSearchEngine searchEngine = new NoIndexSearchEngine(files, contextIndexMap, keyword);
         try {
-            Set<KeywordIndexBuilder.IndexInfo> indexInfoSet = searchEngine.search();
-            System.out.println(JSON.toJSONString(indexInfoSet, true));
+            Set<ContextIndexBuilder.ContextInfo> contextInfoSet = searchEngine.search();
+            System.out.println(JSON.toJSONString(contextInfoSet, true));
         } catch (Exception e) {
             e.printStackTrace();
         }
