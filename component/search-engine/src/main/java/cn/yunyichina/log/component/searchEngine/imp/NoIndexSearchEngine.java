@@ -50,4 +50,5 @@ public class NoIndexSearchEngine extends AbstractSearchEngine implements SearchE
 
         return indexInfoSet;
     }
+
 }

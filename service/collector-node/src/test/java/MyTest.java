@@ -1,3 +1,4 @@
+import cn.yunyichina.log.common.util.ThreadPool;
 import cn.yunyichina.log.component.index.builder.imp.KeyValueIndexBuilder;
 import cn.yunyichina.log.service.collectorNode.constants.Key;
 import cn.yunyichina.log.service.collectorNode.util.PropertiesUtil;
@@ -6,38 +7,77 @@ import org.apache.commons.collections.map.HashedMap;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.util.CollectionUtils;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
+import java.util.*;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 
 /**
  * Created by Jonven on 2016/12/5.
  */
-@Configuration
 @ComponentScan("cn.yunyichina.log.service.collectorNode.util")
 public class MyTest {
 
     @Autowired
     PropertiesUtil propUtil;
 
+    @Autowired
+    ThreadPool threadPool;
+
+
     @Before
-    public void before() {
-        AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext(MyTest.class);
+    public void before() throws ExecutionException, InterruptedException {
+
+
+//
+//        AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext(MyTest.class);
+//        System.out.println("be2222222fore");
+    }
+
+
+    public class TestClass implements Callable<Object> {
+
+        int i;
+
+        public TestClass(int i) {
+            this.i = i;
+        }
+
+        @Override
+        public Object call() throws Exception {
+            return i;
+        }
+    }
+
+    @Test
+    public void test() throws ExecutionException, InterruptedException {
+        List<Future> futureList = new ArrayList<>(10);
+        for (int i = 0; i < 10; i++) {
+            Future<Object> future = threadPool.getThreadPool().submit(new TestClass(i));
+            futureList.add(future);
+        }
+
+        threadPool.getThreadPool().shutdown();
+        ;
+        while (!threadPool.getThreadPool().isTerminated()) {
+        }
+
+        for (int i = 0; i < futureList.size(); i++) {
+            Object returValue = futureList.get(i).get();
+        }
     }
 
     @Test
     public void testCache() throws IOException {
+        System.out.println("======1111111==========");
         Map<String, Object> cacheMap = new HashedMap();
         cacheMap.put("lastModifyTime", "2016-10-29 16:27");
         Set<File> fileSet = new HashSet<>();

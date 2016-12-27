@@ -36,11 +36,17 @@ public class IndexManager {
     private ReentrantReadWriteLock.ReadLock readLock = readWriteLock.readLock();
     private ReentrantReadWriteLock.WriteLock writeLock = readWriteLock.writeLock();
 
-    @Value("${constants.index.rootDir}")
+    @Value("${constants.upload.indexRootDir}")
     private String INDEX_ROOT_DIR;
 
     @PostConstruct
     public void init() {
+//        TODO 第一次启动的时候,初始化
+//        TODO 第一次启动的时候,初始化
+//        TODO 第一次启动的时候,初始化
+
+
+
         appendContextIndex(null);
         appendKeywordIndex(null);
         appendKeyValueIndex(null);
