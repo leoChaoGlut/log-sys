@@ -10,6 +10,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -41,15 +45,13 @@ public class IndexManager {
 
     @PostConstruct
     public void init() {
-//        TODO 第一次启动的时候,初始化
-//        TODO 第一次启动的时候,初始化
-//        TODO 第一次启动的时候,初始化
+        Map<Long, ContextIndexBuilder.ContextInfo> contextInfoMap = readContextIndex(INDEX_ROOT_DIR + File.separator + "context.index");
+        Map<String, Set<KeywordIndexBuilder.IndexInfo>> keywordIndexMap = readKeywordIndex(INDEX_ROOT_DIR + File.separator + "keyword.index");
+        Map<String, Map<String, Set<KeyValueIndexBuilder.IndexInfo>>> keyValueIndexMap = readKeyValueIndex(INDEX_ROOT_DIR + File.separator + "keyValue.index");
 
-
-
-        appendContextIndex(null);
-        appendKeywordIndex(null);
-        appendKeyValueIndex(null);
+        appendContextIndex(contextInfoMap);
+        appendKeywordIndex(keywordIndexMap);
+        appendKeyValueIndex(keyValueIndexMap);
     }
 
 
@@ -138,5 +140,36 @@ public class IndexManager {
         } finally {
             readLock.unlock();
         }
+    }
+
+    private Map<Long, ContextIndexBuilder.ContextInfo> readContextIndex(String indexFilePath) {
+        return (Map<Long, ContextIndexBuilder.ContextInfo>) readObject(indexFilePath);
+    }
+
+    private Map<String, Set<KeywordIndexBuilder.IndexInfo>> readKeywordIndex(String indexFilePath) {
+        return (Map<String, Set<KeywordIndexBuilder.IndexInfo>>) readObject(indexFilePath);
+    }
+
+    private Map<String, Map<String, Set<KeyValueIndexBuilder.IndexInfo>>> readKeyValueIndex(String indexFilePath) {
+        return (Map<String, Map<String, Set<KeyValueIndexBuilder.IndexInfo>>>) readObject(indexFilePath);
+    }
+
+    private Object readObject(String filePath) {
+        ObjectInputStream ois = null;
+        try {
+            ois = new ObjectInputStream(new FileInputStream(filePath));
+            return ois.readObject();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (ois != null) {
+                try {
+                    ois.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return null;
     }
 }
