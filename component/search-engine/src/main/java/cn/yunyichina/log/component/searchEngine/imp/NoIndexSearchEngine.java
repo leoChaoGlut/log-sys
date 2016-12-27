@@ -45,8 +45,6 @@ public class NoIndexSearchEngine extends AbstractSearchEngine implements SearchE
                     keywordTagIndex = contextCountEndTagIndex;
                     indexInfoSet.add(indexInfo);
                 }
-            } else {
-                throw new Exception("日志文件不存在");
             }
         }
 
