@@ -1,36 +1,26 @@
 #!/usr/bin/env bash
-
-#Author: Leo
-#Blog: http://blog.csdn.net/lc0817
-#CreateTime: 2016/12/10 15:07
-#Description:
-
 source /etc/profile
-
 #================Var Begin====================
 serviceGroup=$1
 serviceName=$2
-serviceRootDir="/data/logSystem"
+serviceRootDir="/data/logSys"
 serviceDir="$serviceRootDir/$serviceGroup/$serviceName/"
 jarName="$serviceName.jar"
 mainClass="cn.yunyichina.log.$serviceGroup.$serviceName.Application"
 tag="log-$serviceGroup-$serviceName"
-commonLibDir="$serviceRootDir/commonLib"
-consoleOutput="$serviceDir/console.out"
-logOutputFormat=$(date +%b" "%d" "%H:%M:%S" "`hostname`)
-jvmParam="-Xmx2048M -XX:PermSize=512M -XX:MaxPermSize=512M"
+libDir="$serviceDir/lib"
 #================Var End====================
 
 
 #================Function Begin====================
 start(){
+    echo $serviceDir
     cd $serviceDir
     runningJarCount=$(ps -ef | grep java | grep -w $tag | wc -l)
     if [ $runningJarCount -gt 0 ]; then
         echo "$logOutputFormat $tag is running."
     else
-        cp /dev/null $consoleOutput
-        (nohup $JAVA_HOME/bin/java $jvmParam -Dir=$tag $mainClass &) &>$consoleOutput
+        java -Dir=$tag $mainClass &
         echo "$logOutputFormat Ready to start $tag, if u wanna see the bootstrap process of $tag, please tail the console.out."
     fi
 }
@@ -45,21 +35,18 @@ stop(){
 }
 #================Function End====================
 
-
-if [ ! -f $serviceDir/$jarName ]; then
-    echo "Cannot find $serviceDir/$jarName ."
-    exit
-fi
-
-for lib in $commonLibDir/*.jar
+for lib in $libDir/*.jar
 do
     libs=$lib:$libs
 done
-CLASSPATH=$libs$serviceDir/$jarName
+CLASSPATH=.:
+echo CLASSPATH
 export CLASSPATH
 
+
+echo $1 $2 $3
 #==================Entrance Begin===============
-case "$1" in
+case "$3" in
     start)
         start
         ;;
@@ -72,7 +59,7 @@ case "$1" in
         start
         ;;
     *)
-    echo "Usage: $0 {start|stop|restart}"
+    echo "Usage: $0 {start|stop|restart} "
     exit 2
 esac
 #==================Entrance End===============

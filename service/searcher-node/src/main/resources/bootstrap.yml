@@ -9,3 +9,9 @@ spring:
       discovery:
         serviceId: config-center
         enabled: true
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:10100/eureka/
+logging:
+  config: classpath:logback.xml

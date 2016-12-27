@@ -1,6 +1,0 @@
-eureka:
-  client:
-    serviceUrl:
-      defaultZone: http://localhost:10100/eureka/
-logging:
-  config: classpath:logback/logback-dev.xml

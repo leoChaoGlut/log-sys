@@ -9,3 +9,10 @@ spring:
         serviceId: config-center
   profiles:
     active: dev,extra
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://127.0.0.1:10100/eureka/
+logging:
+  config: classpath:logback.xml
+
