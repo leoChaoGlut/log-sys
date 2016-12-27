@@ -3,6 +3,7 @@ package cn.yunyichina.log.common.entity.dto;
 import cn.yunyichina.log.common.entity.po.Collector;
 import com.alibaba.fastjson.annotation.JSONField;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
@@ -34,6 +35,16 @@ public class SearchCondition {
     private String hospitalLetter;
 
     private Collector collector;
+
+    private final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+
+    public String getBeginDateTimeStr() {
+        return sdf.format(this.beginDateTime);
+    }
+
+    public String getEndDateTimeStr() {
+        return sdf.format(this.endDateTime);
+    }
 
 
     public Date getBeginDateTime() {
@@ -152,6 +163,5 @@ public class SearchCondition {
         this.noIndexKeyword = noIndexKeyword;
         return this;
     }
-
 
 }
