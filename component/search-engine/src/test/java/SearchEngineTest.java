@@ -142,7 +142,7 @@ public class SearchEngineTest {
     @Test
     public void noIndexSearchEngineTest() {
 
-        LogFileScanner logFileScanner = new LogFileScanner("2016-11-15 14:23", "2016-11-15 14:24", "D:\\tmp");
+        LogFileScanner logFileScanner = new LogFileScanner("2016-11-15 14:23", "2016-11-15 14:23", "D:\\tmp");
         Map<String, File> fileMap = logFileScanner.scan();
         Collection<File> files = fileMap.values();
 
