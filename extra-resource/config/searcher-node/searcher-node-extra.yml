@@ -4,10 +4,10 @@ constants:
     indexSuffix: .index
     bakSuffix: .bak
     zipIndex: .zip
-    logRootDir: ${file.separator}tmp${file.separator}uploadLogRoot
-    indexRootDir: ${file.separator}tmp${file.separator}uploadIndexRoot
-  index:
-    rootDir: ${file.separator}tmp${file.separator}indexRoot
+#    logRootDir: ${file.separator}tmp${file.separator}uploadLogRoot
+#    indexRootDir: ${file.separator}tmp${file.separator}uploadIndexRoot
+    logRootDir: D://log//logRootDir
+    indexRootDir: D://log//indexRootDir
 server:
   port: 10500
 eureka:

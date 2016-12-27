@@ -44,6 +44,9 @@ public class IndexManager {
 //        TODO 第一次启动的时候,初始化
 //        TODO 第一次启动的时候,初始化
 //        TODO 第一次启动的时候,初始化
+
+
+
         appendContextIndex(null);
         appendKeywordIndex(null);
         appendKeyValueIndex(null);

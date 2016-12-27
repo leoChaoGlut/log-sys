@@ -27,6 +27,9 @@ public class ApplicationReadyListener implements ApplicationListener<Application
         initCounter();
     }
 
+    /**
+     * 当程序重启的时候,把LoggerWrapper的count恢复为之前的数字,不恢复的话,会是0
+     */
     private void initCounter() {
         String countStr = propUtil.get(Key.CONTEXT_COUNT);
         if (StringUtils.isNotBlank(countStr)) {
