@@ -7,7 +7,7 @@ package cn.yunyichina.log.common.constant;
  * @Description:
  */
 public interface SearchEngineType {
-    int KEYWORD = 1;
-    int KEY_VALUE = 2;
-    int NO_INDEX = 3;
+    int KEYWORD = 0;
+    int KEY_VALUE = 1;
+    int NO_INDEX = 2;
 }
