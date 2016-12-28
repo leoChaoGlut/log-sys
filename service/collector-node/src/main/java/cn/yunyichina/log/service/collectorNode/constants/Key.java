@@ -11,7 +11,7 @@ public interface Key {
     //最近一次上传日志成功的时间
     String LAST_MODIFY_TIME = "lastModifyTime";
     String UPLOAD_FAILED_FILE_LIST = "uploadFailedFileList";
-    String CONTEXT_INFO_INDEX_FILE_NAME = "contextInfo.index";
+    String CONTEXT_INFO_INDEX_FILE_NAME = "context.index";
     String KEYWORD_INDEX_FILE_NAME = "keyword.index";
     String KEY_VALUE_INDEX_FILE_NAME = "keyValue.index";
     String ZIP_FILE_NAME = "zip.zip";
