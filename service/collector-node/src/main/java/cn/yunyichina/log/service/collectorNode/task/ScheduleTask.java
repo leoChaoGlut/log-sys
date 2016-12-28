@@ -45,7 +45,7 @@ import static cn.yunyichina.log.component.index.builder.imp.KeyValueIndexBuilder
 @Service
 public class ScheduleTask {
 
-    private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+    private final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 
     @Autowired
     private Config config;
@@ -60,15 +60,8 @@ public class ScheduleTask {
     public void execute() {
         Set<File> fileSet = null;
         try {
-            String beginDatetime = propUtil.get(Key.LAST_MODIFY_TIME);
             Date now = new Date();
-            String endDatetime = sdf.format(now);
-            if (beginDatetime == null || "".equals(beginDatetime.trim())) {
-                long fixedRateAgo = now.getTime() - config.getFixedRate();
-                beginDatetime = sdf.format(new Date(fixedRateAgo));
-            }
-            LogFileScanner scanner = new LogFileScanner(beginDatetime, endDatetime, config.getLogRootDir());
-            Map<String, File> fileMap = scanner.scan();
+            Map<String, File> fileMap = scanLastestLogFiles(now.getTime());
             if (CollectionUtils.isEmpty(fileMap)) {
 //            没有需要上传的日志文件
             } else {
@@ -86,7 +79,7 @@ public class ScheduleTask {
                 boolean uploadSucceed = uploadFiles(fileSet);
                 if (uploadSucceed) {
                     propUtil.remove(Key.UPLOAD_FAILED_FILE_LIST);
-                    propUtil.put(Key.LAST_MODIFY_TIME, endDatetime);
+                    propUtil.put(Key.LAST_MODIFY_TIME, sdf.format(now));
                 } else {
                     propUtil.put(Key.UPLOAD_FAILED_FILE_LIST, JSON.toJSONString(fileSet));
                 }
@@ -97,6 +90,24 @@ public class ScheduleTask {
             }
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Date传递是的引用,不是传值,所以要传timestamp
+     *
+     * @param currentTimestamp
+     * @return
+     */
+    private Map<String, File> scanLastestLogFiles(long currentTimestamp) {
+        String beginDatetime = propUtil.get(Key.LAST_MODIFY_TIME);
+        String endDatetime = sdf.format(new Date(currentTimestamp));
+        if (beginDatetime == null || "".equals(beginDatetime.trim())) {
+            long fixedRateAgo = currentTimestamp - config.getFixedRate();
+            beginDatetime = sdf.format(new Date(fixedRateAgo));
+        }
+        LogFileScanner scanner = new LogFileScanner(beginDatetime, endDatetime, config.getLogRootDir());
+        Map<String, File> fileMap = scanner.scan();
+        return fileMap;
     }
 
     private void buildIndexAndFlushToDisk(Set<File> fileSet) throws IOException {
