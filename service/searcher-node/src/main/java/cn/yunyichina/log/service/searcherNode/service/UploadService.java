@@ -127,9 +127,9 @@ public class UploadService {
      * @throws IOException
      */
     private void backupAndReplace(String fileName, Object obj) throws IOException {
-        File oldIndexFile = new File(INDEX_ROOT_DIR + fileName + INDEX_SUFFIX);
+        File oldIndexFile = new File(INDEX_ROOT_DIR + File.separator + fileName + INDEX_SUFFIX);
         if (oldIndexFile.exists()) {
-            File bakIndexFile = new File(INDEX_ROOT_DIR + fileName + BAK_SUFFIX);
+            File bakIndexFile = new File(INDEX_ROOT_DIR + File.separator + fileName + BAK_SUFFIX);
             if (bakIndexFile.exists()) {
 
             } else {
