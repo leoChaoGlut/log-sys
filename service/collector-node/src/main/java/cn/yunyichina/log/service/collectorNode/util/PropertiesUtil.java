@@ -40,11 +40,22 @@ public class PropertiesUtil {
         File propertiesFile = new File(propertiesPath);
         if (!propertiesFile.exists()) {
             Files.createParentDirs(propertiesFile);
-            propertiesFile.createNewFile();
+            boolean succeed = propertiesFile.createNewFile();
+            if (succeed) {
+
+            } else {
+                throw new Exception("创建properties文件失败");
+            }
         }
-        FileInputStream fis = new FileInputStream(propertiesFile);
-        prop.load(fis);
-        fis.close();
+        FileInputStream fis = null;
+        try {
+            fis = new FileInputStream(propertiesFile);
+            prop.load(fis);
+        } finally {
+            if (fis != null) {
+                fis.close();
+            }
+        }
     }
 
     public String get(String key) {
@@ -57,7 +68,8 @@ public class PropertiesUtil {
     }
 
     public void put(String key, String value) {
-        readWriteLock.writeLock().lock();
+        ReentrantReadWriteLock.WriteLock writeLock = readWriteLock.writeLock();
+        writeLock.lock();
         FileOutputStream fos = null;
         try {
             prop.setProperty(key, value);
@@ -78,7 +90,8 @@ public class PropertiesUtil {
     }
 
     public void remove(String key) {
-        readWriteLock.writeLock().lock();
+        ReentrantReadWriteLock.WriteLock writeLock = readWriteLock.writeLock();
+        writeLock.lock();
         FileOutputStream fos = null;
         try {
             prop.remove(key);

@@ -48,7 +48,12 @@ public class UploadService {
         byte[] bytes = file.getBytes();
         File dir = new File(UPLOADED_LOG_ROOT_DIR);
         if (!dir.exists()) {
-            dir.mkdirs();
+            boolean succeed = dir.mkdirs();
+            if (succeed) {
+
+            } else {
+                throw new Exception("上传文件时,创建目录失败.");
+            }
         }
         String zipFilePath = dir + File.separator + file.getName() + ZIP_SUFFIX;
         Files.write(bytes, new File(zipFilePath));
@@ -68,7 +73,12 @@ public class UploadService {
                         String oldLogFilePath = buildOldLogFilePath(fileName, fileSuffix);
                         File oldLogFile = new File(oldLogFilePath);
                         if (oldLogFile.exists()) {
-                            uploadedLogFile.delete();
+                            boolean succeed = uploadedLogFile.delete();
+                            if (succeed) {
+
+                            } else {
+                                throw new Exception("恢复日志目录时,替换旧日志文件失败");
+                            }
                         } else {
                             Files.createParentDirs(oldLogFile);
                             Files.move(uploadedLogFile, oldLogFile);
@@ -97,7 +107,12 @@ public class UploadService {
                                     throw new Exception("不支持的索引类型");
                             }
                         } finally {
-                            uploadedLogFile.delete();
+                            boolean succeed = uploadedLogFile.delete();
+                            if (succeed) {
+
+                            } else {
+                                throw new Exception("删除上传的日志文件失败");
+                            }
                             if (ois != null) {
                                 ois.close();
                             }

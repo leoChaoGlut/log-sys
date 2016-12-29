@@ -56,7 +56,12 @@ public class ZipUtil {
                     File file = new File(outputRootDir + File.separator + entryName);
                     if (!file.exists()) {
                         Files.createParentDirs(file);
-                        file.createNewFile();
+                        boolean succeed = file.createNewFile();
+                        if (succeed) {
+
+                        } else {
+                            throw new Exception("解压zip的时候,创建文件失败");
+                        }
                     }
                     Files.write(bytes, file);
                 }

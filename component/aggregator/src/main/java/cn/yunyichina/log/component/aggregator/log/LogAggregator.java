@@ -21,12 +21,8 @@ public class LogAggregator {
     private int beginIndex;
     private int endIndex;
     private List<File> logList;
-    private ContextIndexBuilder.ContextInfo contextInfo;
-    private String baseDir;
 
     protected LogAggregator(ContextIndexBuilder.ContextInfo contextInfo, String baseDir) throws Exception {
-        this.contextInfo = contextInfo;
-        this.baseDir = baseDir;
         ContextIndexBuilder.IndexInfo begin = contextInfo.getBegin();
         ContextIndexBuilder.IndexInfo end = contextInfo.getEnd();
 

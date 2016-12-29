@@ -28,7 +28,6 @@ import org.springframework.util.CollectionUtils;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -55,6 +54,8 @@ public class ScheduleTask {
 
     @Autowired
     private ScheduleService scheduleService;
+
+    private final File[] FILE = new File[0];
 
     @Scheduled(cron = "${cron}")
     public void execute() {
@@ -110,7 +111,7 @@ public class ScheduleTask {
         return fileMap;
     }
 
-    private void buildIndexAndFlushToDisk(Set<File> fileSet) throws IOException {
+    private void buildIndexAndFlushToDisk(Set<File> fileSet) throws Exception {
         Map<Long, ContextIndexBuilder.ContextInfo> contextInfoMap = buildContextIndexByFiles(fileSet);
 
         scheduleService.recordLastestContextCount(contextInfoMap);
@@ -134,7 +135,7 @@ public class ScheduleTask {
 
     private boolean uploadFiles(Set<File> fileSet) throws Exception {
         String zipFilePath = config.getTmpZipDir() + File.separator + Key.ZIP_FILE_NAME;
-        ZipUtil.zip(zipFilePath, fileSet.toArray(new File[0]));
+        ZipUtil.zip(zipFilePath, fileSet.toArray(FILE));
         File zipFile = new File(zipFilePath);
         if (zipFile.exists()) {
             CloseableHttpClient httpClient = HttpClients.createDefault();
@@ -145,7 +146,12 @@ public class ScheduleTask {
             try {
                 response = httpClient.execute(post);
                 if (response.getStatusLine().getStatusCode() == HttpStatus.OK.value()) {
-                    zipFile.delete();
+                    boolean succeed = zipFile.delete();
+                    if (succeed) {
+
+                    } else {
+                        throw new Exception("上传日志文件成功,但删除zip文件失败.");
+                    }
                     return true;
                 } else {
                     return false;
@@ -203,14 +209,19 @@ public class ScheduleTask {
     }
 
 
-    private void indexPersistence(File indexFile, Object indexObj) throws IOException {
+    private void indexPersistence(File indexFile, Object indexObj) throws Exception {
         ObjectOutputStream oos = null;
         try {
             if (indexFile.exists()) {
 
             } else {
                 Files.createParentDirs(indexFile);
-                indexFile.createNewFile();
+                boolean succeed = indexFile.createNewFile();
+                if (succeed) {
+
+                } else {
+                    throw new Exception("持久化索引文件失败");
+                }
             }
             oos = new ObjectOutputStream(new FileOutputStream(indexFile));
             oos.writeObject(indexObj);
