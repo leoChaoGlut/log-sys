@@ -13,6 +13,7 @@ import cn.yunyichina.log.service.collectorNode.util.IndexManager;
 import cn.yunyichina.log.service.collectorNode.util.PropertiesUtil;
 import com.alibaba.fastjson.JSON;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -32,9 +33,10 @@ public class SearchService {
 
     @Autowired
     Config config;
-
     @Autowired
     PropertiesUtil propUtil;
+    @Value("${dir.logRoot}")
+    private String logRootDir;
 
     public List<String> realtime(SearchCondition searchCondition) throws Exception {
         List<String> keywordList = JSON.parseArray(propUtil.get(Key.KEYWORD_SET), String.class);
@@ -69,7 +71,7 @@ public class SearchService {
             } else {
                 List<String> contextList = new ArrayList<>(contextInfoSet.size());
                 for (ContextIndexBuilder.ContextInfo contextInfo : contextInfoSet) {
-                    String contextStr = LogAggregator.aggregate(contextInfo);
+                    String contextStr = LogAggregator.aggregate(contextInfo, logRootDir);
                     contextList.add(contextStr);
                 }
                 return contextList;

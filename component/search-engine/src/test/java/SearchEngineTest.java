@@ -133,7 +133,7 @@ public class SearchEngineTest {
 //        System.out.println(JSON.toJSONString(contextInfoSet, true));
         System.out.println(contextInfoSet.size());
         for (ContextIndexBuilder.ContextInfo contextInfo : contextInfoSet) {
-            String contextStr = LogAggregator.aggregate(contextInfo);
+            String contextStr = LogAggregator.aggregate(contextInfo, "D://tmp");
             System.out.println(contextStr);
         }
 

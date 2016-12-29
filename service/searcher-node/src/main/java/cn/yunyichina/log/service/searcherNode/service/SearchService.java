@@ -8,6 +8,7 @@ import cn.yunyichina.log.component.searchEngine.imp.KeyValueSearchEngine;
 import cn.yunyichina.log.component.searchEngine.imp.KeywordSearchEngine;
 import cn.yunyichina.log.service.searcherNode.util.IndexManager;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -25,6 +26,9 @@ public class SearchService {
 
     @Autowired
     IndexManager indexManager;
+
+    @Value("${constants.upload.logRootDir}")
+    private String UPLOADED_LOG_ROOT_DIR;
 
     public List<String> history(SearchCondition condition) throws Exception {
         Set<ContextIndexBuilder.ContextInfo> contextInfoSet = null;
@@ -46,7 +50,7 @@ public class SearchService {
         } else {
             List<String> contextList = new ArrayList<>(contextInfoSet.size());
             for (ContextIndexBuilder.ContextInfo contextInfo : contextInfoSet) {
-                String contextStr = LogAggregator.aggregate(contextInfo);
+                String contextStr = LogAggregator.aggregate(contextInfo, UPLOADED_LOG_ROOT_DIR);
                 contextList.add(contextStr);
             }
             return contextList;
