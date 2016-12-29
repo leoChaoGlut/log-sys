@@ -39,6 +39,8 @@ public class DispatchService {
             String url = "http://" + outerIp + ":" + outerPort + "/search/history";
 
             Content content = Request.Post(url)
+                    .connectTimeout(7000)
+                    .socketTimeout(7000)
                     .bodyString(JSON.toJSONString(condition), ContentType.APPLICATION_JSON)
                     .execute()
                     .returnContent();
