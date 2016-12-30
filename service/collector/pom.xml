@@ -5,35 +5,44 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>cn.yunyichina.log.service</groupId>
-    <artifactId>service</artifactId>
-    <packaging>pom</packaging>
+    <artifactId>collector</artifactId>
     <version>1.0-SNAPSHOT</version>
-
-    <modules>
-        <module>collector</module>
-        <module>searcherGateway</module>
-        <module>searcher</module>
-        <module>frontEnd</module>
-    </modules>
 
     <properties>
         <java.version>1.7</java.version>
     </properties>
+
+    <build>
+        <finalName>${project.artifactId}</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <classpathPrefix>lib/</classpathPrefix>
+                            <mainClass>${groupId}.${artifactId}.Application</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>1.4.0.RELEASE</version>
+    </parent>
 
     <dependencyManagement>
         <dependencies>
             <dependency>
                 <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-dependencies</artifactId>
-                <version>Camden.SR2</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <dependency>
-                <!-- Import dependency management from Spring Boot -->
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-dependencies</artifactId>
-                <version>1.4.0.RELEASE</version>
+                <version>Camden.SR3</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -41,15 +50,6 @@
     </dependencyManagement>
 
     <dependencies>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-actuator</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-devtools</artifactId>
-            <optional>true</optional>
-        </dependency>
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-config</artifactId>
@@ -64,14 +64,22 @@
             <version>1.0-SNAPSHOT</version>
         </dependency>
         <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
-            <version>4.5.2</version>
+            <groupId>cn.yunyichina.log.component</groupId>
+            <artifactId>aggregator</artifactId>
+            <version>1.0-SNAPSHOT</version>
         </dependency>
         <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>fluent-hc</artifactId>
-            <version>4.5.2</version>
+            <groupId>cn.yunyichina.log.component</groupId>
+            <artifactId>searchEngine</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-devtools</artifactId>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
@@ -80,5 +88,6 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
 
 </project>
