@@ -9,6 +9,7 @@ import java.util.Date;
 public class Collector {
     private Integer id;
     private String name;
+    private Integer group_id;
     private Date create_time;
     private String service_name;
 
@@ -45,6 +46,15 @@ public class Collector {
 
     public Collector setService_name(String service_name) {
         this.service_name = service_name;
+        return this;
+    }
+
+    public Integer getGroup_id() {
+        return group_id;
+    }
+
+    public Collector setGroup_id(Integer group_id) {
+        this.group_id = group_id;
         return this;
     }
 }
