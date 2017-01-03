@@ -1,13 +1,11 @@
 package cn.yunyichina.log.service.frontEnd.service;
 
-import cn.yunyichina.log.service.frontEnd.entity.dto.SearchOption;
-import cn.yunyichina.log.service.frontEnd.util.JedisManager;
+import cn.yunyichina.log.service.frontEnd.entity.do_.option.GroupDo;
+import cn.yunyichina.log.service.frontEnd.repository.GroupRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
-import redis.clients.jedis.Jedis;
 
-import java.util.Set;
+import java.util.List;
 
 /**
  * @Author: Leo
@@ -18,32 +16,22 @@ import java.util.Set;
 @Service
 public class FrontEndService {
 
-    @Autowired
-    JedisManager jedisManager;
-
-    public SearchOption getOption() {
+    public List<GroupDo> getOption() {
 //        getOptionFromCache();
         getOptionFromDB();
         return null;
     }
 
-    private SearchOption getOptionFromCache() {
-        try (
-                Jedis jedis = jedisManager.getInstance();
-        ) {
-            Set<String> collectorSet = jedis.smembers("all_collectors");
-            if (CollectionUtils.isEmpty(collectorSet)) {
 
-            } else {
-                for (String colelctorName : collectorSet) {
-
-                }
-            }
-        }
+    private List<GroupDo> getOptionFromCache() {
         return null;
     }
 
-    private SearchOption getOptionFromDB() {
-        return null;
+    @Autowired
+    GroupRepository groupRepository;
+
+    private List<GroupDo> getOptionFromDB() {
+        List<GroupDo> groupList = groupRepository.findAll();
+        return groupList;
     }
 }

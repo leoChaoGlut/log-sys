@@ -14,6 +14,7 @@
         <module>searcherGateway</module>
         <module>searcher</module>
         <module>frontEnd</module>
+        <module>api</module>
     </modules>
 
     <properties>

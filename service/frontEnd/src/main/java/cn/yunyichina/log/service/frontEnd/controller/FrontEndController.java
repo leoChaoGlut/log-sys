@@ -2,13 +2,15 @@ package cn.yunyichina.log.service.frontEnd.controller;
 
 import cn.yunyichina.log.common.entity.dto.Response;
 import cn.yunyichina.log.common.log.LoggerWrapper;
-import cn.yunyichina.log.service.frontEnd.entity.User;
-import cn.yunyichina.log.service.frontEnd.repository.UserRepository;
+import cn.yunyichina.log.service.frontEnd.entity.do_.option.GroupDo;
+import cn.yunyichina.log.service.frontEnd.repository.GroupRepository;
 import cn.yunyichina.log.service.frontEnd.service.FrontEndService;
 import com.alibaba.fastjson.JSON;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 /**
  * @Author: Leo
@@ -38,12 +40,14 @@ public class FrontEndController {
     }
 
     @Autowired
-    UserRepository userRepository;
+    GroupRepository groupRepository;
 
     @GetMapping("test")
     public Response test() {
-        User user = userRepository.save(new User().setName("aaa").setAge(11));
-        System.out.println(JSON.toJSONString(user, true));
+        List<GroupDo> groupDoList = groupRepository.findAll();
+        System.out.println(JSON.toJSONString(groupDoList, true));
+        System.out.println(null == groupDoList);
         return null;
     }
+
 }
