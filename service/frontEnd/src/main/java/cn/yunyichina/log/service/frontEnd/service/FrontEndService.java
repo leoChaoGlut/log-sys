@@ -1,12 +1,13 @@
 package cn.yunyichina.log.service.frontEnd.service;
 
-import cn.yunyichina.log.service.frontEnd.entity.dto.Option;
-import cn.yunyichina.log.service.frontEnd.mapper.CollectorMapper;
-import cn.yunyichina.log.service.frontEnd.mapper.KeywordeIndexMapper;
-import cn.yunyichina.log.service.frontEnd.mapper.KvIndexMapper;
+import cn.yunyichina.log.service.frontEnd.entity.dto.SearchOption;
 import cn.yunyichina.log.service.frontEnd.util.JedisManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
+import redis.clients.jedis.Jedis;
+
+import java.util.Set;
 
 /**
  * @Author: Leo
@@ -18,24 +19,31 @@ import org.springframework.stereotype.Service;
 public class FrontEndService {
 
     @Autowired
-    CollectorMapper collectorMapper;
-
-    @Autowired
-    KeywordeIndexMapper keywordeIndexMapper;
-
-    @Autowired
-    KvIndexMapper kvIndexMapper;
-
-    @Autowired
     JedisManager jedisManager;
 
-    public Option getOption() {
-//        try (
-////                Jedis jedis = jedisManager.getInstance();
-//        ) {
-////            jedis.lpush()
-//        }
+    public SearchOption getOption() {
+//        getOptionFromCache();
+        getOptionFromDB();
         return null;
     }
 
+    private SearchOption getOptionFromCache() {
+        try (
+                Jedis jedis = jedisManager.getInstance();
+        ) {
+            Set<String> collectorSet = jedis.smembers("all_collectors");
+            if (CollectionUtils.isEmpty(collectorSet)) {
+
+            } else {
+                for (String colelctorName : collectorSet) {
+
+                }
+            }
+        }
+        return null;
+    }
+
+    private SearchOption getOptionFromDB() {
+        return null;
+    }
 }

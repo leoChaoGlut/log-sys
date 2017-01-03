@@ -8,7 +8,7 @@ spring:
         enabled: true
         serviceId: config-center
   profiles:
-    active: dev,extra
+    active: default,extra
 eureka:
   client:
     serviceUrl:

@@ -1,9 +1,9 @@
 package cn.yunyichina.log.service.frontEnd;
 
-import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
+import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 /**
@@ -14,8 +14,9 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
  */
 @EnableWebMvc
 @SpringBootApplication(scanBasePackages = "cn.yunyichina.log.service.frontEnd")
-@MapperScan(basePackages = "cn.yunyichina.log.service.frontEnd.mapper")
+//@MapperScan(basePackages = "cn.yunyichina.log.service.frontEnd.mapper")
 @EnableEurekaClient
+@EnableMongoRepositories(basePackages = "cn.yunyichina.log.service.frontEnd.repository")
 public class Application {
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);

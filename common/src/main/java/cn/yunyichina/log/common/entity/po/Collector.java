@@ -1,6 +1,7 @@
 package cn.yunyichina.log.common.entity.po;
 
 import java.util.Date;
+import java.util.Objects;
 
 /**
  * @Author: Leo
@@ -56,5 +57,18 @@ public class Collector {
     public Collector setGroup_id(Integer group_id) {
         this.group_id = group_id;
         return this;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Collector collector = (Collector) o;
+        return Objects.equals(id, collector.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }
