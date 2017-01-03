@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: api
+  cloud:
+    config:
+      enabled: true
+      discovery:
+        enabled: true
+        serviceId: config-center
+  profiles:
+    active: default,extra
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://127.0.0.1:10100/eureka/
+logging:
+  config: classpath:logback.xml
