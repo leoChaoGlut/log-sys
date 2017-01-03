@@ -3,10 +3,10 @@ package cn.yunyichina.log.service.frontEnd.controller;
 import cn.yunyichina.log.common.entity.dto.Response;
 import cn.yunyichina.log.common.log.LoggerWrapper;
 import cn.yunyichina.log.service.frontEnd.entity.do_.option.GroupDo;
-import cn.yunyichina.log.service.frontEnd.repository.GroupRepository;
 import cn.yunyichina.log.service.frontEnd.service.FrontEndService;
 import com.alibaba.fastjson.JSON;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -39,14 +39,11 @@ public class FrontEndController {
         }
     }
 
-    @Autowired
-    GroupRepository groupRepository;
-
+    @CachePut
     @GetMapping("test")
     public Response test() {
-        List<GroupDo> groupDoList = groupRepository.findAll();
-        System.out.println(JSON.toJSONString(groupDoList, true));
-        System.out.println(null == groupDoList);
+        List<GroupDo> groupList = frontEndService.getSearchOption();
+        System.err.println(JSON.toJSONString(groupList, true));
         return null;
     }
 

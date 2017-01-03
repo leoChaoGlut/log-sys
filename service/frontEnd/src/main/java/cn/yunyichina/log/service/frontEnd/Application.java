@@ -1,5 +1,6 @@
 package cn.yunyichina.log.service.frontEnd;
 
+import cn.yunyichina.log.service.frontEnd.constants.CacheName;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.cache.CacheManagerCustomizer;
@@ -10,7 +11,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @Author: Leo
@@ -30,7 +32,10 @@ public class Application {
         return new CacheManagerCustomizer<ConcurrentMapCacheManager>() {
             @Override
             public void customize(ConcurrentMapCacheManager cacheManager) {
-                cacheManager.setCacheNames(Arrays.asList(""));
+                List<String> cacheNameList = new ArrayList<>();
+                cacheNameList.add(CacheName.OPTION);
+
+                cacheManager.setCacheNames(cacheNameList);
             }
         };
     }
