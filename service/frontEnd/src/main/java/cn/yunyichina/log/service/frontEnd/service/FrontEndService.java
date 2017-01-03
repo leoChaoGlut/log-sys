@@ -1,6 +1,10 @@
 package cn.yunyichina.log.service.frontEnd.service;
 
 import cn.yunyichina.log.service.frontEnd.entity.dto.Option;
+import cn.yunyichina.log.service.frontEnd.mapper.CollectorMapper;
+import cn.yunyichina.log.service.frontEnd.mapper.KeywordeIndexMapper;
+import cn.yunyichina.log.service.frontEnd.mapper.KvIndexMapper;
+import cn.yunyichina.log.service.frontEnd.util.JedisManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,9 +18,23 @@ import org.springframework.stereotype.Service;
 public class FrontEndService {
 
     @Autowired
-    CollectorService collectorService;
+    CollectorMapper collectorMapper;
+
+    @Autowired
+    KeywordeIndexMapper keywordeIndexMapper;
+
+    @Autowired
+    KvIndexMapper kvIndexMapper;
+
+    @Autowired
+    JedisManager jedisManager;
 
     public Option getOption() {
+//        try (
+////                Jedis jedis = jedisManager.getInstance();
+//        ) {
+////            jedis.lpush()
+//        }
         return null;
     }
 

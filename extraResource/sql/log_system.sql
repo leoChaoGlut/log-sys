@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50619
 File Encoding         : 65001
 
-Date: 2016-12-30 09:54:16
+Date: 2016-12-30 12:30:40
 */
 
 SET FOREIGN_KEY_CHECKS = 0;
@@ -28,6 +28,21 @@ CREATE TABLE `collector` (
   COMMENT '采集器对应的服务名',
   `create_time`  DATETIME              DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`, `name`)
+)
+  ENGINE = InnoDB
+  DEFAULT CHARSET = utf8;
+
+-- ----------------------------
+-- Table structure for dict
+-- ----------------------------
+DROP TABLE IF EXISTS `dict`;
+CREATE TABLE `dict` (
+  `id`          INT(11) NOT NULL,
+  `key`         VARCHAR(255) DEFAULT NULL,
+  `alias`       VARCHAR(255) DEFAULT NULL,
+  `value`       VARCHAR(255) DEFAULT NULL,
+  `create_time` DATETIME     DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
 )
   ENGINE = InnoDB
   DEFAULT CHARSET = utf8;

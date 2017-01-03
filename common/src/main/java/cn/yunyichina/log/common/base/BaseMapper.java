@@ -14,5 +14,13 @@ public interface BaseMapper<T> {
 
     List<T> selectAll();
 
+    List<T> selectList(T t);
+
+    int insertOne(T t);
+
+    int updateOne(T t);
+
+    int insertList(List<T> tList);
+
 
 }
