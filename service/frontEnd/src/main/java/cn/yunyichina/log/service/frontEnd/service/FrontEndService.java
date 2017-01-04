@@ -59,15 +59,15 @@ public class FrontEndService {
         } else {
             for (Collector collector : collectorAndKeywordList) {
                 Collector oldCollector = collectorMap.get(collector.getId());
+                Set<KeywordIndex> keywordIndexSet;
                 if (null == oldCollector) {
                     oldCollector = collector;
-                    Set<KeywordIndex> keywordIndexSet = new HashSet<>();
-                    keywordIndexSet.add(collector.getKeywordIndex());
-                    oldCollector.setKeywordIndexSet(keywordIndexSet);
+                    keywordIndexSet = new HashSet<>();
                 } else {
-                    Set<KeywordIndex> keywordIndexSet = oldCollector.getKeywordIndexSet();
-                    keywordIndexSet.add(collector.getKeywordIndex());
+                    keywordIndexSet = oldCollector.getKeywordIndexSet();
                 }
+                keywordIndexSet.add(collector.getKeywordIndex());
+                oldCollector.setKeywordIndexSet(keywordIndexSet);
                 collectorMap.put(collector.getId(), oldCollector);
             }
         }
@@ -80,18 +80,18 @@ public class FrontEndService {
         } else {
             for (Collector collector : collectorAndKeyValueList) {
                 Collector oldCollector = collectorMap.get(collector.getId());
+                Set<KvIndex> kvIndexSet;
                 if (null == oldCollector) {
                     oldCollector = collector;
-                    Set<KvIndex> kvIndexSet = new HashSet<>();
-                    kvIndexSet.add(collector.getKvIndex());
-                    oldCollector.setKvIndexSet(kvIndexSet);
+                    kvIndexSet = new HashSet<>();
                 } else {
-                    Set<KvIndex> kvIndexSet = oldCollector.getKvIndexSet();
+                    kvIndexSet = oldCollector.getKvIndexSet();
                     if (null == kvIndexSet) {
                         kvIndexSet = new HashSet<>();
                     }
-                    kvIndexSet.add(collector.getKvIndex());
                 }
+                kvIndexSet.add(collector.getKvIndex());
+                oldCollector.setKvIndexSet(kvIndexSet);
                 collectorMap.put(collector.getId(), oldCollector);
             }
         }

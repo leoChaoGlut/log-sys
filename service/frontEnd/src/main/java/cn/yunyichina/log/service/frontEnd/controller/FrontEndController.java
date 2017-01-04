@@ -4,6 +4,7 @@ import cn.yunyichina.log.common.log.LoggerWrapper;
 import cn.yunyichina.log.component.entity.do_.Group;
 import cn.yunyichina.log.component.entity.dto.Response;
 import cn.yunyichina.log.service.frontEnd.service.FrontEndService;
+import com.alibaba.fastjson.JSON;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -29,7 +30,7 @@ public class FrontEndController {
         try {
             logger.contextBegin("前端服务接收到请求:");
             Collection<Group> searchOption = frontEndService.getSearchOption();
-            logger.contextEnd("前端服务正常返回:");
+            logger.contextEnd("前端服务正常返回:" + JSON.toJSONString(searchOption, true));
             return Response.success(searchOption);
         } catch (Exception e) {
             logger.error(e.getLocalizedMessage(), e);

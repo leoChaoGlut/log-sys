@@ -3,7 +3,6 @@ import cn.yunyichina.log.component.index.builder.imp.KeyValueIndexBuilder;
 import cn.yunyichina.log.service.collector.constants.Key;
 import cn.yunyichina.log.service.collector.util.PropertiesUtil;
 import com.alibaba.fastjson.JSON;
-import org.apache.commons.collections.map.HashedMap;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,7 +77,7 @@ public class MyTest {
     @Test
     public void testCache() throws IOException {
         System.out.println("======1111111==========");
-        Map<String, Object> cacheMap = new HashedMap();
+        Map<String, Object> cacheMap = new HashMap();
         cacheMap.put("lastModifyTime", "2016-10-29 16:27");
         Set<File> fileSet = new HashSet<>();
         fileSet.add(new File("E:\\zTest\\testLog1\\2016\\11\\15\\14\\21\\201611151421.log"));
@@ -109,9 +108,9 @@ public class MyTest {
         Set<Map.Entry<Object, Object>> entrySet = prop.entrySet();
         Map<Object, Object> storeMap = null;
         if (CollectionUtils.isEmpty(entrySet)) {
-            storeMap = new HashedMap();
+            storeMap = new HashMap();
         } else {
-            storeMap = new HashedMap(entrySet.size() << 1);
+            storeMap = new HashMap(entrySet.size() << 1);
             for (Map.Entry<Object, Object> entry : entrySet) {
                 storeMap.put(entry.getKey(), entry.getValue());
             }
