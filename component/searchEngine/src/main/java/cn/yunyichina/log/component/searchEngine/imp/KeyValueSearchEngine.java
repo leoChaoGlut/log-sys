@@ -1,6 +1,6 @@
 package cn.yunyichina.log.component.searchEngine.imp;
 
-import cn.yunyichina.log.common.entity.dto.SearchCondition;
+import cn.yunyichina.log.component.entity.dto.SearchCondition;
 import cn.yunyichina.log.component.index.builder.imp.ContextIndexBuilder;
 import cn.yunyichina.log.component.index.builder.imp.KeyValueIndexBuilder;
 import cn.yunyichina.log.component.searchEngine.AbstractSearchEngine;

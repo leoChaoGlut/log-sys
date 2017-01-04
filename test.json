@@ -1,14 +1,19 @@
+返回给调度中心的报文:
+resultCode: 0,
+resultMessage: 成功,
+result: [
 {
-  "searchEngineType": 1,
-  "fuzzy": false,
-  "beginDatetime": "2016-12-13T08:46:11.161Z",
-  "endDatetime": "",
-  "noIndexKeyword": "",
-  "keyword": "",
-  "key": "",
-  "value": "",
-  "collector": {
-    "id": 1,
-    "name": ""
-  }
+"dept_name": "妇产科门诊",
+"mz_fee_id": "11933101-4206065",
+"pay_amount": "4600.00",
+"pay_type": "自费",
+"time": "2017-1-3",
+"total_amount": ""
+},
+{
+"dept_name": "妇产科门诊",
+"mz_fee_id": "11933101-4206065",
+"pay_amount": "46.00",
+"time": "2017-1-3",
+"total_amount": ""
 }

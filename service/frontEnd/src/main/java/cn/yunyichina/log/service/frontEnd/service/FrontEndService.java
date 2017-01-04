@@ -1,6 +1,9 @@
 package cn.yunyichina.log.service.frontEnd.service;
 
-import cn.yunyichina.log.service.frontEnd.entity.do_.option.GroupDo;
+import cn.yunyichina.log.component.entity.po.Collector;
+import cn.yunyichina.log.component.entity.po.Group;
+import cn.yunyichina.log.service.frontEnd.entity.do_.GroupDo;
+import cn.yunyichina.log.service.frontEnd.repository.CollectorRepository;
 import cn.yunyichina.log.service.frontEnd.repository.GroupRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CachePut;
@@ -23,10 +26,16 @@ public class FrontEndService {
     @Autowired
     GroupRepository groupRepository;
 
+    @Autowired
+    CollectorRepository collectorRepository;
+
     @Cacheable(cacheNames = {OPTION}, key = "#root.methodName")
     public List<GroupDo> getSearchOption() {
-        List<GroupDo> groupList = groupRepository.findAll();
-        return groupList;
+        List<Group> groupList = groupRepository.findAll();
+        List<Collector> collectorList = collectorRepository.findAll();
+
+
+        return null;
     }
 
     @CachePut(cacheNames = {OPTION}, key = "#root.methodName")

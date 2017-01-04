@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50619
 File Encoding         : 65001
 
-Date: 2016-12-30 12:30:40
+Date: 2017-01-04 11:08:14
 */
 
 SET FOREIGN_KEY_CHECKS = 0;
@@ -30,6 +30,7 @@ CREATE TABLE `collector` (
   PRIMARY KEY (`id`, `name`)
 )
   ENGINE = InnoDB
+  AUTO_INCREMENT = 3
   DEFAULT CHARSET = utf8;
 
 -- ----------------------------
@@ -71,6 +72,7 @@ CREATE TABLE `keyword_index` (
   PRIMARY KEY (`id`)
 )
   ENGINE = InnoDB
+  AUTO_INCREMENT = 2
   DEFAULT CHARSET = utf8;
 
 -- ----------------------------
@@ -99,6 +101,7 @@ CREATE TABLE `mid_collector_keyword` (
   PRIMARY KEY (`id`)
 )
   ENGINE = InnoDB
+  AUTO_INCREMENT = 2
   DEFAULT CHARSET = utf8;
 
 -- ----------------------------

@@ -1,4 +1,4 @@
-package cn.yunyichina.log.common.constant;
+package cn.yunyichina.log.component.entity.dto;
 
 /**
  * @Author: Leo

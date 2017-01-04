@@ -1,9 +1,9 @@
 package cn.yunyichina.log.service.collector.util;
 
-import cn.yunyichina.log.common.entity.dto.SearchCondition;
 import cn.yunyichina.log.component.aggregator.index.imp.ContextIndexAggregator;
 import cn.yunyichina.log.component.aggregator.index.imp.KeyValueIndexAggregator;
 import cn.yunyichina.log.component.aggregator.index.imp.KeywordIndexAggregator;
+import cn.yunyichina.log.component.entity.dto.SearchCondition;
 import cn.yunyichina.log.component.index.builder.imp.ContextIndexBuilder;
 import cn.yunyichina.log.component.index.builder.imp.KeyValueIndexBuilder;
 import cn.yunyichina.log.component.index.builder.imp.KeywordIndexBuilder;

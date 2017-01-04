@@ -1,6 +1,6 @@
 package cn.yunyichina.log.component.searchEngine;
 
-import cn.yunyichina.log.common.entity.dto.SearchCondition;
+import cn.yunyichina.log.component.entity.dto.SearchCondition;
 import cn.yunyichina.log.component.index.builder.imp.ContextIndexBuilder;
 
 import java.io.File;

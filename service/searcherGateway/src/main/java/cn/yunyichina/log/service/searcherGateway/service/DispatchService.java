@@ -1,8 +1,8 @@
 package cn.yunyichina.log.service.searcherGateway.service;
 
-import cn.yunyichina.log.common.entity.dto.Response;
-import cn.yunyichina.log.common.entity.dto.SearchCondition;
-import cn.yunyichina.log.common.entity.po.StoreRecord;
+import cn.yunyichina.log.component.entity.dto.Response;
+import cn.yunyichina.log.component.entity.dto.SearchCondition;
+import cn.yunyichina.log.component.entity.po.StoreRecord;
 import cn.yunyichina.log.service.searcherGateway.mapper.StoreRecordMapper;
 import com.alibaba.fastjson.JSON;
 import com.google.common.base.Charsets;

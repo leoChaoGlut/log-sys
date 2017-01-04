@@ -1,8 +1,8 @@
 package cn.yunyichina.log.service.collector.service;
 
 import cn.yunyichina.log.common.constant.SearchEngineType;
-import cn.yunyichina.log.common.entity.dto.SearchCondition;
 import cn.yunyichina.log.component.aggregator.log.LogAggregator;
+import cn.yunyichina.log.component.entity.dto.SearchCondition;
 import cn.yunyichina.log.component.index.builder.imp.ContextIndexBuilder;
 import cn.yunyichina.log.component.index.builder.imp.KeyValueIndexBuilder;
 import cn.yunyichina.log.component.searchEngine.imp.KeyValueSearchEngine;

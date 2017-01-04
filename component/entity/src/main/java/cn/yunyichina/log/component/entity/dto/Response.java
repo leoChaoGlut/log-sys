@@ -1,7 +1,5 @@
-package cn.yunyichina.log.common.entity.dto;
+package cn.yunyichina.log.component.entity.dto;
 
-
-import cn.yunyichina.log.common.constant.Status;
 
 /**
  * @Author: Leo

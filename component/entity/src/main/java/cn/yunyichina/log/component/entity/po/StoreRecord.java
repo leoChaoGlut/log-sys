@@ -1,4 +1,4 @@
-package cn.yunyichina.log.common.entity.po;
+package cn.yunyichina.log.component.entity.po;
 
 import java.util.Date;
 
