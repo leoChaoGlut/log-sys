@@ -23,6 +23,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(rollbackFor = {Throwable.class, Exception.class, RuntimeException.class})
 public class DispatchService {
 
+    private final int TIME_OUT = 7000;
+
     @Autowired
     StoreRecordMapper storeRecordMapper;
 
@@ -39,8 +41,8 @@ public class DispatchService {
             String url = "http://" + outerIp + ":" + outerPort + "/search/history";
 
             Content content = Request.Post(url)
-                    .connectTimeout(7000)
-                    .socketTimeout(7000)
+                    .connectTimeout(TIME_OUT)
+                    .socketTimeout(TIME_OUT)
                     .bodyString(JSON.toJSONString(condition), ContentType.APPLICATION_JSON)
                     .execute()
                     .returnContent();
