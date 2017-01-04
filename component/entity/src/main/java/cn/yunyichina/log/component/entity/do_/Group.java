@@ -1,6 +1,7 @@
-package cn.yunyichina.log.component.entity.po;
+package cn.yunyichina.log.component.entity.do_;
 
 import java.util.Date;
+import java.util.Set;
 
 /**
  * @Author: Leo
@@ -12,6 +13,19 @@ public class Group {
     private Integer id;
     private String name;
     private Date create_time;
+
+    //    extra
+    private Set<Collector> collectorSet;
+    private Collector collector;
+
+    public Collector getCollector() {
+        return collector;
+    }
+
+    public Group setCollector(Collector collector) {
+        this.collector = collector;
+        return this;
+    }
 
     public Integer getId() {
         return id;
@@ -37,6 +51,15 @@ public class Group {
 
     public Group setCreate_time(Date create_time) {
         this.create_time = create_time;
+        return this;
+    }
+
+    public Set<Collector> getCollectorSet() {
+        return collectorSet;
+    }
+
+    public Group setCollectorSet(Set<Collector> collectorSet) {
+        this.collectorSet = collectorSet;
         return this;
     }
 }

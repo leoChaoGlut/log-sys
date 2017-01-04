@@ -1,6 +1,7 @@
 package cn.yunyichina.log.service.frontEnd;
 
 import cn.yunyichina.log.service.frontEnd.constants.CacheName;
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.cache.CacheManagerCustomizer;
@@ -8,7 +9,6 @@ import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 import org.springframework.context.annotation.Bean;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import java.util.ArrayList;
@@ -24,7 +24,7 @@ import java.util.List;
 @SpringBootApplication(scanBasePackages = "cn.yunyichina.log.service.frontEnd")
 @EnableEurekaClient
 @EnableCaching
-@EnableJpaRepositories(basePackages = "cn.yunyichina.log.service.frontEnd.repository")
+@MapperScan(basePackages = "cn.yunyichina.log.service.frontEnd.mapper")
 public class Application {
 
     @Bean

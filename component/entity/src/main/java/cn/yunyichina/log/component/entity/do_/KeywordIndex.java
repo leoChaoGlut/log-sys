@@ -1,6 +1,7 @@
-package cn.yunyichina.log.component.entity.po;
+package cn.yunyichina.log.component.entity.do_;
 
 import java.util.Date;
+import java.util.Objects;
 
 /**
  * @Author: Leo
@@ -10,6 +11,19 @@ public class KeywordIndex {
     private Integer id;
     private String keyword;
     private Date create_time;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        KeywordIndex that = (KeywordIndex) o;
+        return Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 
     public Integer getId() {
         return id;

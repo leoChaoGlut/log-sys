@@ -1,8 +1,8 @@
 package cn.yunyichina.log.service.searcherGateway.service;
 
+import cn.yunyichina.log.component.entity.do_.StoreRecord;
 import cn.yunyichina.log.component.entity.dto.Response;
 import cn.yunyichina.log.component.entity.dto.SearchCondition;
-import cn.yunyichina.log.component.entity.po.StoreRecord;
 import cn.yunyichina.log.service.searcherGateway.mapper.StoreRecordMapper;
 import com.alibaba.fastjson.JSON;
 import com.google.common.base.Charsets;
@@ -30,12 +30,12 @@ public class DispatchService {
     public Response dispatch(SearchCondition condition) throws Exception {
         StoreRecord storeRecordParam = new StoreRecord();
         storeRecordParam.setCollector_id(condition.getCollector().getId());
-        StoreRecord storeRecordResult = storeRecordMapper.selectOne(storeRecordParam);
-        if (null == storeRecordResult) {
+        StoreRecord storeRecordPoResult = storeRecordMapper.selectOne(storeRecordParam);
+        if (null == storeRecordPoResult) {
             throw new Exception("无存储节点信息:" + JSON.toJSONString(condition, true));
         } else {
-            String outerIp = storeRecordResult.getOuter_ip();
-            Integer outerPort = storeRecordResult.getOuter_port();
+            String outerIp = storeRecordPoResult.getOuter_ip();
+            Integer outerPort = storeRecordPoResult.getOuter_port();
             String url = "http://" + outerIp + ":" + outerPort + "/search/history";
 
             Content content = Request.Post(url)

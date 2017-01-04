@@ -1,6 +1,6 @@
 package cn.yunyichina.log.component.entity.dto;
 
-import cn.yunyichina.log.component.entity.po.Collector;
+import cn.yunyichina.log.component.entity.do_.Collector;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;

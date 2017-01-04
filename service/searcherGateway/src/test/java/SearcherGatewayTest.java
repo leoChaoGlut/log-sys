@@ -1,5 +1,5 @@
+import cn.yunyichina.log.component.entity.do_.Collector;
 import cn.yunyichina.log.component.entity.dto.SearchCondition;
-import cn.yunyichina.log.component.entity.po.Collector;
 import com.alibaba.fastjson.JSON;
 import org.junit.Test;
 

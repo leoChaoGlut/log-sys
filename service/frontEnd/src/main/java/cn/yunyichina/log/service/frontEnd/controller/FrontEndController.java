@@ -1,11 +1,14 @@
 package cn.yunyichina.log.service.frontEnd.controller;
 
 import cn.yunyichina.log.common.log.LoggerWrapper;
+import cn.yunyichina.log.component.entity.do_.Group;
 import cn.yunyichina.log.component.entity.dto.Response;
 import cn.yunyichina.log.service.frontEnd.service.FrontEndService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Collection;
 
 /**
  * @Author: Leo
@@ -25,8 +28,9 @@ public class FrontEndController {
     public Response getOptions() {
         try {
             logger.contextBegin("前端服务接收到请求:");
+            Collection<Group> searchOption = frontEndService.getSearchOption();
             logger.contextEnd("前端服务正常返回:");
-            return Response.success(null);
+            return Response.success(searchOption);
         } catch (Exception e) {
             logger.error(e.getLocalizedMessage(), e);
             logger.contextEnd("前端服务异常:" + e.getLocalizedMessage());
