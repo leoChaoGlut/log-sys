@@ -1,6 +1,6 @@
 spring:
   application:
-    name: api
+    name: front-end
   cloud:
     config:
       enabled: true
@@ -11,6 +11,8 @@ spring:
     active: default,extra
 eureka:
   client:
+    healthcheck:
+      enabled: true
     serviceUrl:
       defaultZone: http://127.0.0.1:10100/eureka/
 logging:

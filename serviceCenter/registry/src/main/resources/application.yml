@@ -9,8 +9,8 @@ eureka:
       prefer-ip-address: true
 spring:
   profiles:
-    active: default
+    active: dev
 server:
   port: 10100
 logging:
-  config: classpath:logback.xml
+  config: classpath:logback-${spring.profiles.active}.xml

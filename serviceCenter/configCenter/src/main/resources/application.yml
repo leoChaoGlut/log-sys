@@ -2,7 +2,7 @@ spring:
   application:
     name: config-center
   profiles:
-    active: default
+    active: dev
   cloud:
     config:
       server:
@@ -12,13 +12,14 @@ spring:
           search-paths: '{application}'
 eureka:
   client:
+    healthcheck:
+      enabled: true
     service-url:
       defaultZone: http://127.0.0.1:10100/eureka/
   instance:
     prefer-ip-address: true
     ip-address: 127.0.0.1
-    instance-id: ${random.value}
 server:
   port: 10200
 logging:
-  config: classpath:logback.xml
+  config: classpath:logback/logback-${spring.profiles.active}.xml
