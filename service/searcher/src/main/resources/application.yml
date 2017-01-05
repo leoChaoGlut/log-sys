@@ -10,10 +10,27 @@ spring:
         serviceId: config-center
         enabled: true
 eureka:
+  instance:
+    ip-address: 127.0.0.1
+    prefer-ip-address: true
+    instance-id: ${random.value}
   client:
     healthcheck:
       enabled: true
     serviceUrl:
       defaultZone: http://localhost:10100/eureka/
 logging:
-  config: classpath:logback.xml
+  config: classpath:logback/logback-test.xml
+#
+constants:
+  upload:
+    logSuffix: .log
+    indexSuffix: .index
+    bakSuffix: .bak
+    zipIndex: .zip
+#    logRootDir: ${file.separator}tmp${file.separator}uploadLogRoot
+#    indexRootDir: ${file.separator}tmp${file.separator}uploadIndexRoot
+    logRootDir: D://log//logRootDir
+    indexRootDir: D://log//indexRootDir
+server:
+  port: 10500
