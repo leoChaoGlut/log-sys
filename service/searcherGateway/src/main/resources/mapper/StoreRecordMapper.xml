@@ -2,8 +2,8 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="cn.yunyichina.log.service.searcherGateway.mapper.StoreRecordMapper">
 
-    <select id="selectOne" parameterType="cn.yunyichina.log.common.entity.po.StoreRecord"
-            resultType="cn.yunyichina.log.common.entity.po.StoreRecord">
+    <select id="selectOne" parameterType="cn.yunyichina.log.component.entity.do_.StoreRecord"
+            resultType="cn.yunyichina.log.component.entity.do_.StoreRecord">
         SELECT
             *
         FROM

@@ -1,23 +1,15 @@
 spring:
   application:
-    name: collector
+    name: collector-shensan
   profiles:
-    active: test,extra
-  cloud:
-    config:
-      enabled: true
-      discovery:
-        serviceId: config-center
-        enabled: true
+    active: test
 eureka:
   instance:
     ip-address: 127.0.0.1
     prefer-ip-address: true
   client:
-    healthcheck:
-      enale: true
     serviceUrl:
-      defaultZone: http://192.168.75.1:10100/eureka/
+      defaultZone: http://127.0.0.1:10100/eureka/
 logging:
   config: classpath:logback/logback-test.xml
 #

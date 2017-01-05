@@ -1,24 +1,15 @@
 spring:
   application:
-    name: searcher-node
+    name: searcher-shensan
   profiles:
-    active: dev,extra
-  cloud:
-    config:
-      enabled: true
-      discovery:
-        serviceId: config-center
-        enabled: true
+    active: dev
 eureka:
   instance:
     ip-address: 127.0.0.1
     prefer-ip-address: true
-    instance-id: ${random.value}
   client:
-    healthcheck:
-      enabled: true
     serviceUrl:
-      defaultZone: http://localhost:10100/eureka/
+      defaultZone: http://120.77.59.164:10100/eureka/
 logging:
   config: classpath:logback/logback-test.xml
 #
@@ -28,8 +19,6 @@ constants:
     indexSuffix: .index
     bakSuffix: .bak
     zipIndex: .zip
-#    logRootDir: ${file.separator}tmp${file.separator}uploadLogRoot
-#    indexRootDir: ${file.separator}tmp${file.separator}uploadIndexRoot
     logRootDir: D://log//logRootDir
     indexRootDir: D://log//indexRootDir
 server:

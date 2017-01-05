@@ -1,22 +1,27 @@
 spring:
+  datasource:
+    url: jdbc:mysql://127.0.0.1:3306/log_system?useUnicode=true&amp;characterEncoding=UTF-8&amp;useSSL=false
+    username: root
+    password: 123
+    driver-class-name: com.mysql.jdbc.Driver
   application:
     name: searcher-gateway
   cloud:
     config:
-      enabled: true
-      discovery:
-        enabled: true
-        serviceId: config-center
+      enabled: false
   profiles:
-    active: dev,extra
+    active: dev
 eureka:
+  instance:
+    ip-address: 127.0.0.1
+    prefer-ip-address: true
   client:
-    healthcheck:
-      enabled: true
     serviceUrl:
       defaultZone: http://127.0.0.1:10100/eureka/
 logging:
-  config: classpath:logback-${spring.profiles.active}.xml
-endpoints:
-  health:
-    enabled: true
+  config: classpath:logback/logback-test.xml
+mybatis:
+  mapper-locations: classpath:mapper/*Mapper.xml
+server:
+  port: 10403
+
