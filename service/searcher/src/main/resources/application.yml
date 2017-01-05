@@ -11,6 +11,8 @@ spring:
         enabled: true
 eureka:
   client:
+    healthcheck:
+      enabled: true
     serviceUrl:
       defaultZone: http://localhost:10100/eureka/
 logging:

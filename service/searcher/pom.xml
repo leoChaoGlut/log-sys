@@ -23,7 +23,7 @@
                         <manifest>
                             <addClasspath>true</addClasspath>
                             <classpathPrefix>lib/</classpathPrefix>
-                            <mainClass>${groupId}.${artifactId}.Application</mainClass>
+                            <mainClass>${project.groupId}.${project.artifactId}.Application</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

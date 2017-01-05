@@ -8,6 +8,22 @@
     <artifactId>configCenter</artifactId>
     <version>1.0-SNAPSHOT</version>
 
+    <profiles>
+        <profile>
+            <id>pkg</id>
+            <build>
+                <resources>
+                    <resource>
+                        <directory>src/main/resources</directory>
+                        <excludes>
+                            <exclude>application.yml</exclude>
+                        </excludes>
+                    </resource>
+                </resources>
+            </build>
+        </profile>
+    </profiles>
+
     <properties>
         <java.version>1.7</java.version>
     </properties>
@@ -23,7 +39,7 @@
                         <manifest>
                             <addClasspath>true</addClasspath>
                             <classpathPrefix>lib/</classpathPrefix>
-                            <mainClass>cn.yunyichina.log.serviceCenter.configCenter.Application</mainClass>
+                            <mainClass>${project.groupId}.${project.artifactId}.Application</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
@@ -66,6 +82,7 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-devtools</artifactId>
+            <optional>true</optional>
         </dependency>
     </dependencies>
 

@@ -1,6 +1,6 @@
 spring:
   application:
-    name: front-end
+    name: searcher-gateway
   cloud:
     config:
       enabled: true
@@ -8,10 +8,15 @@ spring:
         enabled: true
         serviceId: config-center
   profiles:
-    active: default,extra
+    active: dev,extra
 eureka:
   client:
+    healthcheck:
+      enabled: true
     serviceUrl:
       defaultZone: http://127.0.0.1:10100/eureka/
 logging:
-  config: classpath:logback.xml
+  config: classpath:logback-${spring.profiles.active}.xml
+endpoints:
+  health:
+    enabled: true

@@ -1,16 +1,18 @@
 spring:
   application:
-    name: reverse-proxy
-  profiles:
-    active: default,extra
+    name: api
   cloud:
     config:
       enabled: true
       discovery:
         enabled: true
-        service-id: config-center
+        serviceId: config-center
+  profiles:
+    active: default,extra
 eureka:
   client:
+    healthcheck:
+      enabled: true
     serviceUrl:
       defaultZone: http://127.0.0.1:10100/eureka/
 logging:
