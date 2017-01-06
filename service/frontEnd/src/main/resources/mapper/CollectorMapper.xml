@@ -9,7 +9,7 @@
 			g.`name` AS 'name',
 			c.id AS 'collector.id',
 			c.`name` AS 'collector.name',
-			c.service_name AS 'collector.service_name'
+		c.application_name AS 'collector.application_name'
 		FROM
 			`groupPo` g,
 			collectorPo c
@@ -22,7 +22,7 @@
 			c.id AS 'id',
 			c.`name` AS 'name',
 			c.group_id AS 'group_id',
-			c.service_name AS 'service_name',
+		c.application_name AS 'application_name',
 			ki.id AS 'keywordIndex.id',
 			ki.keyword AS 'keywordIndex.keyword'
 		FROM
@@ -40,7 +40,7 @@
 			c.id AS 'id',
 			c.`name` AS 'name',
 			c.group_id AS 'group_id',
-			c.service_name AS 'service_name',
+		c.application_name AS 'application_name',
 			ki.id AS 'kvIndex.id',
 			ki.`key` AS 'kvIndex.key',
 			ki.`value` AS 'kvIndex.value'

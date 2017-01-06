@@ -3,13 +3,14 @@ package cn.yunyichina.log.service.api.controller;
 import cn.yunyichina.log.component.entity.dto.Response;
 import cn.yunyichina.log.service.api.service.IndexApiService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  * Created by Jonven on 2017/1/4.
  */
-@RestController
-@RequestMapping("/indexApi")
+//@RestController
+//@RequestMapping("/indexApi")
 public class IndexApiController {
 
     @Autowired

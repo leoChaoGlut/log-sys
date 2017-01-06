@@ -1,8 +1,10 @@
 package cn.yunyichina.log.service.api.controller;
 
+import cn.yunyichina.log.common.log.LoggerWrapper;
 import cn.yunyichina.log.component.entity.dto.Response;
 import cn.yunyichina.log.component.entity.dto.TagSet;
 import cn.yunyichina.log.service.api.service.TagService;
+import com.alibaba.fastjson.JSON;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,6 +19,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class TagController {
 
+    final LoggerWrapper logger = LoggerWrapper.getLogger(TagController.class);
+
     @Autowired
     TagService tagService;
 
@@ -25,10 +29,15 @@ public class TagController {
             @PathVariable Integer collectorId
     ) {
         try {
+            logger.contextBegin("开始获取TagSet:" + collectorId);
             TagSet tagSet = tagService.getTagSet(collectorId);
+            logger.contextEnd("获取到的TagSet:" + JSON.toJSONString(tagSet, true));
             return Response.success(tagSet);
         } catch (Exception e) {
-            return Response.failure(e.getLocalizedMessage());
+            String errorMsg = "获取TagSet失败:" + e.getLocalizedMessage();
+            logger.error(errorMsg, e);
+            logger.contextEnd(errorMsg);
+            return Response.failure(errorMsg);
         }
     }
 

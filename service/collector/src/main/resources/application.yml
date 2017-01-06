@@ -13,13 +13,15 @@ eureka:
 logging:
   config: classpath:logback/logback-test.xml
 #
-fixedRate: 300000
+fixedRate: 120000
 dir:
-  logRoot: D:${file.separator}logRoot
-  tmpZip: D:${file.separator}tmpZip
+  logRoot: /data/front/shensan/yylog
+  tmpZip: /data/logSys/collector/shensan/other/tmpZip
 url:
-  uploadServer: http://192.168.1.150:10300/searcher-node/file/upload
+  gateway: http://127.0.0.1:10300
+  uploadServer: ${url.gateway}/searcher-shensan/file/upload
+  tagSet: ${url.gateway}/api/tag/${spring.application.name}
 path:
-  properties: D:${file.separator}1.properties
+  properties: /data/logSys/collector/shensan/other/cache.properties
 server:
   port: 10600

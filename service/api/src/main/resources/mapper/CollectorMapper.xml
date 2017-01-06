@@ -33,7 +33,7 @@
     <insert id="insertOne" parameterType="cn.yunyichina.log.component.entity.do_.Collector">
         INSERT INTO
             collector
-        (name,group_id,service_name) VALUES (#{name},#{group_id},#{service_name})
+        (name,group_id,application_name) VALUES (#{name},#{group_id},#{application_name})
     </insert>
 
     <select id="selectOne" parameterType="cn.yunyichina.log.component.entity.do_.Collector"

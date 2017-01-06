@@ -7,6 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.cache.CacheManagerCustomizer;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
+import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
@@ -21,7 +22,7 @@ import java.util.List;
  */
 @EnableWebMvc
 @SpringBootApplication(scanBasePackages = "cn.yunyichina.log.service.api")
-//@EnableEurekaClient
+@EnableEurekaClient
 @MapperScan(basePackages = "cn.yunyichina.log.service.api.mapper")
 @EnableCaching
 public class Application {

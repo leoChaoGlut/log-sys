@@ -20,13 +20,13 @@ SET FOREIGN_KEY_CHECKS = 0;
 -- ----------------------------
 DROP TABLE IF EXISTS `collector`;
 CREATE TABLE `collector` (
-  `id`           INT(11)      NOT NULL AUTO_INCREMENT,
-  `name`         VARCHAR(255) NOT NULL
+  `id`               INT(11)      NOT NULL AUTO_INCREMENT,
+  `name`             VARCHAR(255) NOT NULL
   COMMENT '采集器名:如深三,北大',
-  `group_id`     INT(11)               DEFAULT NULL,
-  `service_name` VARCHAR(255)          DEFAULT NULL
+  `group_id`         INT(11)               DEFAULT NULL,
+  `application_name` VARCHAR(255)          DEFAULT NULL
   COMMENT '采集器对应的服务名',
-  `create_time`  DATETIME              DEFAULT CURRENT_TIMESTAMP,
+  `create_time`      DATETIME              DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`, `name`)
 )
   ENGINE = InnoDB

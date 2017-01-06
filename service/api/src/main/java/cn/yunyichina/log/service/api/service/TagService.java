@@ -1,5 +1,6 @@
 package cn.yunyichina.log.service.api.service;
 
+import cn.yunyichina.log.common.log.LoggerWrapper;
 import cn.yunyichina.log.component.entity.dto.TagSet;
 import cn.yunyichina.log.component.entity.po.KeyValueTag;
 import cn.yunyichina.log.component.entity.po.KeywordTag;
@@ -8,6 +9,8 @@ import cn.yunyichina.log.service.api.constants.CacheName;
 import cn.yunyichina.log.service.api.mapper.KeyValueTagMapper;
 import cn.yunyichina.log.service.api.mapper.KeywordTagMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,6 +30,8 @@ import java.util.Set;
 @Transactional(rollbackFor = {Exception.class, RuntimeException.class})
 public class TagService {
 
+    final LoggerWrapper logger = LoggerWrapper.getLogger(TagService.class);
+
     @Autowired
     KeyValueTagMapper keyValueTagMapper;
 
@@ -36,6 +41,22 @@ public class TagService {
     @Transactional(readOnly = true)
     @Cacheable(cacheNames = CacheName.COLLECTOR, key = "#collectorId")
     public TagSet getTagSet(Integer collectorId) {
+        logger.info("缓存穿透:" + collectorId);
+        return buildTagSet(collectorId);
+    }
+
+
+    @CachePut(cacheNames = CacheName.COLLECTOR, key = "#collectorId")
+    public TagSet updateTagSetCache(Integer collectorId) {
+        return buildTagSet(collectorId);
+    }
+
+    @CacheEvict(cacheNames = CacheName.COLLECTOR, allEntries = true)
+    public void cleanAll() {
+
+    }
+
+    private TagSet buildTagSet(Integer collectorId) {
         Set<String> keywordSet = getKeywordSet(collectorId);
         Set<KeyValueIndexBuilder.KvTag> kvTagSet = getkvTagSet(collectorId);
 
@@ -45,7 +66,6 @@ public class TagService {
 
         return tagSet;
     }
-
 
     private Set<String> getKeywordSet(Integer collectorId) {
         KeywordTag keywordTag = new KeywordTag().setCollector_id(collectorId);

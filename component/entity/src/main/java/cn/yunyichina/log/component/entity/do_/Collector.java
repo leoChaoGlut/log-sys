@@ -13,7 +13,7 @@ public class Collector {
     private String name;
     private Integer group_id;
     private Date create_time;
-    private String service_name;
+    private String application_name;
 
     //extra
     private Set<KeywordIndex> keywordIndexSet;
@@ -79,12 +79,12 @@ public class Collector {
         return this;
     }
 
-    public String getService_name() {
-        return service_name;
+    public String getApplication_name() {
+        return application_name;
     }
 
-    public Collector setService_name(String service_name) {
-        this.service_name = service_name;
+    public Collector setApplication_name(String application_name) {
+        this.application_name = application_name;
         return this;
     }
 

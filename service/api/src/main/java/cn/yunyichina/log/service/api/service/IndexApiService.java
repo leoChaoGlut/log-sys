@@ -80,7 +80,7 @@ public class IndexApiService {
         } else {
             Collector collector = collectorMapper.findByCollectorName(new Collector().setName(collectorName).setGroup_id(groupId));
             if (collector == null) {
-                int result = collectorMapper.insertOne(new Collector().setName(collectorName).setGroup_id(groupId).setService_name(serviceName));
+                int result = collectorMapper.insertOne(new Collector().setName(collectorName).setGroup_id(groupId).setApplication_name(serviceName));
                 if (result > 0) {
 
                 } else {
