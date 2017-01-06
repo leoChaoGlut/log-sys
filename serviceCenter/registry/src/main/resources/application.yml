@@ -1,0 +1,16 @@
+eureka:
+  client:
+    registerWithEureka: false
+    fetchRegistry: false
+    serviceUrl:
+      defaultZone: http://${eureka.instance.ip-address}:${server.port}/eureka/
+  instance:
+      ip-address: 127.0.0.1
+      prefer-ip-address: true
+spring:
+  profiles:
+    active: test
+server:
+  port: 10100
+logging:
+  config: classpath:logback/logback-${spring.profiles.active}.xml

@@ -5,16 +5,16 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>cn.yunyichina.log</groupId>
-    <artifactId>log-sys</artifactId>
+    <artifactId>logSys</artifactId>
     <packaging>pom</packaging>
     <version>1.0-SNAPSHOT</version>
 
     <modules>
         <module>common</module>
         <module>component</module>
-        <module>service-center</module>
+        <module>serviceCenter</module>
         <module>service</module>
+        <module>extraResource</module>
     </modules>
-
 
 </project>

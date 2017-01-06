@@ -31,7 +31,7 @@ public class LoggerWrapper {
 
     private Class<?> targetClass;
 
-    public static LoggerWrapper newInstance(Class<?> targetClass) {
+    public static LoggerWrapper getLogger(Class<?> targetClass) {
         return new LoggerWrapper(targetClass);
     }
 
@@ -41,30 +41,40 @@ public class LoggerWrapper {
 
     public void contextBegin(String msg) {
         Long count = counter.getAndIncrement();
-        countMap.put(Thread.currentThread().getName(), count);
+        countMap.put(buildThreadId(), count);
         logger.info(getInvokeClassAndMethod() + msg + Tag.CONTEXT_BEGIN + count + Tag.CONTEXT_COUNT_END + Tag.ROW_END + count + Tag.CONTEXT_COUNT_END);
     }
 
     public void contextEnd(String msg) {
-        Long count = countMap.get(Thread.currentThread().getName());
+        Long count = countMap.get(buildThreadId());
         logger.info(getInvokeClassAndMethod() + msg + Tag.CONTEXT_END + count + Tag.CONTEXT_COUNT_END + Tag.ROW_END + count + Tag.CONTEXT_COUNT_END);
     }
 
     public void info(String msg) {
-        logger.info(getInvokeClassAndMethod() + msg + Tag.ROW_END + countMap.get(Thread.currentThread().getName()) + Tag.CONTEXT_COUNT_END);
+        logger.info(getInvokeClassAndMethod() + msg + Tag.ROW_END + countMap.get(buildThreadId()) + Tag.CONTEXT_COUNT_END);
     }
 
     public void error(String msg) {
-        logger.error(getInvokeClassAndMethod() + msg + Tag.ROW_END + countMap.get(Thread.currentThread().getName()) + Tag.CONTEXT_COUNT_END);
+        logger.error(getInvokeClassAndMethod() + msg + Tag.ROW_END + countMap.get(buildThreadId()) + Tag.CONTEXT_COUNT_END);
     }
 
     public void error(String msg, Throwable t) {
-        logger.error(getInvokeClassAndMethod() + msg + Tag.ROW_END + countMap.get(Thread.currentThread().getName()) + Tag.CONTEXT_COUNT_END, t);
+        logger.error(getInvokeClassAndMethod() + msg + Tag.ROW_END + countMap.get(buildThreadId()) + Tag.CONTEXT_COUNT_END, t);
     }
 
     private String getInvokeClassAndMethod() {
         StackTraceElement stackTraceElement = new Throwable().getStackTrace()[STACK_INDEX];
         return stackTraceElement.getClassName() + "." + stackTraceElement.getMethodName() + ":" + stackTraceElement.getLineNumber();
+    }
+
+
+    private String buildThreadId() {
+        ThreadGroup threadGroup = Thread.currentThread().getThreadGroup();
+        String threadGroupName = "";
+        if (threadGroup != null) {
+            threadGroupName = threadGroup.getName();
+        }
+        return threadGroupName + "-" + Thread.currentThread().getName() + "-" + Thread.currentThread().getId();
     }
 
     /**
@@ -90,4 +100,6 @@ public class LoggerWrapper {
     public static AtomicLong getCounter() {
         return counter;
     }
+
+
 }

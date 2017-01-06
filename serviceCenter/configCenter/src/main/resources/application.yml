@@ -1,0 +1,23 @@
+spring:
+  application:
+    name: config-center
+  profiles:
+    active: dev
+  cloud:
+    config:
+      server:
+        git:
+          uri: file:///D://gitRepo//gitHub//logSys//extraResource//config
+#          uri: file:///${user.home}/config-repo
+          search-paths: '{application}'
+eureka:
+  client:
+    service-url:
+      defaultZone: http://127.0.0.1:10100/eureka/
+  instance:
+    prefer-ip-address: true
+    ip-address: 127.0.0.1
+server:
+  port: 10200
+logging:
+  config: classpath:logback/logback-${spring.profiles.active}.xml

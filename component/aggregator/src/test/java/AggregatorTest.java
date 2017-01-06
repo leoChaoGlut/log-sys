@@ -9,7 +9,9 @@ import com.alibaba.fastjson.JSON;
 import org.junit.Test;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
@@ -26,22 +28,34 @@ public class AggregatorTest {
 
     @Test
     public void contextIndexAggregator() throws IOException {
-        //        TODO 比较难测试
-        LogFileScanner logFileScanner = new LogFileScanner("2016-01-01 01:02", "2016-11-15 14:23", "D:\\tmp");
-        Map<String, File> fileMap = logFileScanner.scan();
-        Collection<File> values = fileMap.values();
+        String beginDateTime = "2016-01-01 01:02";
+        String endDateTime = "2016-11-15 14:23";
+        String rootDir = "D:\\gitRepo\\gitHub\\log-sys\\component\\index\\src\\test\\resources\\log";
+        LogFileScanner logFileScanner = new LogFileScanner(beginDateTime, endDateTime, rootDir);
+        Map<String, File> logFileMap = logFileScanner.scan();
+        Collection<File> logFiles = logFileMap.values();
         ContextIndexAggregator aggregator = new ContextIndexAggregator();
 
-        for (File f : values) {
-            ContextIndexBuilder builder = new ContextIndexBuilder(f);
-            Map<Long, ContextIndexBuilder.ContextInfo> map = builder.build();
-            System.out.println(JSON.toJSONString(map, true));
-            System.out.println("===================");
-            aggregator.aggregate(map);
+        for (File logFile : logFiles) {
+            ContextIndexBuilder builder = new ContextIndexBuilder(logFile);
+            Map<Long, ContextIndexBuilder.ContextInfo> contextInfoMap = builder.build();
+            aggregator.aggregate(contextInfoMap);
         }
 
         Map<Long, ContextIndexBuilder.ContextInfo> aggregatedCollection = aggregator.getAggregatedCollection();
         System.out.println(JSON.toJSONString(aggregatedCollection, true));
+        ObjectOutputStream oos = null;
+        try {
+            oos = new ObjectOutputStream(new FileOutputStream(rootDir + "\\context.index"));
+            oos.writeObject(aggregatedCollection);
+            oos.flush();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (oos != null) {
+                oos.close();
+            }
+        }
     }
 
     @Test

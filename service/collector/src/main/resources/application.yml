@@ -1,0 +1,27 @@
+spring:
+  application:
+    name: collector-shensan
+  profiles:
+    active: test
+eureka:
+  instance:
+    ip-address: 127.0.0.1
+    prefer-ip-address: true
+  client:
+    serviceUrl:
+      defaultZone: http://127.0.0.1:10100/eureka/
+logging:
+  config: classpath:logback/logback-test.xml
+#
+fixedRate: 120000
+dir:
+  logRoot: /data/front/shensan/yylog
+  tmpZip: /data/logSys/collector/shensan/other/tmpZip
+url:
+  gateway: http://127.0.0.1:10300
+  uploadServer: ${url.gateway}/searcher-shensan/file/upload
+  tagSet: ${url.gateway}/api/tag/${spring.application.name}
+path:
+  properties: /data/logSys/collector/shensan/other/cache.properties
+server:
+  port: 10600

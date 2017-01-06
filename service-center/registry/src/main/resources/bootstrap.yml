@@ -1,9 +1,0 @@
-eureka:
-  client:
-    registerWithEureka: false
-    fetchRegistry: false
-    serviceUrl:
-      defaultZone: http://${eureka.instance.ip-address}:${server.port}/eureka/
-spring:
-  profiles:
-    active: dev

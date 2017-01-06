@@ -1,6 +1,5 @@
 package cn.yunyichina.log.component.aggregator.log;
 
-import cn.yunyichina.log.common.constant.Constant;
 import cn.yunyichina.log.component.index.builder.imp.ContextIndexBuilder;
 import cn.yunyichina.log.component.index.scanner.imp.LogFileScanner;
 import com.google.common.base.Charsets;
@@ -22,30 +21,30 @@ public class LogAggregator {
     private int beginIndex;
     private int endIndex;
     private List<File> logList;
-    private ContextIndexBuilder.ContextInfo contextInfo;
 
-    public static String aggregate(ContextIndexBuilder.ContextInfo contextInfo) {
-        LogAggregator aggregator = new LogAggregator(contextInfo);
+    protected LogAggregator(ContextIndexBuilder.ContextInfo contextInfo, String baseDir) throws Exception {
+        ContextIndexBuilder.IndexInfo begin = contextInfo.getBegin();
+        ContextIndexBuilder.IndexInfo end = contextInfo.getEnd();
+
+        if (begin == null || end == null) {
+            throw new Exception("日志聚合器无法聚合残缺的上下文.");
+        }
+
+        this.beginIndex = begin.getIndexOfLogFile();
+        this.endIndex = end.getIndexOfLogFile();
+        LogFileScanner scanner = new LogFileScanner(begin.getLogFile(), end.getLogFile(), baseDir);
+        Map<String, File> fileMap = scanner.scan();
+        logList = new ArrayList<>(fileMap.values());
+    }
+
+    public static String aggregate(ContextIndexBuilder.ContextInfo contextInfo, String baseDir) {
         try {
+            LogAggregator aggregator = new LogAggregator(contextInfo, baseDir);
             return aggregator.aggregate();
         } catch (Exception e) {
             e.printStackTrace();
             return "";
         }
-    }
-
-    protected LogAggregator(ContextIndexBuilder.ContextInfo contextInfo) {
-        this.contextInfo = contextInfo;
-
-        ContextIndexBuilder.IndexInfo begin = contextInfo.getBegin();
-        ContextIndexBuilder.IndexInfo end = contextInfo.getEnd();
-
-        this.beginIndex = begin.getIndexOfLogFile();
-        this.endIndex = end.getIndexOfLogFile();
-
-        LogFileScanner scanner = new LogFileScanner(begin.getLogFile(), end.getLogFile(), Constant.BASE_DIR);
-        Map<String, File> fileMap = scanner.scan();
-        logList = new ArrayList<>(fileMap.values());
     }
 
     protected String aggregate() throws Exception {
@@ -54,7 +53,7 @@ public class LogAggregator {
             String logContent = Files.asCharSource(log, Charsets.UTF_8).read();
             return logContent.substring(beginIndex, endIndex);
         } else if (logList.size() > 1) {
-            StringBuilder logBuilder = new StringBuilder();
+            StringBuilder logBuilder = new StringBuilder(1024 * 1024 * 10);
             int logListSize = logList.size();
 
             String firstLogConetnt = Files.asCharSource(logList.get(0), Charsets.UTF_8).read();
