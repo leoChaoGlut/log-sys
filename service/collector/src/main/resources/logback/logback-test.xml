@@ -18,7 +18,16 @@
 
     <appender name="ALL" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>${log.path}/%d{yyyy/MM/dd/HH, aux}/%d{yyyyMMddHH}.log</fileNamePattern>
+            <fileNamePattern>${log.path}/all/%d{yyyy/MM/dd/HH, aux}/%d{yyyyMMddHH}.log</fileNamePattern>
+        </rollingPolicy>
+        <encoder>
+            <pattern>[%d{yyyy-MM-dd HH:mm:ss}][%-5level][%thread][%class.%method:%line]:%m%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="UPLOAD" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${log.path}/upload/%d{yyyy/MM/dd/HH, aux}/%d{yyyyMMddHH}.log</fileNamePattern>
         </rollingPolicy>
         <encoder>
             <pattern>[%d{yyyy-MM-dd HH:mm:ss}][%-5level][%thread][%class.%method:%line]:%m%n</pattern>
@@ -31,12 +40,10 @@
     <!--如果在生产环境,则要把root中的appender注释掉.否则会打印到控制台 ,debug时可以打开.-->
     <logger name="cn.yunyichina.log" level="INFO">
         <appender-ref ref="ALL"/>
-        <!--<appender-ref ref="STDOUT"/>-->
     </logger>
 
     <!--打印任意包日志-->
     <root level="INFO">
-        <!--<appender-ref ref="ALL"/>-->
         <appender-ref ref="STDOUT"/>
     </root>
 

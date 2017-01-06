@@ -1,5 +1,6 @@
 package cn.yunyichina.log.service.collector.task;
 
+import cn.yunyichina.log.common.log.LoggerWrapper;
 import cn.yunyichina.log.common.util.ZipUtil;
 import cn.yunyichina.log.component.aggregator.index.imp.ContextIndexAggregator;
 import cn.yunyichina.log.component.aggregator.index.imp.KeyValueIndexAggregator;
@@ -44,6 +45,8 @@ import static cn.yunyichina.log.component.index.builder.imp.KeyValueIndexBuilder
 @Service
 public class ScheduleTask {
 
+    final LoggerWrapper logger = LoggerWrapper.getLogger(ScheduleTask.class);
+
     private final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 
     @Autowired
@@ -57,22 +60,27 @@ public class ScheduleTask {
 
     private final File[] FILE = new File[0];
 
-    @Scheduled(cron = "${cron}")
+    @Scheduled(fixedRateString = "${fixedRate}")
     public void execute() {
         Set<File> fileSet = null;
         try {
             Date now = new Date();
-            Map<String, File> fileMap = scanLastestLogFiles(now.getTime());
-            if (CollectionUtils.isEmpty(fileMap)) {
-//            没有需要上传的日志文件
+            Map<String, File> logFileMap = scanLastestLogFiles(now.getTime());
+            logger.info("扫描到的日志文件:" + JSON.toJSONString(logFileMap));
+            if (CollectionUtils.isEmpty(logFileMap)) {
+                logger.info("没有需要上传的日志文件");
             } else {
-                List<File> uploadFailedFileList = JSON.parseArray(propUtil.get(Key.UPLOAD_FAILED_FILE_LIST), File.class);//获取上传失败的文件
+                String json = propUtil.get(Key.UPLOAD_FAILED_FILE_LIST);
+                logger.info("上传失败文件列表:" + json);
+                List<File> uploadFailedFileList = JSON.parseArray(json, File.class);//获取上传失败的文件
                 int uploadFailedFileSize = uploadFailedFileList == null ? 0 : uploadFailedFileList.size();
-                Collection<File> fileCollection = fileMap.values();
+                Collection<File> fileCollection = logFileMap.values();
                 fileSet = new HashSet<>(fileCollection.size() + uploadFailedFileSize);
                 fileSet.addAll(fileCollection);
 
-                if (!CollectionUtils.isEmpty(uploadFailedFileList)) {
+                if (CollectionUtils.isEmpty(uploadFailedFileList)) {
+
+                } else {
                     fileSet.addAll(uploadFailedFileList);
                 }
 
@@ -84,6 +92,7 @@ public class ScheduleTask {
                 } else {
                     propUtil.put(Key.UPLOAD_FAILED_FILE_LIST, JSON.toJSONString(fileSet));
                 }
+                logger.info("上传" + (uploadSucceed ? "成功" : "失败"));
             }
         } catch (Exception e) {
             if (fileSet != null) {
@@ -101,14 +110,17 @@ public class ScheduleTask {
      */
     private Map<String, File> scanLastestLogFiles(long currentTimestamp) {
         String beginDatetime = propUtil.get(Key.LAST_MODIFY_TIME);
+        logger.info("从cache.properties中获取上一次上传日志的时间:" + beginDatetime);
         String endDatetime = sdf.format(new Date(currentTimestamp));
         if (beginDatetime == null || "".equals(beginDatetime.trim())) {
             long fixedRateAgo = currentTimestamp - config.getFixedRate();
             beginDatetime = sdf.format(new Date(fixedRateAgo));
+            logger.info("开始时间为空,以现在时间往后推: " + config.getFixedRate() + " ms");
         }
+        logger.info("时间区间:" + beginDatetime + " - " + endDatetime);
         LogFileScanner scanner = new LogFileScanner(beginDatetime, endDatetime, config.getLogRootDir());
-        Map<String, File> fileMap = scanner.scan();
-        return fileMap;
+        Map<String, File> logFileMap = scanner.scan();
+        return logFileMap;
     }
 
     private void buildIndexAndFlushToDisk(Set<File> fileSet) throws Exception {

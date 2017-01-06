@@ -13,7 +13,6 @@ eureka:
 logging:
   config: classpath:logback/logback-test.xml
 #
-cron: 0/5 * *  * * ?
 fixedRate: 300000
 dir:
   logRoot: D:${file.separator}logRoot
