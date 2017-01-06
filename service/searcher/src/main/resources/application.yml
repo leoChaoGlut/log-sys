@@ -15,10 +15,10 @@ logging:
 #
 constants:
   upload:
-    logSuffix: .log
-    indexSuffix: .index
-    bakSuffix: .bak
-    zipIndex: .zip
+#    logSuffix: .log
+#    indexSuffix: .index
+#    bakSuffix: .bak
+#    zipIndex: .zip
     logRootDir: D://log//logRootDir
     indexRootDir: D://log//indexRootDir
 server:

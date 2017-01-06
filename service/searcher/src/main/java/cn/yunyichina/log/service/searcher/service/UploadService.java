@@ -26,17 +26,10 @@ public class UploadService {
     @Autowired
     IndexManager indexManager;
 
-    @Value("${constants.upload.logSuffix}")
-    private String LOG_SUFFIX;
-
-    @Value("${constants.upload.indexSuffix}")
-    private String INDEX_SUFFIX;
-
-    @Value("${constants.upload.bakSuffix}")
-    private String BAK_SUFFIX;
-
-    @Value("${constants.upload.zipIndex}")
-    private String ZIP_SUFFIX;
+    private final String LOG_SUFFIX = ".log";
+    private final String INDEX_SUFFIX = ".index";
+    private final String BAK_SUFFIX = ".bak";
+    private final String ZIP_SUFFIX = ".zip";
 
     @Value("${constants.upload.logRootDir}")
     private String UPLOADED_LOG_ROOT_DIR;
@@ -46,16 +39,18 @@ public class UploadService {
 
     public void uploadFile(MultipartFile file) throws Exception {
         byte[] bytes = file.getBytes();
-        File dir = new File(UPLOADED_LOG_ROOT_DIR);
-        if (!dir.exists()) {
-            boolean succeed = dir.mkdirs();
+        File uploadedLogRootDir = new File(UPLOADED_LOG_ROOT_DIR);
+        if (uploadedLogRootDir.exists()) {
+
+        } else {
+            boolean succeed = uploadedLogRootDir.mkdirs();
             if (succeed) {
 
             } else {
                 throw new Exception("上传文件时,创建目录失败.");
             }
         }
-        String zipFilePath = dir + File.separator + file.getName() + ZIP_SUFFIX;
+        String zipFilePath = uploadedLogRootDir + File.separator + file.getName() + ZIP_SUFFIX;
         Files.write(bytes, new File(zipFilePath));
         ZipUtil.unzip(zipFilePath, UPLOADED_LOG_ROOT_DIR);
         rebuildLogDirStructureAndUpdateIndex();
@@ -63,69 +58,88 @@ public class UploadService {
 
     private void rebuildLogDirStructureAndUpdateIndex() throws Exception {
         File[] uploadedLogFiles = new File(UPLOADED_LOG_ROOT_DIR).listFiles();
-        if (uploadedLogFiles != null) {
+        if (uploadedLogFiles == null || uploadedLogFiles.length <= 0) {
+//            TODO zip文件没有内容
+//            TODO zip文件没有内容
+//            TODO zip文件没有内容
+        } else {
             for (File uploadedLogFile : uploadedLogFiles) {
                 if (uploadedLogFile.isFile()) {
                     String fileName = uploadedLogFile.getName();
-                    String fileSuffix = fileName.substring(fileName.lastIndexOf("."));
-                    fileName = fileName.substring(0, fileName.lastIndexOf("."));
+                    int dotIndex = fileName.lastIndexOf(".");
+                    String fileSuffix = fileName.substring(dotIndex);
+                    fileName = fileName.substring(0, dotIndex);
                     if (Objects.equal(fileSuffix, LOG_SUFFIX)) {
-                        String oldLogFilePath = buildOldLogFilePath(fileName, fileSuffix);
-                        File oldLogFile = new File(oldLogFilePath);
-                        if (oldLogFile.exists()) {
-                            boolean succeed = uploadedLogFile.delete();
-                            if (succeed) {
-
-                            } else {
-                                throw new Exception("恢复日志目录时,替换旧日志文件失败");
-                            }
-                        } else {
-                            Files.createParentDirs(oldLogFile);
-                            Files.move(uploadedLogFile, oldLogFile);
-                        }
+                        restructureLogFile(uploadedLogFile, fileName, fileSuffix);
                     } else if (Objects.equal(fileSuffix, INDEX_SUFFIX)) {
-                        ObjectInputStream ois = null;
-                        try {
-                            ois = new ObjectInputStream(new FileInputStream(uploadedLogFile));
-                            switch (fileName) {
-                                case IndexType.CONTEXT:
-                                    Map<Long, ContextIndexBuilder.ContextInfo> contextIndexMap = (Map<Long, ContextIndexBuilder.ContextInfo>) ois.readObject();
-                                    indexManager.appendContextIndex(contextIndexMap);
-                                    backupAndReplace(fileName, indexManager.getContextIndexMap());
-                                    break;
-                                case IndexType.KEYWORD:
-                                    Map<String, Set<KeywordIndexBuilder.IndexInfo>> keywordIndexMap = (Map<String, Set<KeywordIndexBuilder.IndexInfo>>) ois.readObject();
-                                    indexManager.appendKeywordIndex(keywordIndexMap);
-                                    backupAndReplace(fileName, indexManager.getKeywordIndexMap());
-                                    break;
-                                case IndexType.KEY_VALUE:
-                                    Map<String, Map<String, Set<KeyValueIndexBuilder.IndexInfo>>> keyValueIndexMap = (Map<String, Map<String, Set<KeyValueIndexBuilder.IndexInfo>>>) ois.readObject();
-                                    indexManager.appendKeyValueIndex(keyValueIndexMap);
-                                    backupAndReplace(fileName, indexManager.getKeyValueIndexMap());
-                                    break;
-                                default:
-                                    throw new Exception("不支持的索引类型");
-                            }
-                        } finally {
-                            boolean succeed = uploadedLogFile.delete();
-                            if (succeed) {
-
-                            } else {
-                                throw new Exception("删除上传的日志文件失败");
-                            }
-                            if (ois != null) {
-                                ois.close();
-                            }
-                        }
+                        updateIndexManager(uploadedLogFile, fileName);
+                    } else {
+//                          不处理其它格式的文件
                     }
                 } else {
-
+//                          不处理目录
                 }
             }
         }
     }
 
-    private String buildOldLogFilePath(String fileName, String fileSuffix) {
+    private void updateIndexManager(File uploadedLogFile, String fileName) throws Exception {
+        ObjectInputStream ois = null;
+        try {
+            ois = new ObjectInputStream(new FileInputStream(uploadedLogFile));
+            switch (fileName) {
+                case IndexType.CONTEXT:
+                    Map<Long, ContextIndexBuilder.ContextInfo> contextIndexMap = (Map<Long, ContextIndexBuilder.ContextInfo>) ois.readObject();
+                    indexManager.appendContextIndex(contextIndexMap);
+                    backupAndReplace(fileName, indexManager.getContextIndexMap());
+                    break;
+                case IndexType.KEYWORD:
+                    Map<String, Set<KeywordIndexBuilder.IndexInfo>> keywordIndexMap = (Map<String, Set<KeywordIndexBuilder.IndexInfo>>) ois.readObject();
+                    indexManager.appendKeywordIndex(keywordIndexMap);
+                    backupAndReplace(fileName, indexManager.getKeywordIndexMap());
+                    break;
+                case IndexType.KEY_VALUE:
+                    Map<String, Map<String, Set<KeyValueIndexBuilder.IndexInfo>>> keyValueIndexMap = (Map<String, Map<String, Set<KeyValueIndexBuilder.IndexInfo>>>) ois.readObject();
+                    indexManager.appendKeyValueIndex(keyValueIndexMap);
+                    backupAndReplace(fileName, indexManager.getKeyValueIndexMap());
+                    break;
+                default:
+//                    不支持的索引类型
+                    break;
+            }
+        } finally {
+            if (ois != null) {
+                try {
+                    ois.close();
+                } finally {
+                    boolean succeed = uploadedLogFile.delete();
+                    if (succeed) {
+
+                    } else {
+                        throw new Exception("删除上传的日志文件失败");
+                    }
+                }
+            }
+        }
+    }
+
+    private void restructureLogFile(File uploadedLogFile, String fileName, String fileSuffix) throws Exception {
+        String restructureLogFilePath = restructureLogFilePath(fileName, fileSuffix);
+        File restructureLogFile = new File(restructureLogFilePath);
+        if (restructureLogFile.exists()) {
+            boolean succeed = uploadedLogFile.delete();
+            if (succeed) {
+
+            } else {
+                throw new Exception("恢复日志目录时,替换旧日志文件失败");
+            }
+        } else {
+            Files.createParentDirs(restructureLogFile);
+            Files.move(uploadedLogFile, restructureLogFile);
+        }
+    }
+
+    private String restructureLogFilePath(String fileName, String fileSuffix) {
         return UPLOADED_LOG_ROOT_DIR + File.separator + fileName.substring(0, 4) +
                 File.separator + fileName.substring(4, 6) +
                 File.separator + fileName.substring(6, 8) +

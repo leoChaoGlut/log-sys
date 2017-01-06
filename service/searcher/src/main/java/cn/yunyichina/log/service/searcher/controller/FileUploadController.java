@@ -1,5 +1,6 @@
 package cn.yunyichina.log.service.searcher.controller;
 
+import cn.yunyichina.log.common.log.LoggerWrapper;
 import cn.yunyichina.log.component.entity.dto.Response;
 import cn.yunyichina.log.service.searcher.service.UploadService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,22 +16,26 @@ import org.springframework.web.multipart.MultipartFile;
 @RequestMapping("/file")
 public class FileUploadController {
 
+    final LoggerWrapper logger = LoggerWrapper.getLogger(FileUploadController.class);
+
     @Autowired
     UploadService uploadService;
 
     @PostMapping("/upload")
     public Response upload(MultipartFile zipFile) {
-        System.err.println("==========upload============");
         try {
+            logger.contextBegin("上传日志开始:" + zipFile.getName() + "," + zipFile.getSize());
             if (zipFile != null && !zipFile.isEmpty()) {
-                System.out.println(zipFile.getSize());
                 uploadService.uploadFile(zipFile);
-                return Response.success();
+                logger.contextEnd("上传日志成功");
+                return Response.success("上传日志成功");
             } else {
-                return Response.failure("The zipFile which to be uploaded is null or empty");
+                logger.contextEnd("上传文件失败: zip 文件为空");
+                return Response.failure("上传文件失败: zip 文件为空");
             }
         } catch (Exception e) {
-            return Response.failure(e.getLocalizedMessage());
+            logger.contextEnd("上传文件出现异常:" + e.getLocalizedMessage());
+            return Response.failure("上传文件出现异常:" + e.getLocalizedMessage());
         }
     }
 }
