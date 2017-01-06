@@ -26,7 +26,7 @@ public class TagController {
     ) {
         try {
             TagSet tagSet = tagService.getTagSet(collectorId);
-            return Response.success("新增分组成功");
+            return Response.success(tagSet);
         } catch (Exception e) {
             return Response.failure(e.getLocalizedMessage());
         }
