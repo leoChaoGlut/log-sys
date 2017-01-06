@@ -12,9 +12,6 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class Config {
 
-    @Value("${cron}")
-    private String cron;
-
     @Value("${dir.logRoot}")
     private String logRootDir;
 
@@ -26,10 +23,6 @@ public class Config {
 
     @Value("${url.uploadServer}")
     private String uploadServerUrl;
-
-    public String getCron() {
-        return cron;
-    }
 
     public String getLogRootDir() {
         return logRootDir;

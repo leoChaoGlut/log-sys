@@ -62,13 +62,14 @@ public class ScheduleTask {
 
     @Scheduled(fixedRateString = "${fixedRate}")
     public void execute() {
+        logger.contextBegin("定时任务开始,间隔: " + config.getFixedRate() + " ms");
         Set<File> fileSet = null;
         try {
             Date now = new Date();
             Map<String, File> logFileMap = scanLastestLogFiles(now.getTime());
             logger.info("扫描到的日志文件:" + JSON.toJSONString(logFileMap));
             if (CollectionUtils.isEmpty(logFileMap)) {
-                logger.info("没有需要上传的日志文件");
+                logger.contextEnd("没有需要上传的日志文件");
             } else {
                 String json = propUtil.get(Key.UPLOAD_FAILED_FILE_LIST);
                 logger.info("上传失败文件列表:" + json);
@@ -92,13 +93,14 @@ public class ScheduleTask {
                 } else {
                     propUtil.put(Key.UPLOAD_FAILED_FILE_LIST, JSON.toJSONString(fileSet));
                 }
-                logger.info("上传" + (uploadSucceed ? "成功" : "失败"));
+                logger.contextEnd("上传" + (uploadSucceed ? "成功" : "失败"));
             }
         } catch (Exception e) {
             if (fileSet != null) {
                 propUtil.put(Key.UPLOAD_FAILED_FILE_LIST, JSON.toJSONString(fileSet));
             }
-            e.printStackTrace();
+            logger.error("定时任务抛出异常:" + e.getLocalizedMessage(), e);
+            logger.contextEnd("定时任务抛出异常:" + e.getLocalizedMessage());
         }
     }
 
@@ -147,9 +149,11 @@ public class ScheduleTask {
 
     private boolean uploadFiles(Set<File> fileSet) throws Exception {
         String zipFilePath = config.getTmpZipDir() + File.separator + Key.ZIP_FILE_NAME;
+        logger.info("上传文件总数:" + fileSet.size());
         ZipUtil.zip(zipFilePath, fileSet.toArray(FILE));
         File zipFile = new File(zipFilePath);
         if (zipFile.exists()) {
+            logger.info("zip大小:" + zipFile.getTotalSpace());
             CloseableHttpClient httpClient = HttpClients.createDefault();
             HttpPost post = new HttpPost(config.getUploadServerUrl());
             HttpEntity entity = MultipartEntityBuilder.create().addBinaryBody("zipFile", zipFile).build();
