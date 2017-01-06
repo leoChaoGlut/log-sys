@@ -40,7 +40,6 @@
     <!--如果在生产环境,则要把root中的appender注释掉.否则会打印到控制台 ,debug时可以打开.-->
     <logger name="cn.yunyichina.log" level="INFO">
         <appender-ref ref="ALL"/>
-        <!--<appender-ref ref="STDOUT"/>-->
     </logger>
 
     <logger name="cn.yunyichina.log.service.searcher.service.UploadService" level="INFO">
@@ -49,7 +48,6 @@
 
     <!--打印任意包日志-->
     <root level="INFO">
-        <!--<appender-ref ref="ALL"/>-->
         <appender-ref ref="STDOUT"/>
     </root>
 

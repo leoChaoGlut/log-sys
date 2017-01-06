@@ -1,65 +1,61 @@
 #!/usr/bin/env bash
-source /etc/profile
-#================Var Begin====================
-serviceGroup=$1
-serviceName=$2
-serviceRootDir="/data/logSys"
-serviceDir="$serviceRootDir/$serviceGroup/$serviceName/"
-jarName="$serviceName.jar"
-mainClass="cn.yunyichina.log.$serviceGroup.$serviceName.Application"
-tag="log-$serviceGroup-$serviceName"
-libDir="$serviceDir/lib"
-#================Var End====================
+
+#================== Variable Begin ==================
+
+jarName=registry.jar
+
+#================== Variable End ==================
 
 
-#================Function Begin====================
-start(){
-    echo $serviceDir
-    cd $serviceDir
-    runningJarCount=$(ps -ef | grep java | grep -w $tag | wc -l)
-    if [ $runningJarCount -gt 0 ]; then
-        echo "$logOutputFormat $tag is running."
-    else
-        java -Dir=$tag $mainClass &
-        echo "$logOutputFormat Ready to start $tag, if u wanna see the bootstrap process of $tag, please tail the console.out."
-    fi
+#================== Method Begin ==================
+
+getRunningJarCount(){
+        runningJarCount=$(ps -ef | grep java | grep -v grep | grep -w $jarName | wc -l)
+        echo $runningJarCount
 }
 
-stop(){
-    echo "$logOutputFormat Ready to stop $tag."
-    runningJarCount=$(ps -ef | grep java | grep -w $tag | wc -l)
-    if [ $runningJarCount -gt 0 ]; then
-        ps -ef|grep java|grep -w $tag|grep -v grep|awk '{print $2}' |xargs -n1 kill -9
-    fi
-    echo "$logOutputFormat $tag was stopped."
+startJar(){
+        if [ $(getRunningJarCount) -eq 0 ];then
+                nohup java -jar $jarName &
+                echo "Starting $jarName"
+        else
+                echo "$jarName is running now"
+        fi
 }
-#================Function End====================
 
-for lib in $libDir/*.jar
-do
-    libs=$lib:$libs
-done
-CLASSPATH=.:
-echo CLASSPATH
-export CLASSPATH
+stopJar(){
+        if [ $(getRunningJarCount) -eq 0 ];then
+                echo "$jarName is not running"
+        else
+                ps -ef | grep java | grep -v grep | grep -w $jarName | awk '{print $2}' | xargs kill -9
+                while [ 1 -eq 1 ]
+                do
+                        if [ $(getRunningJarCount) -eq 0 ];then
+                                break
+                        fi
+                done
+                echo "$jarName has been shutdown"
+        fi
 
+}
 
-echo $1 $2 $3
-#==================Entrance Begin===============
-case "$3" in
-    start)
-        start
-        ;;
-    stop)
-        stop
-        ;;
-    restart)
-        stop
-        sleep 5
-        start
-        ;;
-    *)
-    echo "Usage: $0 {start|stop|restart} "
-    exit 2
+#================== Method End ==================
+
+#================== Entrance Begin ==================
+
+case "$1" in
+        start)
+                startJar
+                ;;
+        stop)
+                stopJar
+                ;;
+        restart)
+                stopJar
+                startJar
+                ;;
+        *)
+        exit 2
 esac
-#==================Entrance End===============
+
+#================== Entrance End ==================

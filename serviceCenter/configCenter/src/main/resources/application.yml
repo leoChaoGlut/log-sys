@@ -12,8 +12,6 @@ spring:
           search-paths: '{application}'
 eureka:
   client:
-    healthcheck:
-      enabled: true
     service-url:
       defaultZone: http://127.0.0.1:10100/eureka/
   instance:

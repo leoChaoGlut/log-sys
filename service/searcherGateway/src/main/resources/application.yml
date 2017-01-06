@@ -6,11 +6,8 @@ spring:
     driver-class-name: com.mysql.jdbc.Driver
   application:
     name: searcher-gateway
-  cloud:
-    config:
-      enabled: false
   profiles:
-    active: dev
+    active: test
 eureka:
   instance:
     ip-address: 127.0.0.1

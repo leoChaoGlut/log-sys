@@ -1,4 +1,4 @@
-package cn.yunyichina.log.service.collector.entity.dto;
+package cn.yunyichina.log.component.entity.dto;
 
 import cn.yunyichina.log.component.index.builder.imp.KeyValueIndexBuilder;
 

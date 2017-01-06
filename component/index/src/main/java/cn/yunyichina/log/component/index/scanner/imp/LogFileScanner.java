@@ -1,6 +1,7 @@
 package cn.yunyichina.log.component.index.scanner.imp;
 
 
+import cn.yunyichina.log.common.log.LoggerWrapper;
 import cn.yunyichina.log.component.index.constant.DirDepth;
 import cn.yunyichina.log.component.index.scanner.Scanner;
 
@@ -15,6 +16,10 @@ import java.util.TreeMap;
  * @Description:
  */
 public class LogFileScanner implements Scanner<Map<String, File>> {
+
+    final LoggerWrapper logger = LoggerWrapper.getLogger(LogFileScanner.class);
+
+    private final String LOG_SUFFIX = ".log";
 
     private String rootDir;
     private String beginDatetime;
@@ -55,7 +60,7 @@ public class LogFileScanner implements Scanner<Map<String, File>> {
         if (files != null) {
             for (File file : files) {
                 String fileName = file.getName();
-                if (fileName.lastIndexOf(".log") != -1 || file.isDirectory()) {
+                if (fileName.lastIndexOf(LOG_SUFFIX) != -1 || file.isDirectory()) {
                     dfs(file, 0);
                 }
             }
@@ -75,7 +80,7 @@ public class LogFileScanner implements Scanner<Map<String, File>> {
                 }
             } else {
                 String fileName = file.getName();
-                if (fileName.endsWith(".log")) {
+                if (fileName.endsWith(LOG_SUFFIX)) {
                     fileName = fileName.substring(0, fileName.lastIndexOf("."));
                     fileMap.put(fileName, file);
                 }
