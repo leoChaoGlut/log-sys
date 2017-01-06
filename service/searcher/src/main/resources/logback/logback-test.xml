@@ -25,6 +25,15 @@
         </encoder>
     </appender>
 
+    <appender name="UPLOAD" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${log.path}/upload/%d{yyyy/MM/dd/HH, aux}/%d{yyyyMMddHH}.log</fileNamePattern>
+        </rollingPolicy>
+        <encoder>
+            <pattern>[%d{yyyy-MM-dd HH:mm:ss}][%-5level][%thread][%class.%method:%line]:%m%n</pattern>
+        </encoder>
+    </appender>
+
     <!-- name代表:该包名下的log会被打印-->
     <!--现在保持和平台一致,所有log打在同一个文件,不分info和error了-->
     <!--注意,STDOUT 只会打印com.yy下打出的日志.-->
@@ -32,6 +41,10 @@
     <logger name="cn.yunyichina.log" level="INFO">
         <appender-ref ref="ALL"/>
         <!--<appender-ref ref="STDOUT"/>-->
+    </logger>
+
+    <logger name="cn.yunyichina.log.service.searcher.service.UploadService" level="INFO">
+        <appender-ref ref="UPLOAD"/>
     </logger>
 
     <!--打印任意包日志-->
