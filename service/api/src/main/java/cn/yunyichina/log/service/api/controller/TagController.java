@@ -24,13 +24,13 @@ public class TagController {
     @Autowired
     TagService tagService;
 
-    @GetMapping("tag/{collectorId}")
+    @GetMapping("tag/{applicationName}")
     public Response getTagSet(
-            @PathVariable Integer collectorId
+            @PathVariable String applicationName
     ) {
         try {
-            logger.contextBegin("开始获取TagSet:" + collectorId);
-            TagSet tagSet = tagService.getTagSet(collectorId);
+            logger.contextBegin("开始获取TagSet:" + applicationName);
+            TagSet tagSet = tagService.getTagSet(applicationName);
             logger.contextEnd("获取到的TagSet:" + JSON.toJSONString(tagSet, true));
             return Response.success(tagSet);
         } catch (Exception e) {

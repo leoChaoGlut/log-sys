@@ -39,16 +39,15 @@ public class TagService {
     KeywordTagMapper keywordTagMapper;
 
     @Transactional(readOnly = true)
-    @Cacheable(cacheNames = CacheName.COLLECTOR, key = "#collectorId")
-    public TagSet getTagSet(Integer collectorId) {
-        logger.info("缓存穿透:" + collectorId);
-        return buildTagSet(collectorId);
+    @Cacheable(cacheNames = CacheName.COLLECTOR, key = "#applicationName")
+    public TagSet getTagSet(String applicationName) {
+        logger.info("缓存穿透:" + applicationName);
+        return buildTagSet(applicationName);
     }
 
-
-    @CachePut(cacheNames = CacheName.COLLECTOR, key = "#collectorId")
-    public TagSet updateTagSetCache(Integer collectorId) {
-        return buildTagSet(collectorId);
+    @CachePut(cacheNames = CacheName.COLLECTOR, key = "#applicationName")
+    public TagSet updateTagSetCache(String applicationName) {
+        return buildTagSet(applicationName);
     }
 
     @CacheEvict(cacheNames = CacheName.COLLECTOR, allEntries = true)
@@ -56,9 +55,9 @@ public class TagService {
 
     }
 
-    private TagSet buildTagSet(Integer collectorId) {
-        Set<String> keywordSet = getKeywordSet(collectorId);
-        Set<KeyValueIndexBuilder.KvTag> kvTagSet = getkvTagSet(collectorId);
+    private TagSet buildTagSet(String applicationName) {
+        Set<String> keywordSet = getKeywordSet(applicationName);
+        Set<KeyValueIndexBuilder.KvTag> kvTagSet = getkvTagSet(applicationName);
 
         TagSet tagSet = new TagSet()
                 .setKeywordSet(keywordSet)
@@ -67,8 +66,8 @@ public class TagService {
         return tagSet;
     }
 
-    private Set<String> getKeywordSet(Integer collectorId) {
-        KeywordTag keywordTag = new KeywordTag().setCollector_id(collectorId);
+    private Set<String> getKeywordSet(String applicationName) {
+        KeywordTag keywordTag = new KeywordTag().setApplication_name(applicationName);
         List<KeywordTag> keywordTagList = keywordTagMapper.selectList(keywordTag);
         if (CollectionUtils.isEmpty(keywordTagList)) {
             return new HashSet<>();
@@ -81,8 +80,8 @@ public class TagService {
         }
     }
 
-    private Set<KeyValueIndexBuilder.KvTag> getkvTagSet(Integer collectorId) {
-        KeyValueTag keyValueTag = new KeyValueTag().setCollector_id(collectorId);
+    private Set<KeyValueIndexBuilder.KvTag> getkvTagSet(String applicationName) {
+        KeyValueTag keyValueTag = new KeyValueTag().setApplication_name(applicationName);
         List<KeyValueTag> keyValueTagList = keyValueTagMapper.selectList(keyValueTag);
         if (CollectionUtils.isEmpty(keyValueTagList)) {
             return new HashSet<>();

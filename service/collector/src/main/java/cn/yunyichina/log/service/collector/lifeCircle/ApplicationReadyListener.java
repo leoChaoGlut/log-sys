@@ -2,11 +2,13 @@ package cn.yunyichina.log.service.collector.lifeCircle;
 
 
 import cn.yunyichina.log.common.log.LoggerWrapper;
+import cn.yunyichina.log.component.entity.dto.Response;
 import cn.yunyichina.log.component.entity.dto.TagSet;
 import cn.yunyichina.log.component.index.builder.imp.KeyValueIndexBuilder;
 import cn.yunyichina.log.service.collector.constants.Key;
 import cn.yunyichina.log.service.collector.util.PropertiesUtil;
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Charsets;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.client.fluent.Request;
@@ -16,7 +18,7 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -49,11 +51,13 @@ public class ApplicationReadyListener implements ApplicationListener<Application
             logger.contextBegin("开始获取tagSet");
             String keywordSetJson = propUtil.get(Key.KEYWORD_SET);
             String kvTagSetJson = propUtil.get(Key.KV_TAG_SET);
+            logger.info("keywordSetJson: " + keywordSetJson);
+            logger.info("kvTagSetJson: " + kvTagSetJson);
             boolean doRequest = false;
-            if (null == keywordSetJson || org.springframework.util.StringUtils.isEmpty(keywordSetJson)) {
+            if (null == keywordSetJson || StringUtils.isEmpty(keywordSetJson) || Objects.equals("null", keywordSetJson)) {
                 logger.contextEnd(Key.KEYWORD_SET + " 为空");
                 doRequest = true;
-            } else if (null == kvTagSetJson || org.springframework.util.StringUtils.isEmpty(kvTagSetJson)) {
+            } else if (null == kvTagSetJson || StringUtils.isEmpty(kvTagSetJson) || Objects.equals("null", kvTagSetJson)) {
                 logger.contextEnd(Key.KV_TAG_SET + " 为空");
                 doRequest = true;
             }
@@ -62,24 +66,28 @@ public class ApplicationReadyListener implements ApplicationListener<Application
                 String url = env.getProperty("url.tagSet");
                 logger.info("从 " + url + " 获取tagSet");
 
-                String json = Request.Get(url)
+                String respJson = Request.Get(url)
                         .socketTimeout(TIME_OUT)
                         .connectTimeout(TIME_OUT)
                         .execute()
                         .returnContent()
                         .asString(Charsets.UTF_8);
-
-                TagSet tagSet = JSON.parseObject(json, TagSet.class);
+                logger.info("respJson: " + respJson);
+                Response resp = JSON.parseObject(respJson, Response.class);
+                TagSet tagSet = ((JSONObject) resp.getResult()).toJavaObject(TagSet.class);
                 Set<String> keywordSet = tagSet.getKeywordSet();
                 Set<KeyValueIndexBuilder.KvTag> kvTagSet = tagSet.getKvTagSet();
 
                 keywordSetJson = JSON.toJSONString(keywordSet);
                 kvTagSetJson = JSON.toJSONString(kvTagSet);
 
+                logger.info("==keywordSetJson: " + keywordSetJson);
+                logger.info("==kvTagSetJson: " + kvTagSetJson);
+
                 propUtil.put(Key.KEYWORD_SET, keywordSetJson);
                 propUtil.put(Key.KV_TAG_SET, kvTagSetJson);
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             String errorMsg = "获取tagSet时出现异常:" + e.getLocalizedMessage();
             logger.error(errorMsg, e);
             logger.contextEnd(errorMsg);

@@ -4,7 +4,7 @@
 
     <select id="selectList" parameterType="cn.yunyichina.log.component.entity.po.KeywordTag"
             resultType="cn.yunyichina.log.component.entity.po.KeywordTag">
-        SELECT * FROM keyword_tag WHERE collector_id = #{collector_id}
+        SELECT * FROM keyword_tag WHERE application_name = #{application_name}
     </select>
 
 </mapper>

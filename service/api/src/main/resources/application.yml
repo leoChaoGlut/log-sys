@@ -18,7 +18,6 @@ eureka:
 logging:
   config: classpath:logback/logback-test.xml
 server:
-  context-path: /api
   port: 10700
 mybatis:
   mapper-locations: classpath:mapper/*Mapper.xml
