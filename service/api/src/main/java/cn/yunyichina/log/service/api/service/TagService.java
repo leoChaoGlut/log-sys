@@ -1,13 +1,14 @@
 package cn.yunyichina.log.service.api.service;
 
+import cn.yunyichina.log.common.entity.entity.dto.TagSet;
+import cn.yunyichina.log.common.entity.entity.po.KeyValueTag;
+import cn.yunyichina.log.common.entity.entity.po.KeywordTag;
 import cn.yunyichina.log.common.log.LoggerWrapper;
-import cn.yunyichina.log.component.entity.dto.TagSet;
-import cn.yunyichina.log.component.entity.po.KeyValueTag;
-import cn.yunyichina.log.component.entity.po.KeywordTag;
 import cn.yunyichina.log.component.index.builder.imp.KeyValueIndexBuilder;
 import cn.yunyichina.log.service.api.constants.CacheName;
 import cn.yunyichina.log.service.api.mapper.KeyValueTagMapper;
 import cn.yunyichina.log.service.api.mapper.KeywordTagMapper;
+import com.alibaba.fastjson.JSON;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
@@ -92,6 +93,29 @@ public class TagService {
                 kvTagSet.add(kvTag);
             }
             return kvTagSet;
+        }
+    }
+
+    public TagSet addKeyword(KeywordTag keywordTag) {
+        System.out.println("测试：" + JSON.toJSONString(keywordTag));
+        int result = keywordTagMapper.insertOne(keywordTag);
+        if (result > 0) {
+            String applicationName = keywordTag.getApplication_name();
+            updateTagSetCache(applicationName);
+            return buildTagSet(applicationName);
+        } else {
+            return null;
+        }
+    }
+
+    public TagSet addKvTag(KeyValueTag keyValueTag) {
+        int result = keyValueTagMapper.insertOne(keyValueTag);
+        if (result > 0) {
+            String applicationName = keyValueTag.getApplication_name();
+            updateTagSetCache(applicationName);
+            return buildTagSet(applicationName);
+        } else {
+            return null;
         }
     }
 

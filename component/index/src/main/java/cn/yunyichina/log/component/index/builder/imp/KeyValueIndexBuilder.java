@@ -18,6 +18,7 @@ import java.util.*;
  */
 public class KeyValueIndexBuilder implements IndexBuilder<Map<String, Map<String, Set<KeyValueIndexBuilder.IndexInfo>>>>, Serializable {
 
+    private static final long serialVersionUID = 8379700811052368709L;
     private Set<KvTag> kvTagSet;
     private File logFile;
 
@@ -74,6 +75,7 @@ public class KeyValueIndexBuilder implements IndexBuilder<Map<String, Map<String
     }
 
     public static class IndexInfo implements Serializable {
+        private static final long serialVersionUID = -1025285228385964638L;
         private File logFile;
         private int indexOfLogFile;
         private Long contextCount;
@@ -116,6 +118,7 @@ public class KeyValueIndexBuilder implements IndexBuilder<Map<String, Map<String
     }
 
     public static class KvTag implements Serializable {
+        private static final long serialVersionUID = -7840708503963386116L;
         private String key;
         private String keyTag;
         private String valueEndTag;

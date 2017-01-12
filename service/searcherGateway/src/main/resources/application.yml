@@ -21,4 +21,8 @@ mybatis:
   mapper-locations: classpath:mapper/*Mapper.xml
 server:
   port: 10403
+endpoints:
+  cors:
+    allowed-origins: http://localhost,http://127.0.0.1
+    allowed-methods: GET,POST
 

@@ -7,7 +7,6 @@ import cn.yunyichina.log.component.searchEngine.AbstractSearchEngine;
 import cn.yunyichina.log.component.searchEngine.SearchEngine;
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
-import org.springframework.util.CollectionUtils;
 
 import java.io.File;
 import java.util.*;
@@ -54,11 +53,11 @@ public class NoIndexSearchEngine extends AbstractSearchEngine implements SearchE
                 }
             }
         }
-        if (CollectionUtils.isEmpty(keywordIndexMap)) {
+        if (null == keywordIndexMap || keywordIndexMap.isEmpty()) {
 
         } else {
             Set<KeywordIndexBuilder.IndexInfo> indexInfoSet = keywordIndexMap.get(keyword);
-            if (CollectionUtils.isEmpty(indexInfoSet)) {
+            if (null == indexInfoSet || indexInfoSet.isEmpty()) {
 
             } else {
                 matchedContextInfoSet = new HashSet<>(indexInfoSet.size());

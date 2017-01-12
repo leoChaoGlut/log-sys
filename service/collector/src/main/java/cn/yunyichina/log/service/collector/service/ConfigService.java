@@ -1,6 +1,6 @@
 package cn.yunyichina.log.service.collector.service;
 
-import cn.yunyichina.log.component.entity.dto.TagSet;
+import cn.yunyichina.log.common.entity.entity.dto.TagSet;
 import cn.yunyichina.log.service.collector.constants.Key;
 import cn.yunyichina.log.service.collector.util.PropertiesUtil;
 import com.alibaba.fastjson.JSON;

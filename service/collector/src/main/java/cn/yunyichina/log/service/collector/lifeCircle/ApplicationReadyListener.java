@@ -1,9 +1,9 @@
 package cn.yunyichina.log.service.collector.lifeCircle;
 
 
+import cn.yunyichina.log.common.entity.entity.dto.Response;
+import cn.yunyichina.log.common.entity.entity.dto.TagSet;
 import cn.yunyichina.log.common.log.LoggerWrapper;
-import cn.yunyichina.log.component.entity.dto.Response;
-import cn.yunyichina.log.component.entity.dto.TagSet;
 import cn.yunyichina.log.component.index.builder.imp.KeyValueIndexBuilder;
 import cn.yunyichina.log.service.collector.constants.Key;
 import cn.yunyichina.log.service.collector.util.PropertiesUtil;

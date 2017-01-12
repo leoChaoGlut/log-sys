@@ -1,7 +1,7 @@
 package cn.yunyichina.log.service.searcherGateway.mapper;
 
-import cn.yunyichina.log.common.base.BaseMapper;
-import cn.yunyichina.log.component.entity.do_.StoreRecord;
+import cn.yunyichina.log.common.entity.base.BaseMapper;
+import cn.yunyichina.log.common.entity.entity.po.StoreRecord;
 import org.springframework.stereotype.Repository;
 
 /**

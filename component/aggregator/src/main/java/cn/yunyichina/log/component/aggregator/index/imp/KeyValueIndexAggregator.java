@@ -2,7 +2,6 @@ package cn.yunyichina.log.component.aggregator.index.imp;
 
 import cn.yunyichina.log.component.aggregator.index.AbstractIndexAggregator;
 import cn.yunyichina.log.component.index.builder.imp.KeyValueIndexBuilder;
-import org.springframework.util.CollectionUtils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -22,7 +21,9 @@ public class KeyValueIndexAggregator extends AbstractIndexAggregator<Map<String,
 
     @Override
     public Map<String, Map<String, Set<KeyValueIndexBuilder.IndexInfo>>> aggregate(Map<String, Map<String, Set<KeyValueIndexBuilder.IndexInfo>>> input) {
-        if (!CollectionUtils.isEmpty(input)) {
+        if (null == input || input.isEmpty()) {
+
+        } else {
             Set<Map.Entry<String, Map<String, Set<KeyValueIndexBuilder.IndexInfo>>>> inputEntrySet0 = input.entrySet();
             for (Map.Entry<String, Map<String, Set<KeyValueIndexBuilder.IndexInfo>>> inputEntry0 : inputEntrySet0) {
                 Map<String, Set<KeyValueIndexBuilder.IndexInfo>> valueIndex = aggregatedCollection.get(inputEntry0.getKey());
@@ -30,7 +31,9 @@ public class KeyValueIndexAggregator extends AbstractIndexAggregator<Map<String,
                     valueIndex = inputEntry0.getValue();
                 } else {
                     Set<Map.Entry<String, Set<KeyValueIndexBuilder.IndexInfo>>> inputEntrySet1 = inputEntry0.getValue().entrySet();
-                    if (!CollectionUtils.isEmpty(inputEntrySet1)) {
+                    if (null == inputEntrySet1 || inputEntrySet1.isEmpty()) {
+
+                    } else {
                         for (Map.Entry<String, Set<KeyValueIndexBuilder.IndexInfo>> inputEntry1 : inputEntrySet1) {
                             Set<KeyValueIndexBuilder.IndexInfo> indexInfoSet = valueIndex.get(inputEntry1.getKey());
                             if (indexInfoSet == null) {

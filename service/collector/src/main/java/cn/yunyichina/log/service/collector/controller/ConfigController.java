@@ -1,7 +1,7 @@
 package cn.yunyichina.log.service.collector.controller;
 
-import cn.yunyichina.log.component.entity.dto.Response;
-import cn.yunyichina.log.component.entity.dto.TagSet;
+import cn.yunyichina.log.common.entity.entity.dto.Response;
+import cn.yunyichina.log.common.entity.entity.dto.TagSet;
 import cn.yunyichina.log.service.collector.service.ConfigService;
 import com.alibaba.fastjson.JSON;
 import org.springframework.beans.factory.annotation.Autowired;

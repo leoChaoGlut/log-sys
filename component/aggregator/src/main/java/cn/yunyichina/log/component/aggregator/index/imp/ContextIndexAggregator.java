@@ -2,7 +2,6 @@ package cn.yunyichina.log.component.aggregator.index.imp;
 
 import cn.yunyichina.log.component.aggregator.index.AbstractIndexAggregator;
 import cn.yunyichina.log.component.index.builder.imp.ContextIndexBuilder;
-import org.springframework.util.CollectionUtils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -33,7 +32,9 @@ public class ContextIndexAggregator extends AbstractIndexAggregator<Map<Long, Co
 
     @Override
     public Map<Long, ContextIndexBuilder.ContextInfo> aggregate(Map<Long, ContextIndexBuilder.ContextInfo> input) {
-        if (!CollectionUtils.isEmpty(input)) {
+        if (null == input || input.isEmpty()) {
+
+        } else {
             Set<Map.Entry<Long, ContextIndexBuilder.ContextInfo>> entrySet = input.entrySet();
             for (Map.Entry<Long, ContextIndexBuilder.ContextInfo> entry : entrySet) {
                 ContextIndexBuilder.ContextInfo contextInfo = aggregatedCollection.get(entry.getKey());

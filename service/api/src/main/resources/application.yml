@@ -18,6 +18,10 @@ eureka:
 logging:
   config: classpath:logback/logback-test.xml
 server:
-  port: 10700
+  port: 10600
 mybatis:
   mapper-locations: classpath:mapper/*Mapper.xml
+endpoints:
+  cors:
+    allowed-origins: http://localhost,http://127.0.0.1
+    allowed-methods: GET,POST

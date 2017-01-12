@@ -1,9 +1,9 @@
 package cn.yunyichina.log.service.collector.util;
 
+import cn.yunyichina.log.common.entity.entity.dto.SearchCondition;
 import cn.yunyichina.log.component.aggregator.index.imp.ContextIndexAggregator;
 import cn.yunyichina.log.component.aggregator.index.imp.KeyValueIndexAggregator;
 import cn.yunyichina.log.component.aggregator.index.imp.KeywordIndexAggregator;
-import cn.yunyichina.log.component.entity.dto.SearchCondition;
 import cn.yunyichina.log.component.index.builder.imp.ContextIndexBuilder;
 import cn.yunyichina.log.component.index.builder.imp.KeyValueIndexBuilder;
 import cn.yunyichina.log.component.index.builder.imp.KeywordIndexBuilder;
@@ -32,6 +32,9 @@ public class IndexManager {
     Map<String, Map<String, Set<KeyValueIndexBuilder.IndexInfo>>> keyValueIndexMap;
 
     public IndexManager(SearchCondition searchCondition, Set<KeyValueIndexBuilder.KvTag> kvTagSet, Set<String> keywordSet, String beginDatetime, String logRootDir) {
+//        TODO 实时日志时间区间有待商榷
+//        TODO 实时日志时间区间有待商榷
+//        TODO 实时日志时间区间有待商榷
         String endDatetime = sdf.format(searchCondition.getEndDateTime());
         this.keywordSet = keywordSet;
         this.kvTagSet = kvTagSet;

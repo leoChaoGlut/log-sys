@@ -2,7 +2,6 @@ package cn.yunyichina.log.component.aggregator.index.imp;
 
 import cn.yunyichina.log.component.aggregator.index.AbstractIndexAggregator;
 import cn.yunyichina.log.component.index.builder.imp.KeywordIndexBuilder;
-import org.springframework.util.CollectionUtils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -22,7 +21,9 @@ public class KeywordIndexAggregator extends AbstractIndexAggregator<Map<String, 
 
     @Override
     public Map<String, Set<KeywordIndexBuilder.IndexInfo>> aggregate(Map<String, Set<KeywordIndexBuilder.IndexInfo>> input) {
-        if (!CollectionUtils.isEmpty(input)) {
+        if (null == input || input.isEmpty()) {
+
+        } else {
             Set<Map.Entry<String, Set<KeywordIndexBuilder.IndexInfo>>> inputEntrySet = input.entrySet();
             for (Map.Entry<String, Set<KeywordIndexBuilder.IndexInfo>> inputEntry : inputEntrySet) {
                 Set<KeywordIndexBuilder.IndexInfo> indexInfoSet = aggregatedCollection.get(inputEntry.getKey());

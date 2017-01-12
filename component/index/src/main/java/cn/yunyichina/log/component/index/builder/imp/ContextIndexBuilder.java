@@ -20,6 +20,7 @@ import java.util.Objects;
  */
 public class ContextIndexBuilder implements IndexBuilder<Map<Long, ContextIndexBuilder.ContextInfo>>, Serializable {
 
+    private static final long serialVersionUID = -6007560470667273849L;
     private File logFile;
 
     /**
@@ -87,10 +88,31 @@ public class ContextIndexBuilder implements IndexBuilder<Map<Long, ContextIndexB
      * @return
      */
     public static class ContextInfo implements Serializable {
+
+        private static final long serialVersionUID = -8753201735866113930L;
+
         private IndexInfo begin;
         private IndexInfo end;
 
         public ContextInfo() {
+        }
+
+        public String getBeginLogAndEndLogName() {
+            return getLogName(begin) + getLogName(end);
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            ContextInfo that = (ContextInfo) o;
+            return Objects.equals(begin, that.begin) &&
+                    Objects.equals(end, that.end);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(begin, end);
         }
 
         public IndexInfo getBegin() {
@@ -111,22 +133,22 @@ public class ContextIndexBuilder implements IndexBuilder<Map<Long, ContextIndexB
             return this;
         }
 
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            ContextInfo that = (ContextInfo) o;
-            return Objects.equals(begin, that.begin) &&
-                    Objects.equals(end, that.end);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(begin, end);
+        private String getLogName(IndexInfo indexInfo) {
+            if (null == indexInfo) {
+                return "";
+            } else {
+                File endLogFile = indexInfo.getLogFile();
+                if (null == endLogFile) {
+                    return "";
+                } else {
+                    return endLogFile.getName();
+                }
+            }
         }
     }
 
     public static class IndexInfo implements Serializable {
+        private static final long serialVersionUID = 7464183768648638516L;
         private File logFile;
         private int indexOfLogFile;
 

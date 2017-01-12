@@ -62,9 +62,20 @@ public class LoggerWrapper {
         logger.error(getInvokeClassAndMethod() + msg + Tag.ROW_END + countMap.get(buildThreadId()) + Tag.CONTEXT_COUNT_END, t);
     }
 
+    /**
+     * 获取调用 contextBegin ,contextEnd, error 等方法的调用者
+     * 方法栈帧顺序:
+     * 0: getInvokeClassAndMethod
+     * 1: contextBegin或contextEnd或error
+     * 2. 调用contextBegin或contextEnd或error的方法
+     *
+     * @return
+     */
     private String getInvokeClassAndMethod() {
-        StackTraceElement stackTraceElement = new Throwable().getStackTrace()[STACK_INDEX];
-        return stackTraceElement.getClassName() + "." + stackTraceElement.getMethodName() + ":" + stackTraceElement.getLineNumber();
+        StackTraceElement stackTraceElement = Thread.currentThread().getStackTrace()[STACK_INDEX];
+        return stackTraceElement.getClassName() + "." +
+                stackTraceElement.getMethodName() + ":" +
+                stackTraceElement.getLineNumber();
     }
 
 
@@ -88,6 +99,12 @@ public class LoggerWrapper {
         return countMap.get(threadName);
     }
 
+    /**
+     * 根据给定的count,初始化counter
+     * 用途:采集结点崩溃后,恢复索引值
+     *
+     * @param count
+     */
     public static void initCounter(long count) {
         if (counterHasInit.get()) {
 

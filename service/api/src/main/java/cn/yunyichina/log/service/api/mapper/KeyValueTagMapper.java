@@ -1,7 +1,7 @@
 package cn.yunyichina.log.service.api.mapper;
 
-import cn.yunyichina.log.common.base.BaseMapper;
-import cn.yunyichina.log.component.entity.po.KeyValueTag;
+import cn.yunyichina.log.common.entity.base.BaseMapper;
+import cn.yunyichina.log.common.entity.entity.po.KeyValueTag;
 import org.springframework.stereotype.Repository;
 
 /**

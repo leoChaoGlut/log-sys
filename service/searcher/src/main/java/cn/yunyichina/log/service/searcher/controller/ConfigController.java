@@ -1,6 +1,6 @@
 package cn.yunyichina.log.service.searcher.controller;
 
-import cn.yunyichina.log.component.entity.dto.Response;
+import cn.yunyichina.log.common.entity.entity.dto.Response;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;

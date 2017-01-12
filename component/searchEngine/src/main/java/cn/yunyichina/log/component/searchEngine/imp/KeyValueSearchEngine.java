@@ -1,11 +1,12 @@
 package cn.yunyichina.log.component.searchEngine.imp;
 
-import cn.yunyichina.log.component.entity.dto.SearchCondition;
+import cn.yunyichina.log.common.entity.entity.dto.SearchCondition;
+import cn.yunyichina.log.common.log.LoggerWrapper;
 import cn.yunyichina.log.component.index.builder.imp.ContextIndexBuilder;
 import cn.yunyichina.log.component.index.builder.imp.KeyValueIndexBuilder;
 import cn.yunyichina.log.component.searchEngine.AbstractSearchEngine;
 import cn.yunyichina.log.component.searchEngine.SearchEngine;
-import org.springframework.util.CollectionUtils;
+import com.alibaba.fastjson.JSON;
 
 import java.util.HashSet;
 import java.util.Map;
@@ -20,11 +21,14 @@ import java.util.Set;
  */
 public class KeyValueSearchEngine extends AbstractSearchEngine implements SearchEngine<Set<ContextIndexBuilder.ContextInfo>> {
 
+    final LoggerWrapper logger = LoggerWrapper.getLogger(KeyValueSearchEngine.class);
+
     private Map<String, Map<String, Set<KeyValueIndexBuilder.IndexInfo>>> keyValueIndexMap;
     private Map<Long, ContextIndexBuilder.ContextInfo> contextIndexMap;
 
 
     public KeyValueSearchEngine(Map<String, Map<String, Set<KeyValueIndexBuilder.IndexInfo>>> keyValueIndexMap, Map<Long, ContextIndexBuilder.ContextInfo> contextIndexMap, SearchCondition searchCondition) throws Exception {
+        logger.info("初始化kv搜索引擎:" + JSON.toJSONString(keyValueIndexMap) + " =========== " + JSON.toJSONString(contextIndexMap));
         this.keyValueIndexMap = keyValueIndexMap;
         this.contextIndexMap = contextIndexMap;
         if (searchCondition.getBeginDateTime().after(searchCondition.getEndDateTime())) {
@@ -40,7 +44,7 @@ public class KeyValueSearchEngine extends AbstractSearchEngine implements Search
 
         if (fuzzySearch) {
             Set<String> valueSet = valueIndex.keySet();
-            if (CollectionUtils.isEmpty(valueSet)) {
+            if (null == valueSet || valueSet.isEmpty()) {
 
             } else {
                 indexInfoSet = new HashSet<>(valueSet.size() << 1);//避免扩容,
@@ -51,14 +55,14 @@ public class KeyValueSearchEngine extends AbstractSearchEngine implements Search
                 }
             }
         } else {
-            if (CollectionUtils.isEmpty(valueIndex)) {
+            if (null == valueIndex || valueIndex.isEmpty()) {
 
             } else {
                 indexInfoSet = valueIndex.get(searchCondition.getValue());
             }
         }
 
-        if (CollectionUtils.isEmpty(indexInfoSet)) {
+        if (null == indexInfoSet || indexInfoSet.isEmpty()) {
 
         } else {
             matchedContextInfoSet = new HashSet<>(indexInfoSet.size());

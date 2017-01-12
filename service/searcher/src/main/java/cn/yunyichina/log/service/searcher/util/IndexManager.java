@@ -1,5 +1,6 @@
 package cn.yunyichina.log.service.searcher.util;
 
+import cn.yunyichina.log.common.log.LoggerWrapper;
 import cn.yunyichina.log.component.aggregator.index.imp.ContextIndexAggregator;
 import cn.yunyichina.log.component.aggregator.index.imp.KeyValueIndexAggregator;
 import cn.yunyichina.log.component.aggregator.index.imp.KeywordIndexAggregator;
@@ -28,6 +29,8 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 @Component
 public class IndexManager {
 
+    final LoggerWrapper logger = LoggerWrapper.getLogger(IndexManager.class);
+
     private volatile Map<Long, ContextIndexBuilder.ContextInfo> contextIndexMap;
     private volatile Map<String, Set<KeywordIndexBuilder.IndexInfo>> keywordIndexMap;
     private volatile Map<String, Map<String, Set<KeyValueIndexBuilder.IndexInfo>>> keyValueIndexMap;
@@ -45,6 +48,7 @@ public class IndexManager {
 
     @PostConstruct
     public void init() {
+        logger.contextBegin("======搜索节点初始化索引开始=========");
         Map<Long, ContextIndexBuilder.ContextInfo> contextInfoMap = readContextIndex(INDEX_ROOT_DIR + File.separator + "context.index");
         Map<String, Set<KeywordIndexBuilder.IndexInfo>> keywordIndexMap = readKeywordIndex(INDEX_ROOT_DIR + File.separator + "keyword.index");
         Map<String, Map<String, Set<KeyValueIndexBuilder.IndexInfo>>> keyValueIndexMap = readKeyValueIndex(INDEX_ROOT_DIR + File.separator + "keyValue.index");
@@ -52,6 +56,12 @@ public class IndexManager {
         appendContextIndex(contextInfoMap);
         appendKeywordIndex(keywordIndexMap);
         appendKeyValueIndex(keyValueIndexMap);
+
+        logger.info("contextIndexMap:" + (contextInfoMap == null ? "null" : contextIndexMap.size()));
+        logger.info("keywordIndexMap:" + (keywordIndexMap == null ? "null" : keywordIndexMap.size()));
+        logger.info("keyValueIndexMap:" + (keyValueIndexMap == null ? "null" : keyValueIndexMap.size()));
+
+        logger.contextEnd("=======搜索节点初始化索引结束======");
     }
 
 

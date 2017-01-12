@@ -24,4 +24,4 @@ url:
 path:
   properties: /data/logSys/collector/shensan/other/cache.properties
 server:
-  port: 10600
+  port: 10800

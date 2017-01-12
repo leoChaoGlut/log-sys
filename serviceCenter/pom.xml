@@ -4,16 +4,20 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>cn.yunyichina.log</groupId>
-    <artifactId>serviceCenter</artifactId>
-    <packaging>pom</packaging>
+    <parent>
+        <groupId>cn.yunyichina.log</groupId>
+        <artifactId>log-sys</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>service-center</artifactId>
     <version>1.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
 
     <modules>
-        <module>registry</module>
-        <module>reverseProxy</module>
         <module>configCenter</module>
+        <module>gateway</module>
+        <module>registry</module>
     </modules>
-
 
 </project>

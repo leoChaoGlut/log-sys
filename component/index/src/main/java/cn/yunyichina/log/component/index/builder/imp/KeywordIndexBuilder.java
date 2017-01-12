@@ -17,6 +17,7 @@ import java.util.*;
  * @Description: 关键词索引构造器
  */
 public class KeywordIndexBuilder implements IndexBuilder<Map<String, Set<KeywordIndexBuilder.IndexInfo>>>, Serializable {
+    private static final long serialVersionUID = -1228607753528629475L;
     private File logFile;
     /**
      * set保证关键词不重复
@@ -72,6 +73,7 @@ public class KeywordIndexBuilder implements IndexBuilder<Map<String, Set<Keyword
     }
 
     public static class IndexInfo implements Serializable {
+        private static final long serialVersionUID = 5922961444464197133L;
         private File logFile;
         private int indexOfLogFile;
         private Long contextCount;

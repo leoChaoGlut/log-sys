@@ -1,5 +1,5 @@
-import cn.yunyichina.log.component.entity.do_.Collector;
-import cn.yunyichina.log.component.entity.dto.SearchCondition;
+import cn.yunyichina.log.common.entity.entity.dto.SearchCondition;
+import cn.yunyichina.log.common.entity.entity.po.Collector;
 import com.alibaba.fastjson.JSON;
 import org.junit.Test;
 
@@ -21,7 +21,7 @@ public class SearcherGatewayTest {
         condition.setBeginDateTime(sdf.parse("2016-10-10 10:10"));
         condition.setEndDateTime(sdf.parse("2016-10-10 10:10"));
         Collector collector = new Collector();
-        collector.setId(3);
+        collector.setName("深三");
         condition.setCollector(collector);
         condition.setKeyword("test");
         condition.setSearchEngineType(1);

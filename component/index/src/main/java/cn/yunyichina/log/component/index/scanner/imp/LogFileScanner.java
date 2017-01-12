@@ -38,6 +38,7 @@ public class LogFileScanner implements Scanner<Map<String, File>> {
         this.beginDatetime = rootDir + File.separator + beginDateTime.replace("-", File.separator).replace(" ", File.separator).replace(":", File.separator);
         this.endDatetime = rootDir + File.separator + endDateTime.replace("-", File.separator).replace(" ", File.separator).replace(":", File.separator);
         this.rootDir = rootDir;
+        logger.info("初始化LogFileScanner:" + this.beginDatetime + "," + this.endDatetime + "," + this.rootDir);
     }
 
     /**
@@ -51,6 +52,7 @@ public class LogFileScanner implements Scanner<Map<String, File>> {
         this.beginDatetime = rootDir + File.separator + beginFileName.substring(0, 4) + File.separator + beginFileName.substring(4, 6) + File.separator + beginFileName.substring(6, 8) + File.separator + beginFileName.substring(8, 10) + File.separator + beginFileName.substring(10, 12);
         this.endDatetime = rootDir + File.separator + endFileName.substring(0, 4) + File.separator + endFileName.substring(4, 6) + File.separator + endFileName.substring(6, 8) + File.separator + endFileName.substring(8, 10) + File.separator + endFileName.substring(10, 12);
         this.rootDir = rootDir;
+        logger.info("完成初始化LogFileScanner:" + this.beginDatetime + "," + this.endDatetime + "," + this.rootDir);
     }
 
     @Override

@@ -1,7 +1,7 @@
 package cn.yunyichina.log.service.searcher.controller;
 
+import cn.yunyichina.log.common.entity.entity.dto.Response;
 import cn.yunyichina.log.common.log.LoggerWrapper;
-import cn.yunyichina.log.component.entity.dto.Response;
 import cn.yunyichina.log.service.searcher.service.UploadService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;

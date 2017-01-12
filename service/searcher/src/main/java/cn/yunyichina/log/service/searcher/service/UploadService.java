@@ -1,6 +1,6 @@
 package cn.yunyichina.log.service.searcher.service;
 
-import cn.yunyichina.log.common.constant.IndexType;
+import cn.yunyichina.log.common.entity.constant.IndexType;
 import cn.yunyichina.log.common.log.LoggerWrapper;
 import cn.yunyichina.log.common.util.ZipUtil;
 import cn.yunyichina.log.component.index.builder.imp.ContextIndexBuilder;

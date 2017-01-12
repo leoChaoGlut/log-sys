@@ -9,4 +9,6 @@ package cn.yunyichina.log.service.api.constants;
 public interface CacheName {
 
     String COLLECTOR = "collectorAndItsTagSet";
+
+    String OPTION = "optionCache";
 }
