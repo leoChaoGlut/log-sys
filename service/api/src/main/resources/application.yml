@@ -10,11 +10,17 @@ spring:
     active: test
 eureka:
   client:
+    healthcheck:
+      enabled: true
     serviceUrl:
       defaultZone: http://127.0.0.1:10100/eureka/
   instance:
     ip-address: 127.0.0.1
     prefer-ip-address: true
+    lease-renewal-interval-in-seconds: 30
+    lease-expiration-duration-in-seconds: 90
+    instance-id: ${spring.cloud.client.ipAddress}:${server.port}
+#    hostname: log.yunyichina.cn
 logging:
   config: classpath:logback/logback-test.xml
 server:

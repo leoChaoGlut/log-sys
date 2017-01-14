@@ -4,6 +4,7 @@ import cn.yunyichina.log.common.entity.constant.SearchEngineType;
 import cn.yunyichina.log.common.entity.entity.dto.LogResult;
 import cn.yunyichina.log.common.entity.entity.dto.SearchCondition;
 import cn.yunyichina.log.common.log.LoggerWrapper;
+import cn.yunyichina.log.common.util.ZipUtil;
 import cn.yunyichina.log.component.aggregator.log.LogAggregator;
 import cn.yunyichina.log.component.index.builder.imp.ContextIndexBuilder;
 import cn.yunyichina.log.component.index.scanner.imp.LogFileScanner;
@@ -39,6 +40,9 @@ public class SearchService {
 
     @Value("${constants.upload.logRootDir}")
     private String UPLOADED_LOG_ROOT_DIR;
+
+    @Value("${constants.download.logZip}")
+    private String DOWNLOAD_FILE_ZIP;
 
     //    @Cacheable(cacheNames = {CacheName.OPTION}, key = "#condition.toString()")
     public List<LogResult> history(SearchCondition condition) throws Exception {
@@ -141,5 +145,26 @@ public class SearchService {
         }
     }
 
+    public File download(String[] logNames) throws Exception{
+
+        File[] logFiles = new File[logNames.length];
+
+        for (int i = 0; i < logNames.length; i++) {
+            String logName = UPLOADED_LOG_ROOT_DIR
+                    + File.separator + logNames[i].substring(0, 4)
+                    + File.separator + logNames[i].substring(4, 6)
+                    + File.separator + logNames[i].substring(6, 8)
+                    + File.separator + logNames[i].substring(8, 10)
+                    + File.separator + logNames[i].substring(10, 12)
+                    + File.separator + logNames[i] + ".log";
+            File logFile = new File(logName);
+            if (logFile.exists()){
+                logFiles[i] = logFile;
+            }
+        }
+        ZipUtil.zip(DOWNLOAD_FILE_ZIP,logFiles);
+        File zipFile = new File(DOWNLOAD_FILE_ZIP);
+        return zipFile;
+    }
 
 }

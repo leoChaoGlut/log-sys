@@ -7,7 +7,13 @@ eureka:
   instance:
     ip-address: 127.0.0.1
     prefer-ip-address: true
+    lease-renewal-interval-in-seconds: 30
+    lease-expiration-duration-in-seconds: 90
+    instance-id: ${spring.cloud.client.ipAddress}:${server.port}
+#    hostname: log.yunyichina.cn
   client:
+    healthcheck:
+      enabled: true
     serviceUrl:
       defaultZone: http://127.0.0.1:10100/eureka/
 logging:
@@ -15,8 +21,11 @@ logging:
 #
 constants:
   upload:
-    logRootDir: D://log//logRootDir
+#  绝对路径,如 /data/logRootDir . 错误实例:/data/logRootDir/  在logRootDir后多加了一个/
+    logRootDir: E:${file.separator}zTest${file.separator}testLog
     indexRootDir: D://log//indexRootDir
+  download:
+    logZip: E:${file.separator}zTest${file.separator}testLog${file.separator}log.zip
 server:
   port: 10500
 endpoints:
