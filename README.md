@@ -1,11 +1,11 @@
 # logSys
 A distribute log system which is based on spring cloud &amp; docker
 
-端口分布:
-  serviceCenter:
-    registry: 10100
-    configCenter: 10200
-    gateway: 10300
+端口分布:<br>
+  serviceCenter:<br>
+    registry: 10100<br>
+    configCenter: 10200<br>
+    gateway: 10300<br>
   service:
     api: 10400
     searcherGateway: 10500
