@@ -1,8 +1,11 @@
+var:
+  tag: shensan
+  env: test
 spring:
   application:
-    name: collector-shensan
+    name: collector-${var.tag}-${var.env}
   profiles:
-    active: test
+    active: ${var.env}
 eureka:
   instance:
     ip-address: 127.0.0.1
@@ -22,12 +25,12 @@ logging:
 fixedRate: 120000
 dir:
   logRoot: /data/front/shensan/yylog
-  tmpZip: /data/logSys/collector/shensan/other/tmpZip
+  tmpZip: /data/log-sys/collector/${var.env}/${var.tag}/cache/tmpZip
 url:
   gateway: http://127.0.0.1:10300
-  uploadServer: ${url.gateway}/searcher-shensan/file/upload
-  tagSet: ${url.gateway}/api/tag/${spring.application.name}
+  uploadServer: ${url.gateway}/searcher-${var.tag}-${var.env}/file/upload
+  tagSet: ${url.gateway}/api/collector/tag/${spring.application.name}
 path:
-  properties: /data/logSys/collector/shensan/other/cache.properties
+  properties: /data/log-sys/collector/${var.env}/${var.tag}/cache/cache.properties
 server:
   port: 10800
