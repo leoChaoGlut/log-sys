@@ -1,0 +1,49 @@
+端口分布:
+  serviceCenter:
+    registry: 10100
+    configCenter: 10200
+    gateway: 10300
+  service:
+    api: 10400
+    searcherGateway: 10500
+    searcher: 10600
+    collector: 10700
+部署步骤:
+  注册中心:
+  配置中心(暂时不用):
+  入口网关:
+  api:
+  搜索网关:
+  搜索节点:
+    配置:
+      logRootDir: 存储日志的根目录
+        正确示例: /data/logRootDir
+        错误示例: /data/logRootDir/
+      indexRootDir: 索引根目录
+        示例: 同上
+  采集结点:
+    配置:
+      url:
+        logRoot: 要被采集的日志根目录
+        tmpZip: 临时zip 解压,压缩目录
+        gateway: 入口网关
+        uploadServer: 上传到哪一台服务器
+        tagSet: 获取索引tag
+      path:
+        properties: 缓存配置
+    部署步骤:
+      1.必备:
+        1.1.application.yml: 核心配置文件
+        1.2.collector.jar: 源码包
+        1.3.lib: 依赖包
+        1.4.switch.sh: 启动脚本
+      2.application.yml 中的必改项:
+        2.1.var.tag: 采集节点的tag
+        2.2.var.env: test/prod/release 等环境
+        2.3.eureka.instance.ip-address: 对外提供服务的ip,与2.4二选一
+        2.4.eureka.instance.hostname: 对外提供服务的域名,与2.3二选一
+        2.5.eureka.client.serviceUrl.defaultZone: 注册中心网址
+        2.6.dir.logRoot: 被采集的日志的根目录
+        2.7.url.gateway: spring cloud zuul的网关的网址
+      3.switch.sh 中的必改项:
+        3.1.jarName: 与1.2一致

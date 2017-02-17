@@ -1,0 +1,7 @@
+server:
+  port: 10300
+eureka:
+  instance:
+    prefer-ip-address: true
+    ip-address: 127.0.0.1
+    instance-id: ${random.value}

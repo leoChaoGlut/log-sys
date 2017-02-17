@@ -1,0 +1,17 @@
+constants:
+  upload:
+    logSuffix: .log
+    indexSuffix: .index
+    bakSuffix: .bak
+    zipIndex: .zip
+#    logRootDir: ${file.separator}tmp${file.separator}uploadLogRoot
+#    indexRootDir: ${file.separator}tmp${file.separator}uploadIndexRoot
+    logRootDir: D://log//logRootDir
+    indexRootDir: D://log//indexRootDir
+server:
+  port: 10500
+eureka:
+  instance:
+    ip-address: 127.0.0.1
+    prefer-ip-address: true
+    instance-id: ${random.value}

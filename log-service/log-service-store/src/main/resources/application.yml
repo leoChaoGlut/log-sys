@@ -1,0 +1,49 @@
+spring:
+  application:
+    name: searcher
+  profiles:
+    active: test
+eureka:
+  instance:
+    ip-address: 127.0.0.1
+    prefer-ip-address: true
+    lease-renewal-interval-in-seconds: 30
+    lease-expiration-duration-in-seconds: 90
+    instance-id: ${spring.cloud.client.ipAddress}:${server.port}
+#    hostname: log.yunyichina.cn
+  client:
+    healthcheck:
+      enabled: true
+    serviceUrl:
+      defaultZone: http://127.0.0.1:10100/eureka/
+logging:
+  config: classpath:logback/logback-test.xml
+#
+constants:
+  upload:
+#  绝对路径,如 /data/logRootDir . 错误实例:/data/logRootDir/  在logRootDir后多加了一个/
+    logRootDir: E:${file.separator}zTest${file.separator}testLog
+    indexRootDir: D://log//indexRootDir
+  download:
+    logZip: E:${file.separator}zTest${file.separator}testLog${file.separator}log.zip
+server:
+  port: 10500
+endpoints:
+  cors:
+    allowed-origins: http://localhost,http://127.0.0.1
+    allowed-methods: GET,POST
+
+config:
+  configItemMap:
+    shensan:
+      logRootDir: F:${file.separator}log${file.separator}searcher${file.separator}shensan${file.separator}log
+      indexRootDir: F:${file.separator}log${file.separator}searcher${file.separator}shensan${file.separator}index
+      logZip: F:${file.separator}log${file.separator}searcher${file.separator}zip${file.separator}shensan${file.separator}log.zip
+    beida:
+      logRootDir: F:${file.separator}log${file.separator}searcher${file.separator}beida${file.separator}log
+      indexRootDir: F:${file.separator}log${file.separator}searcher${file.separator}beida${file.separator}index
+      logZip: F:${file.separator}log${file.separator}searcher${file.separator}zip${file.separator}beida${file.separator}log.zip
+    shener:
+      logRootDir: F:${file.separator}log${file.separator}searcher${file.separator}shener${file.separator}log
+      indexRootDir: F:${file.separator}log${file.separator}searcher${file.separator}shener${file.separator}index
+      logZip: F:${file.separator}log${file.separator}searcher${file.separator}zip${file.separator}shener${file.separator}log.zip

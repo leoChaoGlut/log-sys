@@ -10,12 +10,13 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>common</module>
-        <module>common/entity</module>
-        <module>common/util</module>
-        <module>component</module>
-        <module>service</module>
-        <module>serviceCenter</module>
+        <module>log-common</module>
+        <module>log-common/log-common-entity</module>
+        <module>log-common/log-common-util</module>
+        <module>log-component</module>
+        <module>log-service</module>
+        <module>log-service-center</module>
+        <module>log-resource</module>
     </modules>
 
     <properties>

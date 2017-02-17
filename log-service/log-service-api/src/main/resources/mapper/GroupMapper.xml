@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.yunyichina.log.service.api.mapper.GroupMapper">
+
+    <select id="findByGroupName" parameterType="string"
+            resultType="cn.yunyichina.log.common.entity.entity.do_.Group">
+        SELECT
+            *
+        FROM
+            `group`
+        WHERE
+            name = #{group_name}
+        ORDER BY
+            create_time DESC
+        LIMIT 1
+    </select>
+
+    <select id="findByGroupId" parameterType="integer"
+            resultType="cn.yunyichina.log.common.entity.entity.do_.Group">
+        SELECT
+        *
+        FROM
+        `group`
+        WHERE
+          id = #{id}
+        ORDER BY
+        create_time DESC
+        LIMIT 1
+    </select>
+
+    <insert id="insertOne" parameterType="cn.yunyichina.log.common.entity.entity.do_.Group">
+        INSERT INTO
+            `group`
+        (name) VALUES (#{name})
+    </insert>
+
+    <select id="selectOne" parameterType="cn.yunyichina.log.common.entity.entity.do_.Group"
+            resultType="cn.yunyichina.log.common.entity.entity.do_.Group">
+        SELECT
+        *
+        FROM
+        `group`
+        WHERE
+        id = #{id}
+        ORDER BY
+        create_time DESC
+        LIMIT 1
+    </select>
+
+    <update id="updateOne" parameterType="cn.yunyichina.log.common.entity.entity.do_.Group">
+        UPDATE
+          `group`
+        SET
+          `name` = #{name}
+        WHERE
+          id = #{id}
+    </update>
+
+    <select id="selectAll" resultType="cn.yunyichina.log.common.entity.entity.do_.Group">
+        SELECT
+        *
+        FROM
+        `group`
+    </select>
+
+</mapper>
