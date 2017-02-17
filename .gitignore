@@ -4,3 +4,4 @@ yylog/
 */*.iml
 *.iml
 *.log
+node_modules/

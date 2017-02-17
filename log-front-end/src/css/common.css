@@ -1,0 +1,16 @@
+* {
+    margin: 0;
+    padding: 0
+}
+
+.no-margin {
+    margin: 0 !important
+}
+
+.no-border {
+    border: none !important
+}
+
+.center {
+    text-align: center !important
+}

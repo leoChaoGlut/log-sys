@@ -17,6 +17,7 @@
         <module>log-service</module>
         <module>log-service-center</module>
         <module>log-resource</module>
+        <module>log-front-end</module>
     </modules>
 
     <properties>

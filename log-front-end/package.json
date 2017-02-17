@@ -1,0 +1,21 @@
+{
+  "name": "log-fron-end",
+  "version": "1.0.0",
+  "description": "",
+  "main": "gulpfile.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "element-ui": "^1.0.6",
+    "gulp": "^3.9.1",
+    "gulp-clean-css": "^2.2.1",
+    "gulp-connect": "^5.0.0",
+    "gulp-html-minifier": "^0.1.8",
+    "gulp-less": "^3.3.0",
+    "gulp-uglify": "^2.0.0"
+  }
+}
