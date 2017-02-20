@@ -1,5 +1,7 @@
 eureka:
   client:
+    healthcheck:
+      enabled: true
     registerWithEureka: false
     fetchRegistry: false
     serviceUrl:
@@ -14,8 +16,8 @@ eureka:
     eviction-interval-timer-in-ms: 30000
 spring:
   profiles:
-    active: test
+    active: default
 server:
   port: 10100
 logging:
-  config: classpath:logback/logback-${spring.profiles.active}.xml
+  config: classpath:logback.xml
