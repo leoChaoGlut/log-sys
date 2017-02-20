@@ -1,15 +1,13 @@
 spring:
   application:
-    name: config-center
+    name: log-service-center-config-center
   profiles:
-    active: dev
+    active: default
   cloud:
     config:
       server:
         git:
-          uri: file:///D://gitRepo//gitHub//logSys//extraResource//config
-#          uri: file:///${user.home}/config-repo
-          search-paths: '{application}'
+          uri: file:///D:/gitRepo/gitHub/log-sys/log-resource/config
 eureka:
   client:
     service-url:
@@ -20,4 +18,4 @@ eureka:
 server:
   port: 10200
 logging:
-  config: classpath:logback/logback-${spring.profiles.active}.xml
+  config: classpath:logback.xml
