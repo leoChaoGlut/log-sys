@@ -1,6 +1,4 @@
 spring:
-  application:
-    name: log-service-center-config-center
   profiles:
     active: default
   cloud:
@@ -8,13 +6,16 @@ spring:
       server:
         git:
           uri: file:///D:/gitRepo/gitHub/log-sys/log-resource/config
+  application:
+    name: log-service-center-config-center
 eureka:
   client:
+    healthcheck:
+      enabled: true
     service-url:
       defaultZone: http://127.0.0.1:10100/eureka/
   instance:
-    prefer-ip-address: true
-    ip-address: 127.0.0.1
+    hostname: localhost
 server:
   port: 10200
 logging:
