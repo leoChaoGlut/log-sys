@@ -4,7 +4,7 @@ import cn.yunyichina.log.common.entity.entity.do_.*;
 import cn.yunyichina.log.common.entity.entity.dto.TagSet;
 import cn.yunyichina.log.common.log.LoggerWrapper;
 import cn.yunyichina.log.service.api.constants.CacheName;
-import cn.yunyichina.log.service.api.mapper.CollectorMapper;
+import cn.yunyichina.log.service.api.mapper.CollectorMapperBak;
 import cn.yunyichina.log.service.api.mapper.GroupMapper;
 import cn.yunyichina.log.service.api.mapper.KeywordIndexMapper;
 import cn.yunyichina.log.service.api.mapper.KvIndexMapper;
@@ -38,7 +38,7 @@ public class TagService {
     KeywordIndexMapper keywordIndexMapper;
 
     @Autowired
-    CollectorMapper collectorMapper;
+    CollectorMapperBak collectorMapperBak;
 
     @Autowired
     GroupMapper groupMapper;
@@ -72,7 +72,7 @@ public class TagService {
     }
 
     private Set<String> getKeywordSet(String applicationName) {
-        Collector collector = collectorMapper.findByCollectorName(new Collector().setName(applicationName));
+        Collector collector = collectorMapperBak.findByCollectorName(new Collector().setName(applicationName));
         if (collector == null) {
             return new HashSet<>();
         } else {
@@ -99,7 +99,7 @@ public class TagService {
     }
 
     private Set<KvIndex> getkvTagSet(String applicationName) {
-        Collector collector = collectorMapper.findByCollectorName(new Collector().setName(applicationName));
+        Collector collector = collectorMapperBak.findByCollectorName(new Collector().setName(applicationName));
         if (collector == null) {
             return new HashSet<>();
         } else {
@@ -170,9 +170,9 @@ public class TagService {
         if (group == null) {
             throw new Exception("找不到所属分组");
         } else {
-            Collector collector = collectorMapper.findByCollectorName(new Collector().setName(collectorName).setGroup_id(groupId));
+            Collector collector = collectorMapperBak.findByCollectorName(new Collector().setName(collectorName).setGroup_id(groupId));
             if (collector == null) {
-                int result = collectorMapper.insertOne(new Collector().setName(collectorName).setGroup_id(groupId).setService_name(serviceName));
+                int result = collectorMapperBak.insertOne(new Collector().setName(collectorName).setGroup_id(groupId).setService_name(serviceName));
                 if (result > 0) {
 
                 } else {
@@ -198,7 +198,7 @@ public class TagService {
         if (collectorId == null) {
             throw new Exception("所属节点不能为空");
         }
-        Collector collector = collectorMapper.findByCollectorId(collectorId);
+        Collector collector = collectorMapperBak.findByCollectorId(collectorId);
         if (collector == null) {
             throw new Exception("找不到所属节点");
         } else {
@@ -249,7 +249,7 @@ public class TagService {
         if (collectorId == null) {
             throw new Exception("所属节点不能为空");
         }
-        Collector collector = collectorMapper.findByCollectorId(collectorId);
+        Collector collector = collectorMapperBak.findByCollectorId(collectorId);
         if (collector == null) {
             throw new Exception("找不到所属节点");
         } else {
@@ -347,16 +347,16 @@ public class TagService {
         collector.setId(collectorId);
         collector.setName(collectorName);
 
-        Collector oldGCollector = collectorMapper.selectOne(collector);
+        Collector oldGCollector = collectorMapperBak.selectOne(collector);
         if (oldGCollector == null) {
             throw new Exception("节点不存在");
         } else {
             if (oldGCollector.getName().equals(collectorName)) {
                 throw new Exception("节点名称没有改变");
             } else {
-                Collector resultObj = collectorMapper.findByCollectorName(new Collector().setName(collectorName).setGroup_id(oldGCollector.getGroup_id()));
+                Collector resultObj = collectorMapperBak.findByCollectorName(new Collector().setName(collectorName).setGroup_id(oldGCollector.getGroup_id()));
                 if (resultObj == null) {
-                    int result = collectorMapper.updateOne(collector);
+                    int result = collectorMapperBak.updateOne(collector);
                     if (result > 0) {
 
                     } else {

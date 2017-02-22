@@ -2,71 +2,37 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="cn.yunyichina.log.service.api.mapper.CollectorMapper">
 
-    <select id="findByCollectorName" parameterType="cn.yunyichina.log.common.entity.entity.do_.Collector"
-            resultType="cn.yunyichina.log.common.entity.entity.do_.Collector">
+    <resultMap id="selectOneResultMap" type="CollectorDO">
+        <id property="id" column="lc_id"></id>
+        <result property="name" column="lc_name"></result>
+        <result property="applicationName" column="lc_application_name"></result>
+        <result property="remark" column="lc_remark"></result>
+        <result property="createTime" column="lc_create_time"></result>
+        <collection property="collectedItemDOList" ofType="CollectedItemDO">
+            <id property="id" column="lci_id"></id>
+            <result property="name" column="lci_name"></result>
+            <result property="collectorId" column="lci_collector_id"></result>
+        </collection>
+    </resultMap>
+
+    <select id="selectOne" parameterType="CollectorDO" resultType="CollectorDO">
         SELECT
-        *
+        lc.id AS lc_id,
+        lc.`name` AS lc_name,
+        lc.application_name AS lc_application_name,
+        lc.remark AS lc_remark,
+        lc.create_time AS lc_create_time,
+        lci.id AS lci_id,
+        lci.`name` AS lci_name,
+        lci.collector_id AS lci_collector_id
         FROM
-        `collector`
-        WHERE
-        `name` = #{name}
-        <if test="group_id != null and group_id != ''">
-            AND
-            group_id = #{group_id}
-        </if>
-
-        ORDER BY
-        create_time DESC
-        LIMIT 1
+        log_collector lc
+        LEFT JOIN log_collected_item lci ON lc.id = lci.collector_id
+        <trim prefix="WHERE" suffixOverrides="AND|OR">
+            <if test="applicationName != null">
+                lc.application_name = #{applicationName}
+            </if>
+        </trim>
     </select>
-
-    <select id="findByCollectorId" parameterType="java.lang.Integer"
-            resultType="cn.yunyichina.log.common.entity.entity.do_.Collector">
-        SELECT
-        *
-        FROM
-        `collector`
-        WHERE
-        id = #{collectorId}
-        ORDER BY
-        create_time DESC
-        LIMIT 1
-    </select>
-
-    <insert id="insertOne" parameterType="cn.yunyichina.log.common.entity.entity.do_.Collector">
-        INSERT INTO
-            collector
-        (`name`,group_id,service_name) VALUES (#{name},#{group_id},#{service_name})
-    </insert>
-
-    <select id="selectOne" parameterType="cn.yunyichina.log.common.entity.entity.do_.Collector"
-            resultType="cn.yunyichina.log.common.entity.entity.do_.Collector">
-        SELECT
-        *
-        FROM
-        collector
-        WHERE
-        id = #{id}
-        ORDER BY
-        create_time DESC
-        LIMIT 1
-    </select>
-
-    <update id="updateOne" parameterType="cn.yunyichina.log.common.entity.entity.do_.Collector">
-        UPDATE
-        collector
-        SET
-        `name` = #{name}
-        WHERE
-        id = #{id}
-    </update>
-
-    <select id="selectAll" resultType="cn.yunyichina.log.common.entity.entity.do_.Collector">
-        SELECT
-        *
-        FROM
-        collector
-    </select>
-
 
 </mapper>

@@ -4,9 +4,9 @@
 
     <resultMap id="midCollectorKv" type="cn.yunyichina.log.common.entity.entity.do_.MidCollectorKv">
         <result column="id" property="id"/>
-        <result column="collector_id" property="collector_id"/>
+        <result column="collectorId" property="collectorId"/>
         <result column="kv_id" property="kv_id"/>
-        <result column="create_time" property="create_time"/>
+        <result column="createTime" property="createTime"/>
     </resultMap>
 
     <select id="findByKey" parameterType="java.lang.String"
@@ -18,7 +18,7 @@
         WHERE
             `key` = #{kvIndexName}
         ORDER BY
-            create_time DESC
+        createTime DESC
         LIMIT 1
     </select>
 
@@ -32,7 +32,7 @@
     <insert id="insertMid" parameterType="java.lang.Integer">
         INSERT INTO
         mid_collector_kv
-        (collector_id,kv_id) VALUES (#{0},#{1})
+        (collectorId,kv_id) VALUES (#{0},#{1})
     </insert>
 
     <delete id="removeById" parameterType="java.lang.Integer">
@@ -49,11 +49,11 @@
         FROM
           mid_collector_kv
         WHERE
-          collector_id = #{0}
+        collectorId = #{0}
         AND
           kv_id = #{1}
         ORDER BY
-          create_time DESC
+        createTime DESC
           LIMIT 1
     </select>
 
@@ -66,7 +66,7 @@
         WHERE
         id = #{id}
         ORDER BY
-        create_time DESC
+        createTime DESC
         LIMIT 1
     </select>
 
@@ -95,7 +95,7 @@
         SET
         kv_id = #{2}
         WHERE
-        collector_id = #{0}
+        collectorId = #{0}
         AND
         kv_id = #{1}
     </update>
@@ -107,7 +107,7 @@
         FROM
         mid_collector_kv
         WHERE
-        collector_id = #{collectorId}
+        collectorId = #{collectorId}
     </select>
 
     <select id="selectKvInId"

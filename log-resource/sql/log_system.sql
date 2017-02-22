@@ -22,11 +22,11 @@ DROP TABLE IF EXISTS `collector`;
 CREATE TABLE `collector` (
   `name`             VARCHAR(255) NOT NULL
   COMMENT '采集器名:如深三,北大',
-  `application_name` VARCHAR(255) NOT NULL
+  `applicationName` VARCHAR(255) NOT NULL
   COMMENT '采集器对应的服务名 spring.application.name',
   `group`            VARCHAR(255) DEFAULT NULL
   COMMENT '所属分组',
-  `create_time`      DATETIME     DEFAULT CURRENT_TIMESTAMP,
+  `createTime`      DATETIME     DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`name`)
 )
   ENGINE = InnoDB
@@ -41,7 +41,7 @@ CREATE TABLE `dict` (
   `key`         VARCHAR(255) DEFAULT NULL,
   `alias`       VARCHAR(255) DEFAULT NULL,
   `value`       VARCHAR(255) DEFAULT NULL,
-  `create_time` DATETIME     DEFAULT CURRENT_TIMESTAMP,
+  `createTime` DATETIME     DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
 )
   ENGINE = InnoDB
@@ -54,9 +54,9 @@ DROP TABLE IF EXISTS `keyword_tag`;
 CREATE TABLE `keyword_tag` (
   `id`               INT(11) NOT NULL AUTO_INCREMENT,
   `collector_name`   VARCHAR(255)     DEFAULT NULL,
-  `application_name` VARCHAR(255)     DEFAULT NULL,
+  `applicationName` VARCHAR(255)     DEFAULT NULL,
   `keyword`          VARCHAR(255)     DEFAULT NULL,
-  `create_time`      DATETIME         DEFAULT CURRENT_TIMESTAMP,
+  `createTime`      DATETIME         DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
 )
   ENGINE = InnoDB
@@ -71,12 +71,12 @@ CREATE TABLE `key_value_tag` (
   `id`               INT(11) NOT NULL AUTO_INCREMENT,
   `collector_name`   VARCHAR(255)     DEFAULT NULL
   COMMENT '所属采集器名',
-  `application_name` VARCHAR(255)     DEFAULT NULL
+  `applicationName` VARCHAR(255)     DEFAULT NULL
   COMMENT '所属应用名 spring.application.name',
   `key`              VARCHAR(255)     DEFAULT NULL,
-  `key_tag`          VARCHAR(255)     DEFAULT NULL,
-  `value_end_tag`    VARCHAR(255)     DEFAULT NULL,
-  `create_time`      DATETIME         DEFAULT CURRENT_TIMESTAMP,
+  `keyTag`          VARCHAR(255)     DEFAULT NULL,
+  `valueEndTag`    VARCHAR(255)     DEFAULT NULL,
+  `createTime`      DATETIME         DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
 )
   ENGINE = InnoDB
@@ -103,7 +103,7 @@ CREATE TABLE `store_record` (
   COMMENT '内网ip:docker容易一般会使用172.17开头的内网ip',
   `inner_port`     INT(11)          DEFAULT NULL
   COMMENT '容器内部expose的端口',
-  `create_time`    DATETIME         DEFAULT CURRENT_TIMESTAMP,
+  `createTime`    DATETIME         DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
 )
   ENGINE = InnoDB

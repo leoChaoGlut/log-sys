@@ -127,7 +127,7 @@ public class ScheduleTaskBak {
     private void buildIndexAndFlushToDisk(Set<File> fileSet) throws Exception {
         Map<Long, ContextIndexBuilder.ContextInfo> contextInfoMap = buildContextIndexByFiles(fileSet);
 
-        scheduleService.recordLastestContextCount(contextInfoMap);
+        scheduleService.recordLastestContextCount(null, null);
 
         Map<String, Set<KeywordIndexBuilder.IndexInfo>> keywordIndexMap = buildKeywordIndexByFiles(fileSet);
         Map<String, Map<String, Set<KeyValueIndexBuilder.IndexInfo>>> keyValueIndexMap = buildKeyValueIndexByFiles(fileSet);

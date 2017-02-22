@@ -6,6 +6,13 @@ spring:
     driver-class-name: com.mysql.jdbc.Driver
   application:
     name: searcher-gateway
+eureka:
+  client:
+    healthcheck:
+      enabled: true
+  instance:
+    instance-id: ${eureka.instance.hostname}:${server.port}
+    hostname: log.yunyichina.cn
 logging:
   config: classpath:logback/logback-test.xml
 mybatis:

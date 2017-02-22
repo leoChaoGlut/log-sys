@@ -1,6 +1,6 @@
 package cn.yunyichina.log.service.searcherGateway.controller;
 
-import cn.yunyichina.log.common.entity.entity.dto.Response;
+import cn.yunyichina.log.common.entity.entity.dto.ResponseDTO;
 import cn.yunyichina.log.common.entity.entity.dto.SearchCondition;
 import cn.yunyichina.log.common.log.LoggerWrapper;
 import cn.yunyichina.log.service.searcherGateway.service.DispatchService;
@@ -27,20 +27,20 @@ public class DispatchController {
     DispatchService dispatchService;
 
     @PostMapping
-    public Response dispatch(String json) {
+    public ResponseDTO dispatch(String json) {
         try {
             logger.contextBegin("搜索网关接收到请求:" + json);
             json = URLDecoder.decode(json, Charsets.UTF_8.name());
             logger.info("decode:" + json + "--");
             SearchCondition condition = JSON.parseObject(json, SearchCondition.class);
             logger.info("obj:" + JSON.toJSONString(condition, true));
-            Response response = dispatchService.dispatch(condition);
-            logger.contextEnd("搜索网关正常返回:" + JSON.toJSONString(response.getResult(), true));
-            return response;
+            ResponseDTO responseDTO = dispatchService.dispatch(condition);
+            logger.contextEnd("搜索网关正常返回:" + JSON.toJSONString(responseDTO.getResult(), true));
+            return responseDTO;
         } catch (Exception e) {
             logger.error(e.getLocalizedMessage(), e);
             logger.contextEnd("搜索网关返回,但是出现异常:" + e.getLocalizedMessage());
-            return Response.failure(e.getLocalizedMessage());
+            return ResponseDTO.failure(e.getLocalizedMessage());
         }
     }
 

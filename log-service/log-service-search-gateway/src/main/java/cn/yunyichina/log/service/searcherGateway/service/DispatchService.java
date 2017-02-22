@@ -1,6 +1,6 @@
 package cn.yunyichina.log.service.searcherGateway.service;
 
-import cn.yunyichina.log.common.entity.entity.dto.Response;
+import cn.yunyichina.log.common.entity.entity.dto.ResponseDTO;
 import cn.yunyichina.log.common.entity.entity.dto.SearchCondition;
 import cn.yunyichina.log.common.entity.entity.po.StoreRecord;
 import cn.yunyichina.log.common.log.LoggerWrapper;
@@ -30,7 +30,7 @@ public class DispatchService {
     StoreRecordMapper storeRecordMapper;
 
     //    @Cacheable(cacheNames = {LOG}, key = "#condition.toString()")
-    public Response dispatch(SearchCondition condition) throws Exception {
+    public ResponseDTO dispatch(SearchCondition condition) throws Exception {
         StoreRecord storeRecord = getStoreRecord(condition.getCollector().getName());
         if (null == storeRecord) {
             throw new Exception("无存储节点信息:" + JSON.toJSONString(condition, true));
@@ -50,11 +50,11 @@ public class DispatchService {
 
             String respJson = content.asString(Charsets.UTF_8);
             logger.info("搜索节点返回的数据:" + respJson);
-            return JSON.parseObject(respJson, Response.class);
+            return JSON.parseObject(respJson, ResponseDTO.class);
         }
     }
 
-    public Response getDownloadableLogs(SearchCondition condition) throws Exception {
+    public ResponseDTO getDownloadableLogs(SearchCondition condition) throws Exception {
         StoreRecord storeRecord = getStoreRecord(condition.getCollector().getName());
         if (null == storeRecord) {
             throw new Exception("无存储节点信息:" + JSON.toJSONString(condition, true));
@@ -74,7 +74,7 @@ public class DispatchService {
 
             String respJson = content.asString(Charsets.UTF_8);
             logger.info("搜索节点返回的数据:" + respJson);
-            return JSON.parseObject(respJson, Response.class);
+            return JSON.parseObject(respJson, ResponseDTO.class);
         }
     }
 

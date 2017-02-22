@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.yunyichina.log.service.api.mapper.CollectedItemMapper">
+
+    <select id="selectKvTagList" resultType="KvTagDO">
+        SELECT
+        lkvt.id AS lkvt_id,
+        lkvt.`key` AS lkvt_key,
+        lkvt.key_tag AS lkvt_key_tag,
+        lkvt.value_end_tag AS lkvt_value_end_tag
+        FROM
+        log_collected_item lci,
+        log_mid_collected_item_kv lmcik,
+        log_kv_tag lkvt
+        WHERE
+        lmcik.collected_item_id = lci.id
+        AND lmcik.kv_tag_id = lkvt.id
+        AND lci.id = #{collectedItemId}
+    </select>
+
+</mapper>

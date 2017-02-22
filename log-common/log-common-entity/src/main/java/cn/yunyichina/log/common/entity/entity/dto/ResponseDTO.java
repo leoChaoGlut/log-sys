@@ -7,7 +7,7 @@ package cn.yunyichina.log.common.entity.entity.dto;
  * @CreateTime: 16-9-1 上午10:39
  * @Description:
  */
-public class Response {
+public class ResponseDTO {
 
     private String code;
 
@@ -15,36 +15,36 @@ public class Response {
 
     private Object result;
 
-    public Response() {
+    public ResponseDTO() {
 
     }
 
-    public static Response success() {
-        return new Response(Status.SUCCESS_NO_DATA, null);
+    public static ResponseDTO success() {
+        return new ResponseDTO(Status.SUCCESS_NO_DATA, null);
     }
 
-    public static Response success(Object result) {
-        return new Response(Status.SUCCESS, result);
+    public static ResponseDTO success(Object result) {
+        return new ResponseDTO(Status.SUCCESS, result);
     }
 
-    public static Response success(Status status, Object result) {
-        return new Response(status, result);
+    public static ResponseDTO success(Status status, Object result) {
+        return new ResponseDTO(status, result);
     }
 
-    public static Response failure(String resultMessage) {
-        return new Response(String.valueOf(Status.INTERFACE_CONVERSION_PROGRAM_ERROR.getCode()), resultMessage);
+    public static ResponseDTO failure(String resultMessage) {
+        return new ResponseDTO(String.valueOf(Status.INTERFACE_CONVERSION_PROGRAM_ERROR.getCode()), resultMessage);
     }
 
-    public static Response failure(Status status) {
-        return new Response(status, null);
+    public static ResponseDTO failure(Status status) {
+        return new ResponseDTO(status, null);
     }
 
-    public Response(String code, String msg) {
+    public ResponseDTO(String code, String msg) {
         this.code = code;
         this.msg = msg;
     }
 
-    public Response(Status status, Object result) {
+    public ResponseDTO(Status status, Object result) {
         this.code = String.valueOf(status.getCode());
         this.msg = status.getMsg();
         this.result = result;

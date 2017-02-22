@@ -3,7 +3,7 @@ package cn.yunyichina.log.service.api.service;
 import cn.yunyichina.log.common.entity.entity.do_.*;
 import cn.yunyichina.log.common.log.LoggerWrapper;
 import cn.yunyichina.log.service.api.entity.dto.SearchOption;
-import cn.yunyichina.log.service.api.mapper.CollectorMapper;
+import cn.yunyichina.log.service.api.mapper.CollectorMapperBak;
 import cn.yunyichina.log.service.api.mapper.GroupMapper;
 import cn.yunyichina.log.service.api.mapper.KeywordIndexMapper;
 import cn.yunyichina.log.service.api.mapper.KvIndexMapper;
@@ -31,7 +31,7 @@ public class FrontEndService {
     GroupMapper groupMapper;
 
     @Autowired
-    CollectorMapper collectorMapper;
+    CollectorMapperBak collectorMapperBak;
 
     @Autowired
     KeywordIndexMapper keywordIndexMapper;
@@ -81,7 +81,7 @@ public class FrontEndService {
     }
 
     private Map<Integer, Collector> bulidCollectorMap() {
-        List<Collector> collectorList = collectorMapper.selectAll();
+        List<Collector> collectorList = collectorMapperBak.selectAll();
         Map<Integer, Collector> collectorMap = null;
         if (CollectionUtils.isEmpty(collectorList)) {
 

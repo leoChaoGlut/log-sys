@@ -1,6 +1,6 @@
 package cn.yunyichina.log.service.api.controller;
 
-import cn.yunyichina.log.common.entity.entity.dto.Response;
+import cn.yunyichina.log.common.entity.entity.dto.ResponseDTO;
 import cn.yunyichina.log.common.log.LoggerWrapper;
 import cn.yunyichina.log.service.api.entity.dto.SearchOption;
 import cn.yunyichina.log.service.api.service.FrontEndService;
@@ -26,16 +26,16 @@ public class FrontEndController {
     FrontEndService frontEndService;
 
     @GetMapping("options")
-    public Response getOptions() {
+    public ResponseDTO getOptions() {
         try {
             logger.contextBegin("前端服务接收到请求:");
             SearchOption searchOption = frontEndService.getSearchOption();
             logger.contextEnd("前端服务正常返回:" + JSON.toJSONString(searchOption, true));
-            return Response.success(searchOption);
+            return ResponseDTO.success(searchOption);
         } catch (Exception e) {
             logger.error(e.getLocalizedMessage(), e);
             logger.contextEnd("前端服务异常:" + e.getLocalizedMessage());
-            return Response.failure(e.getLocalizedMessage());
+            return ResponseDTO.failure(e.getLocalizedMessage());
         }
     }
 

@@ -2,7 +2,7 @@ package cn.yunyichina.log.service.collector.lifeCircle;
 
 
 import cn.yunyichina.log.common.entity.entity.do_.KvIndex;
-import cn.yunyichina.log.common.entity.entity.dto.Response;
+import cn.yunyichina.log.common.entity.entity.dto.ResponseDTO;
 import cn.yunyichina.log.common.entity.entity.dto.TagSet;
 import cn.yunyichina.log.common.log.LoggerWrapper;
 import cn.yunyichina.log.service.collector.constants.Key;
@@ -72,8 +72,9 @@ public class ApplicationReadyListener implements ApplicationListener<Application
                         .execute()
                         .returnContent()
                         .asString(Charsets.UTF_8);
+
                 logger.info("respJson: " + respJson);
-                Response resp = JSON.parseObject(respJson, Response.class);
+                ResponseDTO resp = JSON.parseObject(respJson, ResponseDTO.class);
                 TagSet tagSet = ((JSONObject) resp.getResult()).toJavaObject(TagSet.class);
                 Set<String> keywordSet = tagSet.getKeywordSet();
                 Set<KvIndex> kvTagSet = tagSet.getKvTagSet();

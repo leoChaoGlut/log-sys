@@ -1,7 +1,7 @@
 package cn.yunyichina.log.service.collector.controller;
 
 import cn.yunyichina.log.common.entity.entity.dto.LogResult;
-import cn.yunyichina.log.common.entity.entity.dto.Response;
+import cn.yunyichina.log.common.entity.entity.dto.ResponseDTO;
 import cn.yunyichina.log.common.entity.entity.dto.SearchCondition;
 import cn.yunyichina.log.common.log.LoggerWrapper;
 import cn.yunyichina.log.service.collector.constants.ServiceConfig;
@@ -32,17 +32,17 @@ public class SearchController {
     SearchService searchService;
 
     @PostMapping("realtime")
-    public Response realtime(@RequestBody String json) {
+    public ResponseDTO realtime(@RequestBody String json) {
         try {
             logger.contextBegin("实时日志搜索开始:" + json);
             SearchCondition condition = JSON.parseObject(json, SearchCondition.class);
             logger.info("obj:" + JSON.toJSONString(condition, true));
             List<LogResult> logResultList = searchService.realtime(condition);
             logger.contextEnd("实时日志搜索结束:" + JSON.toJSONString(logResultList, true));
-            return Response.success(logResultList);
+            return ResponseDTO.success(logResultList);
         } catch (Exception e) {
             logger.contextEnd("实时日志搜索失败:" + e.getLocalizedMessage());
-            return Response.failure(e.getLocalizedMessage());
+            return ResponseDTO.failure(e.getLocalizedMessage());
         }
     }
 

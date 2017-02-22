@@ -18,7 +18,6 @@ import com.alibaba.fastjson.JSON;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
@@ -31,7 +30,7 @@ import java.util.*;
  * @CreateTime: 2016/11/18 14:49
  * @Description:
  */
-@Service
+//@Service
 public class SearchServiceV1 {
 
     final LoggerWrapper logger = LoggerWrapper.getLogger(SearchServiceV1.class);
@@ -160,11 +159,11 @@ public class SearchServiceV1 {
                     + File.separator + logNames[i].substring(10, 12)
                     + File.separator + logNames[i] + ".log";
             File logFile = new File(logName);
-            if (logFile.exists()){
+            if (logFile.exists()) {
                 logFiles[i] = logFile;
             }
         }
-        ZipUtil.zip(DOWNLOAD_FILE_ZIP,logFiles);
+        ZipUtil.zip(DOWNLOAD_FILE_ZIP, logFiles);
         File zipFile = new File(DOWNLOAD_FILE_ZIP);
         return zipFile;
     }

@@ -11,7 +11,7 @@
         WHERE
             name = #{group_name}
         ORDER BY
-            create_time DESC
+        createTime DESC
         LIMIT 1
     </select>
 
@@ -24,7 +24,7 @@
         WHERE
           id = #{id}
         ORDER BY
-        create_time DESC
+        createTime DESC
         LIMIT 1
     </select>
 
@@ -43,7 +43,7 @@
         WHERE
         id = #{id}
         ORDER BY
-        create_time DESC
+        createTime DESC
         LIMIT 1
     </select>
 

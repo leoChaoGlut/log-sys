@@ -20,11 +20,11 @@ SET FOREIGN_KEY_CHECKS=0;
 -- ----------------------------
 DROP TABLE IF EXISTS `collector`;
 CREATE TABLE `collector` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) DEFAULT NULL COMMENT '采集节点名称(如：shensan,beida)',
-  `group_id` int(11) DEFAULT NULL COMMENT '分组id',
-  `service_name` varchar(255) DEFAULT NULL,
-  `create_time` datetime DEFAULT CURRENT_TIMESTAMP,
+  `id`           int(11) NOT NULL AUTO_INCREMENT,
+  `name`         varchar(255)     DEFAULT NULL COMMENT '采集节点名称(如：shensan,beida)',
+  `group_id`     int(11)          DEFAULT NULL COMMENT '分组id',
+  `service_name` varchar(255)     DEFAULT NULL,
+  `createTime`   DATETIME         DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
 
@@ -33,9 +33,9 @@ CREATE TABLE `collector` (
 -- ----------------------------
 DROP TABLE IF EXISTS `group`;
 CREATE TABLE `group` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) DEFAULT NULL COMMENT '分组名称',
-  `create_time` datetime DEFAULT CURRENT_TIMESTAMP,
+  `id`         int(11) NOT NULL AUTO_INCREMENT,
+  `name`       varchar(255)     DEFAULT NULL COMMENT '分组名称',
+  `createTime` DATETIME         DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8;
 
@@ -44,9 +44,9 @@ CREATE TABLE `group` (
 -- ----------------------------
 DROP TABLE IF EXISTS `keyword_index`;
 CREATE TABLE `keyword_index` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `keyword` varchar(255) DEFAULT NULL,
-  `create_time` datetime DEFAULT CURRENT_TIMESTAMP,
+  `id`         int(11) NOT NULL AUTO_INCREMENT,
+  `keyword`    varchar(255)     DEFAULT NULL,
+  `createTime` DATETIME         DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8;
 
@@ -55,10 +55,10 @@ CREATE TABLE `keyword_index` (
 -- ----------------------------
 DROP TABLE IF EXISTS `kv_index`;
 CREATE TABLE `kv_index` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `key` varchar(255) DEFAULT NULL,
-  `value` varchar(255) DEFAULT NULL,
-  `create_time` datetime DEFAULT CURRENT_TIMESTAMP,
+  `id`         int(11) NOT NULL AUTO_INCREMENT,
+  `key`        varchar(255)     DEFAULT NULL,
+  `value`      varchar(255)     DEFAULT NULL,
+  `createTime` DATETIME         DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
 
@@ -67,10 +67,10 @@ CREATE TABLE `kv_index` (
 -- ----------------------------
 DROP TABLE IF EXISTS `mid_collector_keyword`;
 CREATE TABLE `mid_collector_keyword` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `collector_id` int(11) DEFAULT NULL,
-  `keyword_id` int(11) DEFAULT NULL,
-  `create_time` datetime DEFAULT CURRENT_TIMESTAMP,
+  `id`          int(11) NOT NULL AUTO_INCREMENT,
+  `collectorId` INT(11)          DEFAULT NULL,
+  `keyword_id`  int(11)          DEFAULT NULL,
+  `createTime`  DATETIME         DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8;
 
@@ -79,10 +79,10 @@ CREATE TABLE `mid_collector_keyword` (
 -- ----------------------------
 DROP TABLE IF EXISTS `mid_collector_kv`;
 CREATE TABLE `mid_collector_kv` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `collector_id` int(11) DEFAULT NULL,
-  `kv_id` int(11) DEFAULT NULL,
-  `create_time` datetime DEFAULT CURRENT_TIMESTAMP,
+  `id`          int(11) NOT NULL AUTO_INCREMENT,
+  `collectorId` INT(11)          DEFAULT NULL,
+  `kv_id`       int(11)          DEFAULT NULL,
+  `createTime`  DATETIME         DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
 
@@ -91,14 +91,14 @@ CREATE TABLE `mid_collector_kv` (
 -- ----------------------------
 DROP TABLE IF EXISTS `store_record`;
 CREATE TABLE `store_record` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `collector_name` varchar(255) DEFAULT NULL COMMENT '采集器名',
-  `name` varchar(255) DEFAULT NULL COMMENT '容器名,容器tag',
-  `image` varchar(255) DEFAULT NULL COMMENT '镜像名',
-  `outer_ip` varchar(255) DEFAULT NULL COMMENT '外网ip:docker容器宿主机外网ip',
-  `outer_port` int(11) DEFAULT NULL COMMENT '容器expose的宿主机端口',
-  `inner_ip` varchar(255) DEFAULT NULL COMMENT '内网ip:docker容易一般会使用172.17开头的内网ip',
-  `inner_port` int(11) DEFAULT NULL COMMENT '容器内部expose的端口',
-  `create_time` datetime DEFAULT CURRENT_TIMESTAMP,
+  `id`             int(11) NOT NULL AUTO_INCREMENT,
+  `collector_name` varchar(255)     DEFAULT NULL COMMENT '采集器名',
+  `name`           varchar(255)     DEFAULT NULL COMMENT '容器名,容器tag',
+  `image`          varchar(255)     DEFAULT NULL COMMENT '镜像名',
+  `outer_ip`       varchar(255)     DEFAULT NULL COMMENT '外网ip:docker容器宿主机外网ip',
+  `outer_port`     int(11)          DEFAULT NULL COMMENT '容器expose的宿主机端口',
+  `inner_ip`       varchar(255)     DEFAULT NULL COMMENT '内网ip:docker容易一般会使用172.17开头的内网ip',
+  `inner_port`     int(11)          DEFAULT NULL COMMENT '容器内部expose的端口',
+  `createTime`     DATETIME         DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;

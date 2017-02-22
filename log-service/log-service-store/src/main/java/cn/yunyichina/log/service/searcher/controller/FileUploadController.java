@@ -1,8 +1,7 @@
 package cn.yunyichina.log.service.searcher.controller;
 
-import cn.yunyichina.log.common.entity.entity.dto.Response;
+import cn.yunyichina.log.common.entity.entity.dto.ResponseDTO;
 import cn.yunyichina.log.common.log.LoggerWrapper;
-import cn.yunyichina.log.service.searcher.service.UploadServiceV1;
 import cn.yunyichina.log.service.searcher.service.UploadServiceV2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,45 +18,45 @@ public class FileUploadController {
 
     final LoggerWrapper logger = LoggerWrapper.getLogger(FileUploadController.class);
 
-    @Autowired
-    UploadServiceV1 uploadServiceV1;
+//    @Autowired
+//    UploadServiceV1 uploadServiceV1;
 
     @Autowired
     UploadServiceV2 uploadServiceV2;
-
-    @PostMapping("/upload")
-    public Response upload(MultipartFile zipFile) {
-        try {
-            logger.contextBegin("上传日志开始:" + zipFile.getName() + "," + zipFile.getSize());
-            if (zipFile != null && !zipFile.isEmpty()) {
-                uploadServiceV1.uploadFile(zipFile);
-                logger.contextEnd("上传日志成功");
-                return Response.success("上传日志成功");
-            } else {
-                logger.contextEnd("上传文件失败: zip 文件为空");
-                return Response.failure("上传文件失败: zip 文件为空");
-            }
-        } catch (Exception e) {
-            logger.contextEnd("上传文件出现异常:" + e.getLocalizedMessage());
-            return Response.failure("上传文件出现异常:" + e.getLocalizedMessage());
-        }
-    }
+//
+//    @PostMapping("/upload")
+//    public ResponseDTO upload(MultipartFile zipFile) {
+//        try {
+//            logger.contextBegin("上传日志开始:" + zipFile.getName() + "," + zipFile.getSize());
+//            if (zipFile != null && !zipFile.isEmpty()) {
+//                uploadServiceV1.uploadFile(zipFile);
+//                logger.contextEnd("上传日志成功");
+//                return ResponseDTO.success("上传日志成功");
+//            } else {
+//                logger.contextEnd("上传文件失败: zip 文件为空");
+//                return ResponseDTO.failure("上传文件失败: zip 文件为空");
+//            }
+//        } catch (Exception e) {
+//            logger.contextEnd("上传文件出现异常:" + e.getLocalizedMessage());
+//            return ResponseDTO.failure("上传文件出现异常:" + e.getLocalizedMessage());
+//        }
+//    }
 
     @PostMapping("/upload/v2")
-    public Response uploadV2(MultipartFile zipFile, String applicationName) {
+    public ResponseDTO uploadV2(MultipartFile zipFile, String applicationName) {
         try {
             logger.contextBegin("上传日志开始:" + zipFile.getName() + "," + zipFile.getSize());
             if (zipFile != null && !zipFile.isEmpty()) {
                 uploadServiceV2.uploadFile(zipFile, applicationName);
                 logger.contextEnd("上传日志成功");
-                return Response.success("上传日志成功");
+                return ResponseDTO.success("上传日志成功");
             } else {
                 logger.contextEnd("上传文件失败: zip 文件为空");
-                return Response.failure("上传文件失败: zip 文件为空");
+                return ResponseDTO.failure("上传文件失败: zip 文件为空");
             }
         } catch (Exception e) {
             logger.contextEnd("上传文件出现异常:" + e.getLocalizedMessage());
-            return Response.failure("上传文件出现异常:" + e.getLocalizedMessage());
+            return ResponseDTO.failure("上传文件出现异常:" + e.getLocalizedMessage());
         }
     }
 }

@@ -1,5 +1,5 @@
 logging:
-  config: classpath:logback/logback-test.xml
+  config: classpath:logback.xml
 #
 constants:
   upload:

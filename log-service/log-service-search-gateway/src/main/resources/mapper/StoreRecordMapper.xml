@@ -11,7 +11,7 @@
         WHERE
         collector_name = #{collector_name}
         ORDER BY
-            create_time DESC
+        createTime DESC
         LIMIT 1
     </select>
 

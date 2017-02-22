@@ -11,7 +11,6 @@ import com.google.common.base.Objects;
 import com.google.common.io.Files;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
@@ -21,7 +20,7 @@ import java.util.Set;
 /**
  * Created by Jonven on 2016/11/28.
  */
-@Service
+//@Service
 public class UploadServiceV1 {
 
     final LoggerWrapper logger = LoggerWrapper.getLogger(UploadServiceV1.class);

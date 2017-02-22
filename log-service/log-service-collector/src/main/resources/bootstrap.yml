@@ -8,10 +8,5 @@ spring:
         service-id: log-service-center-config-center
 eureka:
   client:
-    healthcheck:
-      enabled: true
     serviceUrl:
       defaultZone: http://localhost:10100/eureka/
-  instance:
-    instance-id: ${eureka.instance.hostname}:${server.port}
-    hostname: localhost

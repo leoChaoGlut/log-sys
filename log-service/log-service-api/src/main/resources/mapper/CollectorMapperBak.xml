@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.yunyichina.log.service.api.mapper.CollectorMapperBak">
+
+    <select id="findByCollectorName" parameterType="cn.yunyichina.log.common.entity.entity.do_.Collector"
+            resultType="cn.yunyichina.log.common.entity.entity.do_.Collector">
+        SELECT
+        *
+        FROM
+        `collector`
+        WHERE
+        `name` = #{name}
+        <if test="group_id != null and group_id != ''">
+            AND
+            group_id = #{group_id}
+        </if>
+
+        ORDER BY
+        createTime DESC
+        LIMIT 1
+    </select>
+
+    <select id="findByCollectorId" parameterType="java.lang.Integer"
+            resultType="cn.yunyichina.log.common.entity.entity.do_.Collector">
+        SELECT
+        *
+        FROM
+        `collector`
+        WHERE
+        id = #{collectorId}
+        ORDER BY
+        createTime DESC
+        LIMIT 1
+    </select>
+
+    <insert id="insertOne" parameterType="cn.yunyichina.log.common.entity.entity.do_.Collector">
+        INSERT INTO
+            collector
+        (`name`,group_id,service_name) VALUES (#{name},#{group_id},#{service_name})
+    </insert>
+
+    <select id="selectOne" parameterType="cn.yunyichina.log.common.entity.entity.do_.Collector"
+            resultType="cn.yunyichina.log.common.entity.entity.do_.Collector">
+        SELECT
+        *
+        FROM
+        collector
+        WHERE
+        id = #{id}
+        ORDER BY
+        createTime DESC
+        LIMIT 1
+    </select>
+
+    <update id="updateOne" parameterType="cn.yunyichina.log.common.entity.entity.do_.Collector">
+        UPDATE
+        collector
+        SET
+        `name` = #{name}
+        WHERE
+        id = #{id}
+    </update>
+
+    <select id="selectAll" resultType="cn.yunyichina.log.common.entity.entity.do_.Collector">
+        SELECT
+        *
+        FROM
+        collector
+    </select>
+
+
+</mapper>

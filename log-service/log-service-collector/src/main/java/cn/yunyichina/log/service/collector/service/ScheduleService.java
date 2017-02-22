@@ -3,7 +3,6 @@ package cn.yunyichina.log.service.collector.service;
 import cn.yunyichina.log.component.index.builder.imp.ContextIndexBuilder;
 import cn.yunyichina.log.service.collector.constants.Key;
 import cn.yunyichina.log.service.collector.util.PropertiesMapUtil;
-import cn.yunyichina.log.service.collector.util.PropertiesUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -20,24 +19,24 @@ import java.util.Set;
  */
 @Service
 public class ScheduleService {
-
-    @Autowired
-    private PropertiesUtil propUtil;
+//
+//    @Autowired
+//    private PropertiesUtil propUtil;
 
     @Autowired
     private PropertiesMapUtil propMapUtil;
 
-    /**
-     * 记录最新的上下文计数
-     *
-     * @param contextInfoMap
-     */
-    @Async
-    public void recordLastestContextCount(Map<Long, ContextIndexBuilder.ContextInfo> contextInfoMap) {
-        Set<Long> countSet = contextInfoMap.keySet();
-        Long lastestCount = Collections.max(countSet);
-        propUtil.put(Key.CONTEXT_COUNT, lastestCount + "");
-    }
+//    /**
+//     * 记录最新的上下文计数
+//     *
+//     * @param contextInfoMap
+//     */
+//    @Async
+//    public void recordLastestContextCount(Map<Long, ContextIndexBuilder.ContextInfo> contextInfoMap) {
+//        Set<Long> countSet = contextInfoMap.keySet();
+//        Long lastestCount = Collections.max(countSet);
+//        propUtil.put(Key.CONTEXT_COUNT, lastestCount + "");
+//    }
 
     /**
      * 记录最新的上下文计数
