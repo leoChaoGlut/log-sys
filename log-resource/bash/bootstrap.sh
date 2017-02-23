@@ -10,8 +10,28 @@ jarName=$(ls | grep ".jar")
 #================== Method Begin ==================
 
 getRunningJarCount(){
-        runningJarCount=$(ps -ef | grep java | grep -v grep | grep -w $jarName | wc -l)
+        pnameList=$(ps -ef | grep -w $jarName | grep -v grep | awk '{print $10}')
+        runningJarCount=0
+        for pname in ${pnameList[*]}
+        do
+                if [ $pname == $jarName ];then
+                        let runningJarCount++
+                fi
+        done
         echo $runningJarCount
+}
+
+getPid(){
+        pidList=$(ps -ef | grep -w java | grep -v grep | awk '{print $2}')
+        pnameList=$(ps -ef | grep -w java | grep -v grep | awk '{print $10}')
+        index=0
+        for pname in ${pnameList[*]}
+        do
+                let index++;
+                if [ $pname == $jarName ];then
+                        echo $pidList | awk '{print $'$index'}'
+                fi
+        done
 }
 
 startJar(){
@@ -27,7 +47,7 @@ stopJar(){
         if [ $(getRunningJarCount) -eq 0 ];then
                 echo "$jarName is not running"
         else
-                ps -ef | grep java | grep -v grep | grep -w $jarName | awk '{print $2}' | xargs kill -9
+                kill -9 $(getPid)
                 while [ 1 -eq 1 ]
                 do
                         if [ $(getRunningJarCount) -eq 0 ];then
@@ -36,7 +56,6 @@ stopJar(){
                 done
                 echo "$jarName has been shutdown"
         fi
-
 }
 
 #================== Method End ==================
