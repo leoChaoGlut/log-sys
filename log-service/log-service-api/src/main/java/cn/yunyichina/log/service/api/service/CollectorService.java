@@ -4,11 +4,9 @@ import cn.yunyichina.log.common.entity.entity.do_.CollectedItemDO;
 import cn.yunyichina.log.common.entity.entity.do_.CollectorDO;
 import cn.yunyichina.log.common.entity.entity.do_.KeywordTagDO;
 import cn.yunyichina.log.common.entity.entity.do_.KvTagDO;
-import cn.yunyichina.log.service.api.constants.CacheName;
 import cn.yunyichina.log.service.api.mapper.CollectedItemMapper;
 import cn.yunyichina.log.service.api.mapper.CollectorMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -30,7 +28,7 @@ public class CollectorService {
     @Autowired
     CollectedItemMapper collectedItemMapper;
 
-    @Cacheable(cacheNames = CacheName.COLLECTOR, key = "#applicationName")
+    //    @Cacheable(cacheNames = CacheName.COLLECTOR, key = "#applicationName")
     public List<CollectedItemDO> listCollectedItem(String applicationName) {
         CollectorDO collectorDOParam = new CollectorDO()
                 .setApplicationName(applicationName);
