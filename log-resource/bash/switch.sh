@@ -2,15 +2,7 @@
 
 #================== Variable Begin ==================
 
-serviceDir=/data/logSys/$1/$2
-
-if [ ! -d $serviceDir ];then
-	mkdir $serviceDir
-fi 
-
-cd $serviceDir
-
-jarName=$2.jar
+jar=$(pwd)/$(ls | grep ".jar")
 
 #================== Variable End ==================
 
@@ -18,40 +10,59 @@ jarName=$2.jar
 #================== Method Begin ==================
 
 getRunningJarCount(){
-        runningJarCount=$(ps -ef | grep java | grep -v grep | grep -w $jarName | wc -l)
+        pnameList=$(ps -ef | grep -w $jar | grep -v grep | awk '{print $10}')
+        runningJarCount=0
+        for pname in ${pnameList[*]}
+        do
+                if [ $pname == $jar ];then
+                        let runningJarCount++
+                fi
+        done
         echo $runningJarCount
+}
+
+getPid(){
+        pidList=$(ps -ef | grep -w java | grep -v grep | awk '{print $2}')
+        pnameList=$(ps -ef | grep -w java | grep -v grep | awk '{print $10}')
+        index=0
+        for pname in ${pnameList[*]}
+        do
+                let index++;
+                if [ $pname == $jar ];then
+                        echo $pidList | awk '{print $'$index'}'
+                fi
+        done
 }
 
 startJar(){
         if [ $(getRunningJarCount) -eq 0 ];then
-                nohup java -jar $jarName &
-                echo "Starting $jarName"
+                nohup java -jar $jar &
+                echo "Starting $jar"
         else
-                echo "$jarName is running now"
+                echo "$jar is running now"
         fi
 }
 
 stopJar(){
         if [ $(getRunningJarCount) -eq 0 ];then
-                echo "$jarName is not running"
+                echo "$jar is not running"
         else
-                ps -ef | grep java | grep -v grep | grep -w $jarName | awk '{print $2}' | xargs kill -9
+                kill -9 $(getPid)
                 while [ 1 -eq 1 ]
                 do
                         if [ $(getRunningJarCount) -eq 0 ];then
                                 break
                         fi
                 done
-                echo "$jarName has been shutdown"
+                echo "$jar has been shutdown"
         fi
-
 }
 
 #================== Method End ==================
 
 #================== Entrance Begin ==================
 
-case "$3" in
+case "$1" in
         start)
                 startJar
                 ;;
