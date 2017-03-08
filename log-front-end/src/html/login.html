@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>日志系统万世千秋</title>
+    <link href="../css/lib/materializecss/0.98.0/icon.css" rel="stylesheet">
+    <link type="text/css" rel="stylesheet" href="../css/lib/materializecss/0.98.0/materialize.min.css"
+          media="screen,projection"/>
+
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/login.css">
+</head>
+<body>
+<div id="app" style="display: none;">
+    <div class="row">
+        <form class="login-form col s2 offset-s5 z-depth-2">
+            <div class="row">
+                <div class="input-field col s12">
+                    <i class="material-icons prefix">person_pin</i>
+                    <input id="username" type="text" class="validate" v-model="username" @keyup.enter="login">
+                    <label for="username">用户名</label>
+                </div>
+                <div class="input-field col s12">
+                    <i class="material-icons prefix">vpn_key</i>
+                    <input id="password" type="password" class="validate" v-model="password" @keyup.enter="login">
+                    <label for="password">密码</label>
+                </div>
+                <a class="col s12 waves-effect waves-light btn" @click="login" :disabled="submitting">
+                    {{submitting?"登陆中":"登陆"}}
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+<script src="../js/lib/jquery/3.1.1/jquery.min.js"></script>
+<script src="../js/lib/materializecss/0.98.0/materialize.min.js"></script>
+<script src="../js/lib/element/1.2.3/vue.js"></script>
+<!---->
+<script src="../js/common.js"></script>
+<script src="../js/login.js"></script>
+</html>

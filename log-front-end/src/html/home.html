@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>日志系统万世千秋</title>
+    <link rel="stylesheet" href="../css/lib/element/1.2.3/index.css">
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/home.css">
+</head>
+<body>
+<div id="app" style="display: none;">
+    <el-row :gutter="30">
+        <el-col :span="4">
+            <div class="menu-wrapper">
+                <el-menu :default-active="activedMenu" :default-openeds="[0,1,2]" class="menu" @select="menuSelect">
+                    <div class="menu-user-info">
+                        <img src="../img/doge.jpg" alt=""
+                             style="width:100%;">
+                        <div class="username-wrapper">
+                            Hi
+                            <span class="username"> {{user.name}}</span>
+                            <span class="quit" @click="exit">[退出]</span>
+                        </div>
+                    </div>
+                    <el-submenu :index="index0" v-for="(menu,index0) in menuList">
+                        <template slot="title">
+                            <i :class="menu.icon"></i>{{menu.title}}
+                        </template>
+                        <el-menu-item :index="index0 + '-' + index1" v-for="(subMenu,index1) in menu.subMenuList">
+                            <i :class="subMenu.icon"></i>{{subMenu.title}}
+                        </el-menu-item>
+                    </el-submenu>
+                </el-menu>
+            </div>
+        </el-col>
+        <el-col :span="20">
+            <el-row :gutter="30" v-show="activedMenu == '0-0'">
+                <el-col :span="8" id="searchPanel">
+                    <el-tabs v-model="activedPanel">
+                        <el-tab-pane label="搜索面板" name="panel">
+                            <el-form ref="searchCondition" :model="searchCondition"
+                                     label-width="80px"
+                                     label-position="left">
+                                <el-form-item label="搜索引擎">
+                                    <el-radio-group v-model="searchCondition.searchEngineType">
+                                        <el-radio :label="200" style="margin-right: 1vw;">Keyword</el-radio>
+                                        <el-radio :label="201" style="margin-right: 1vw;margin-left: 0;">Key Value
+                                        </el-radio>
+                                        <el-radio :label="202" class="no-margin">No Index</el-radio>
+                                    </el-radio-group>
+                                </el-form-item>
+                                <el-form-item label="日志节点">
+                                    <el-select v-model="collectedItem" placeholder="请选择日志节点" filterable
+                                               style="width:100%;">
+                                        <el-option-group
+                                                v-for="collector in collectorList"
+                                                :label="collector.name">
+                                            <el-option
+                                                    v-for="collectedItem in collector.collectedItemList"
+                                                    :label="collectedItem.name"
+                                                    :value="collectedItem">
+                                            </el-option>
+                                        </el-option-group>
+                                    </el-select>
+                                </el-form-item>
+                                <el-form-item label="时间范围">
+                                    <el-col :span="11">
+                                        <el-date-picker type="datetime" placeholder="开始时间"
+                                                        format="yyyy-MM-dd HH:mm"
+                                                        v-model="searchCondition.beginDateTime"
+                                                        style="width: 100%;"></el-date-picker>
+                                    </el-col>
+                                    <el-col class="line center" :span="2">-</el-col>
+                                    <el-col :span="11">
+                                        <el-date-picker type="datetime" placeholder="结束时间"
+                                                        format="yyyy-MM-dd HH:mm"
+                                                        v-model="searchCondition.endDateTime"
+                                                        style="width: 100%;"></el-date-picker>
+                                    </el-col>
+                                </el-form-item>
+                                <el-form-item label="索引选择"
+                                              v-show="SEARCH_ENGINE_TYPE.NO_INDEX != searchCondition.searchEngineType">
+                                    <el-col :span="24"
+                                            v-if="searchCondition.searchEngineType == SEARCH_ENGINE_TYPE.KEYWORD">
+                                        <el-select v-model="searchCondition.keyword" filterable
+                                                   placeholder="请选择Keyword" style="width:100%;">
+                                            <el-option
+                                                    v-for="keywordTag in keywordTagList"
+                                                    :label="keywordTag.keyword"
+                                                    :value="keywordTag.keyword"></el-option>
+                                        </el-select>
+                                    </el-col>
+                                    <el-col :span="11"
+                                            v-show="searchCondition.searchEngineType == SEARCH_ENGINE_TYPE.KEY_VALUE">
+                                        <el-select v-model="searchCondition.key" filterable placeholder="请选择Key">
+                                            <el-option v-for="kvTag in kvTagList"
+                                                       :label="kvTag.key"
+                                                       :value="kvTag.key"></el-option>
+                                        </el-select>
+                                    </el-col>
+                                    <el-col class="line center" :span="2"
+                                            v-show="searchCondition.searchEngineType == SEARCH_ENGINE_TYPE.KEY_VALUE">
+                                        -
+                                    </el-col>
+                                    <el-col :span="11"
+                                            v-show="searchCondition.searchEngineType == SEARCH_ENGINE_TYPE.KEY_VALUE">
+                                        <el-input
+                                                placeholder="请输入Value"
+                                                v-model="searchCondition.value">
+                                        </el-input>
+                                    </el-col>
+                                </el-form-item>
+                                <el-form-item label="关键词"
+                                              v-show="SEARCH_ENGINE_TYPE.NO_INDEX == searchCondition.searchEngineType">
+                                    <el-input v-model="searchCondition.noIndexKeyword" placeholder="建议使用索引"></el-input>
+                                </el-form-item>
+                                <el-form-item label="模糊搜索"
+                                              v-show="SEARCH_ENGINE_TYPE.KEY_VALUE == searchCondition.searchEngineType">
+                                    <el-switch on-text="" off-text="" v-model="searchCondition.fuzzy"></el-switch>
+                                </el-form-item>
+                            </el-form>
+                            <el-button
+                                    size="large"
+                                    type="primary"
+                                    icon="search"
+                                    style="width:100%;"
+                                    @click="search">
+                                搜 索
+                            </el-button>
+                        </el-tab-pane>
+                        <el-tab-pane label="结果列表" name="result">
+                            <el-tree
+                                    id="logResultList"
+                                    :data="logResultList"
+                                    :props="defaultProps"
+                                    :props="defaultProps"
+                                    :highlight-current=true
+                                    class="no-border"
+                                    @node-click="loadLogContent"
+                                    :style="style.logResultList">
+                            </el-tree>
+                        </el-tab-pane>
+                    </el-tabs>
+                </el-col>
+                <el-col :span="16" class="logContentPanel">
+                    <el-tabs class="log-content-panel" value="context">
+                        <el-tab-pane label="上下文详情" name="context" v-text="logContent" :style="style.logContent">
+                        </el-tab-pane>
+                    </el-tabs>
+                </el-col>
+            </el-row>
+            <el-row :gutter="30" v-show="activedMenu == '1-0'">
+                <el-col :span="8" id="realtimeLogPanel">
+                    <el-tabs v-model="activedPanel">
+                        <el-tab-pane label="节点选择" name="panel">
+                            <el-form ref="searchCondition" :model="searchCondition"
+                                     label-width="80px"
+                                     label-position="left">
+                                <el-form-item label="日志节点">
+                                    <el-select v-model="collectedItem" placeholder="请选择日志节点" filterable
+                                               style="width:100%;">
+                                        <el-option-group
+                                                v-for="collector in collectorList"
+                                                :label="collector.name">
+                                            <el-option
+                                                    v-for="collectedItem in collector.collectedItemList"
+                                                    :label="collectedItem.name"
+                                                    :value="collectedItem">
+                                            </el-option>
+                                        </el-option-group>
+                                    </el-select>
+                                </el-form-item>
+                            </el-form>
+                            <el-button
+                                    size="large"
+                                    :type="linking?'danger':'primary'"
+                                    icon="upload"
+                                    style="width:100%;"
+                                    @click="link">
+                                {{linking?'断 开':'连 接'}}
+                            </el-button>
+                        </el-tab-pane>
+                    </el-tabs>
+                </el-col>
+                <el-col :span="16" class="logContentPanel">
+                    <el-tabs class="log-content-panel" value="context">
+                        <el-tab-pane label="实时日志" name="context" v-text="logContent" :style="style.logContent">
+
+                        </el-tab-pane>
+                    </el-tabs>
+                </el-col>
+            </el-row>
+            <el-row :gutter="30" v-show="activedMenu == '1-1'">
+                <el-col :span="8" id="realtimeLogPanel">
+                    <el-tabs v-model="activedPanel">
+                        <el-tab-pane label="节点选择" name="panel">
+                            <el-form ref="searchCondition" :model="searchCondition"
+                                     label-width="80px"
+                                     label-position="left">
+                                <el-form-item label="日志节点">
+                                    <el-select v-model="collectedItem" placeholder="请选择日志节点" filterable
+                                               style="width:100%;">
+                                        <el-option-group
+                                                v-for="collector in collectorList"
+                                                :label="collector.name">
+                                            <el-option
+                                                    v-for="collectedItem in collector.collectedItemList"
+                                                    :label="collectedItem.name"
+                                                    :value="collectedItem">
+                                            </el-option>
+                                        </el-option-group>
+                                    </el-select>
+                                </el-form-item>
+                                <el-form-item label="时间范围">
+                                    <el-col :span="11">
+                                        <el-date-picker type="datetime" placeholder="开始时间"
+                                                        format="yyyy-MM-dd HH:mm"
+                                                        v-model="searchCondition.beginDateTime"
+                                                        style="width: 100%;"></el-date-picker>
+                                    </el-col>
+                                    <el-col class="line center" :span="2">-</el-col>
+                                    <el-col :span="11">
+                                        <el-date-picker type="datetime" placeholder="结束时间"
+                                                        format="yyyy-MM-dd HH:mm"
+                                                        v-model="searchCondition.endDateTime"
+                                                        style="width: 100%;"></el-date-picker>
+                                    </el-col>
+                                </el-form-item>
+                            </el-form>
+                            <el-row :gutter="30">
+                                <el-col :span="reading?'12':'24'">
+                                    <el-button
+                                            size="large"
+                                            :type="reading?'danger':'primary'"
+                                            :icon="reading?'loading':'upload'"
+                                            style="width:100%;"
+                                            @click="readHistoryLog">
+                                        {{reading?'断 开':'读 取'}}
+                                    </el-button>
+                                </el-col>
+                                <el-col :span="12" v-show="reading">
+                                    <el-button
+                                            size="large"
+                                            type="success"
+                                            icon="bottom"
+                                            style="width:100%;"
+                                            @click="readMoreHistoryLog">
+                                        加 载 更 多
+                                    </el-button>
+                                </el-col>
+                            </el-row>
+                        </el-tab-pane>
+                    </el-tabs>
+                </el-col>
+                <el-col :span="16" class="logContentPanel">
+                    <el-tabs class="log-content-panel" value="context">
+                        <el-tab-pane label="实时日志" name="context" v-text="logContent" :style="style.logContent">
+
+                        </el-tab-pane>
+                    </el-tabs>
+                </el-col>
+            </el-row>
+        </el-col>
+    </el-row>
+    <!---->
+    <el-dialog :title="logContentTitle" v-model="showLogContentDialog">
+        <div v-text="logContent" style="word-wrap: break-word;max-height:50vh;overflow-y: auto"></div>
+        <span slot="footer" class="dialog-footer">
+            <el-button type="primary" @click="dialogVisible = false" style="width:100%;">加 载 更 多</el-button>
+        </span>
+    </el-dialog>
+</div>
+</body>
+<script src="../js/lib/jquery/3.1.1/jquery.min.js"></script>
+<script src="../js/lib/element/1.2.3/vue.js"></script>
+<script src="../js/lib/element/1.2.3/index.js"></script>
+<script src="../js/lib/sockjs/1.1.2/sockjs.js"></script>
+<!---->
+<script src="../js/common.js"></script>
+<script src="../js/home.js"></script>
+</html>

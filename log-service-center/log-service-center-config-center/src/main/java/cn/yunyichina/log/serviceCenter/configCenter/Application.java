@@ -1,4 +1,4 @@
-package cn.yunyichina.log.serviceCenter.configCenter;
+package cn.yunyichina.log.servicecenter.configcenter;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

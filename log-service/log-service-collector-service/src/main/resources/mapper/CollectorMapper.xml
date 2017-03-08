@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.yunyichina.log.service.collectorservice.mapper.CollectorMapper">
+
+    <sql id="table">log_collector</sql>
+
+    <select id="count" parameterType="CollectorDO" resultType="int">
+        SELECT COUNT(*) FROM
+        <include refid="table"/>
+        <trim prefix="WHERE" suffixOverrides="AND|OR">
+            <if test="id != null">id = #{id} AND</if>
+            <if test="applicationName != null">application_name = #{applicationName} AND</if>
+        </trim>
+    </select>
+
+    <select id="selectOne" parameterType="CollectorDO" resultType="CollectorDO">
+        SELECT * FROM
+        <include refid="table"/>
+        <trim prefix="WHERE" suffixOverrides="AND|OR">
+            <if test="id != null">id = #{id} AND</if>
+            <if test="applicationName != null">application_name = #{applicationName} AND</if>
+        </trim>
+    </select>
+
+    <select id="selectAll" resultType="CollectorDO">
+        SELECT * FROM
+        <include refid="table"/>
+    </select>
+
+    <select id="selectAllApplicationName" resultType="java.lang.String">
+        SELECT application_name FROM
+        <include refid="table"/>
+    </select>
+
+    <insert id="insertOne" parameterType="CollectorDO" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO
+        <include refid="table"/>
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="ip != null">ip,</if>
+            <if test="port != null">port,</if>
+            <if test="applicationName != null">application_name,</if>
+        </trim>
+        <trim prefix="VALUES(" suffix=")" suffixOverrides=",">
+            <if test="ip != null">#{ip},</if>
+            <if test="port != null">#{port},</if>
+            <if test="applicationName != null">#{applicationName},</if>
+        </trim>
+    </insert>
+
+    <update id="update" parameterType="CollectorDO">
+        UPDATE
+        <include refid="table"/>
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="ip != null">ip = #{ip},</if>
+            <if test="port != null">port = #{port},</if>
+            <if test="name != null">name = #{name},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="applicationName != null">application_name = #{applicationName},</if>
+        </trim>
+        <trim prefix="WHERE" suffixOverrides="AND|OR">
+            <if test="id != null">id = #{id} AND</if>
+        </trim>
+    </update>
+
+</mapper>

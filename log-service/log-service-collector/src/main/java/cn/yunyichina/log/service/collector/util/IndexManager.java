@@ -1,96 +1,163 @@
 package cn.yunyichina.log.service.collector.util;
 
-import cn.yunyichina.log.common.entity.entity.dto.SearchCondition;
-import cn.yunyichina.log.component.aggregator.index.imp.ContextIndexAggregator;
-import cn.yunyichina.log.component.aggregator.index.imp.KeyValueIndexAggregator;
-import cn.yunyichina.log.component.aggregator.index.imp.KeywordIndexAggregator;
-import cn.yunyichina.log.component.index.builder.imp.ContextIndexBuilder;
-import cn.yunyichina.log.component.index.builder.imp.KeyValueIndexBuilder;
-import cn.yunyichina.log.component.index.builder.imp.KeywordIndexBuilder;
-import cn.yunyichina.log.component.index.scanner.imp.LogFileScanner;
+import cn.yunyichina.log.component.index.entity.ContextInfo;
+import cn.yunyichina.log.component.index.entity.KeywordIndex;
+import cn.yunyichina.log.component.index.entity.KvIndex;
+import cn.yunyichina.log.service.collector.cache.CollectedItemCache;
+import cn.yunyichina.log.service.collector.constants.CacheName;
+import org.springframework.stereotype.Component;
 
-import java.io.File;
-import java.text.SimpleDateFormat;
-import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
  * @Author: Leo
  * @Blog: http://blog.csdn.net/lc0817
- * @CreateTime: 2016/11/18 11:10
+ * @CreateTime: 2017/3/3 18:28
  * @Description:
  */
+@Component
 public class IndexManager {
-    private Collection<File> logFiles;
-    private Set<KeyValueIndexBuilder.KvTag> kvTagSet;
-    private Set<String> keywordSet;
-    private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 
-    Map<Long, ContextIndexBuilder.ContextInfo> contextIndexMap;
-    Map<String, Set<KeywordIndexBuilder.IndexInfo>> keywordIndexMap;
-    Map<String, Map<String, Set<KeyValueIndexBuilder.IndexInfo>>> keyValueIndexMap;
+    /**
+     * key: collected item id
+     * value : CollectedItemCache
+     */
+    private Map<Integer, CollectedItemCache> collectedItemCacheMap = new HashMap<>();
 
-    public IndexManager(SearchCondition searchCondition, Set<KeyValueIndexBuilder.KvTag> kvTagSet, Set<String> keywordSet, String beginDatetime, String logRootDir) {
-//        TODO 实时日志时间区间有待商榷
-//        TODO 实时日志时间区间有待商榷
-//        TODO 实时日志时间区间有待商榷
-        String endDatetime = sdf.format(searchCondition.getEndDateTime());
-        this.keywordSet = keywordSet;
-        this.kvTagSet = kvTagSet;
-        LogFileScanner logFileScanner = new LogFileScanner(beginDatetime, endDatetime, logRootDir);
-        Map<String, File> fileMap = logFileScanner.scan();
-        logFiles = fileMap.values();
+    private ReentrantReadWriteLock readWriteLock = new ReentrantReadWriteLock();
+    private ReentrantReadWriteLock.WriteLock writeLock = readWriteLock.writeLock();
+    private ReentrantReadWriteLock.ReadLock readLock = readWriteLock.readLock();
 
-        buildContextIndexMap();
-        buildKeywordIndexMap();
-        buildKeyValueIndexMap();
-    }
+    public void setContextIndexBy(Integer collectedItemId, ConcurrentHashMap<Long, ContextInfo> contextInfoMap) {
+        CollectedItemCache collectedItemCache = collectedItemCacheMap.get(collectedItemId);
+        if (collectedItemCache == null) {
+            collectedItemCache = new CollectedItemCache()
+                    .setContextInfoMap(contextInfoMap);
 
-    private void buildKeyValueIndexMap() {
-        KeyValueIndexAggregator aggregator = new KeyValueIndexAggregator();
-
-        for (File logFile : logFiles) {
-            KeyValueIndexBuilder builder = new KeyValueIndexBuilder(kvTagSet, logFile);
-            Map<String, Map<String, Set<KeyValueIndexBuilder.IndexInfo>>> map = builder.build();
-            aggregator.aggregate(map);
+            collectedItemCacheMap.put(collectedItemId, collectedItemCache);
+        } else {
+            collectedItemCache.setContextInfoMap(contextInfoMap);
         }
-
-        keyValueIndexMap = aggregator.getAggregatedCollection();
     }
 
-    private void buildKeywordIndexMap() {
-        KeywordIndexAggregator aggregator = new KeywordIndexAggregator();
+    public void setKeywordIndexBy(Integer collectedItemId, ConcurrentHashMap<String, Set<KeywordIndex>> keywordIndexMap) {
+        CollectedItemCache collectedItemCache = collectedItemCacheMap.get(collectedItemId);
+        if (collectedItemCache == null) {
+            collectedItemCache = new CollectedItemCache()
+                    .setKeywordIndexMap(keywordIndexMap);
 
-        for (File logFile : logFiles) {
-            KeywordIndexBuilder builder = new KeywordIndexBuilder(logFile, keywordSet);
-            Map<String, Set<KeywordIndexBuilder.IndexInfo>> map = builder.build();
-            aggregator.aggregate(map);
+            collectedItemCacheMap.put(collectedItemId, collectedItemCache);
+        } else {
+            collectedItemCache.setKeywordIndexMap(keywordIndexMap);
         }
-
-        keywordIndexMap = aggregator.getAggregatedCollection();
     }
 
-    private void buildContextIndexMap() {
-        ContextIndexAggregator aggregator = new ContextIndexAggregator();
-        for (File logFile : logFiles) {
-            ContextIndexBuilder builder = new ContextIndexBuilder(logFile);
-            Map<Long, ContextIndexBuilder.ContextInfo> map = builder.build();
-            aggregator.aggregate(map);
+    public void setKvIndexBy(Integer collectedItemId, ConcurrentHashMap<String, ConcurrentHashMap<String, Set<KvIndex>>> kvIndexMap) {
+        CollectedItemCache collectedItemCache = collectedItemCacheMap.get(collectedItemId);
+        if (collectedItemCache == null) {
+            collectedItemCache = new CollectedItemCache()
+                    .setKvIndexMap(kvIndexMap);
+
+            collectedItemCacheMap.put(collectedItemId, collectedItemCache);
+        } else {
+            collectedItemCache.setKvIndexMap(kvIndexMap);
         }
-
-        contextIndexMap = aggregator.getAggregatedCollection();
     }
 
-    public Map<Long, ContextIndexBuilder.ContextInfo> getContextIndexMap() {
-        return contextIndexMap;
+    public ConcurrentHashMap<Long, ContextInfo> getContextIndexBy(Integer collectedItemId) throws Exception {
+        writeLock.lock();
+        try {
+            CollectedItemCache collectedItemCache = collectedItemCacheMap.get(collectedItemId);
+            if (collectedItemCache == null) {
+                collectedItemCache = new CollectedItemCache();
+
+                CollectedItemCache.BaseInfo baseInfo = CacheUtil.read(collectedItemId, CacheName.COLLECTED_ITEM_BASE_INFO);
+                ConcurrentHashMap<Long, ContextInfo> contextIndexMap = CacheUtil.read(collectedItemId, CacheName.CONTEXT_INDEX);
+
+                collectedItemCache.setBaseInfo(baseInfo);
+                collectedItemCache.setContextInfoMap(contextIndexMap);
+
+                collectedItemCacheMap.put(collectedItemId, collectedItemCache);
+
+                return contextIndexMap;
+            } else {
+                ConcurrentHashMap<Long, ContextInfo> contextInfoMap = collectedItemCache.getContextInfoMap();
+                if (contextInfoMap == null) {
+                    contextInfoMap = CacheUtil.read(collectedItemId, CacheName.CONTEXT_INDEX);
+                    collectedItemCache.setContextInfoMap(contextInfoMap);
+                    return contextInfoMap;
+                } else {
+                    return contextInfoMap;
+                }
+            }
+        } finally {
+            writeLock.unlock();
+        }
     }
 
-    public Map<String, Set<KeywordIndexBuilder.IndexInfo>> getKeywordIndexMap() {
-        return keywordIndexMap;
+    public ConcurrentHashMap<String, Set<KeywordIndex>> getKeywordIndexBy(Integer collectedItemId) throws Exception {
+        writeLock.lock();
+        try {
+            CollectedItemCache collectedItemCache = collectedItemCacheMap.get(collectedItemId);
+            if (collectedItemCache == null) {
+                collectedItemCache = new CollectedItemCache();
+
+                CollectedItemCache.BaseInfo baseInfo = CacheUtil.read(collectedItemId, CacheName.COLLECTED_ITEM_BASE_INFO);
+                ConcurrentHashMap<String, Set<KeywordIndex>> keywordIndexMap = CacheUtil.read(collectedItemId, CacheName.KEYWORD_INDEX);
+
+                collectedItemCache.setBaseInfo(baseInfo);
+                collectedItemCache.setKeywordIndexMap(keywordIndexMap);
+
+                collectedItemCacheMap.put(collectedItemId, collectedItemCache);
+
+                return keywordIndexMap;
+            } else {
+                ConcurrentHashMap<String, Set<KeywordIndex>> keywordIndexMap = collectedItemCache.getKeywordIndexMap();
+                if (keywordIndexMap == null) {
+                    keywordIndexMap = CacheUtil.read(collectedItemId, CacheName.KEYWORD_INDEX);
+                    collectedItemCache.setKeywordIndexMap(keywordIndexMap);
+                    return keywordIndexMap;
+                } else {
+                    return keywordIndexMap;
+                }
+            }
+        } finally {
+            writeLock.unlock();
+        }
     }
 
-    public Map<String, Map<String, Set<KeyValueIndexBuilder.IndexInfo>>> getKeyValueIndexMap() {
-        return keyValueIndexMap;
+    public ConcurrentHashMap<String, ConcurrentHashMap<String, Set<KvIndex>>> getKvIndexBy(Integer collectedItemId) throws Exception {
+        writeLock.lock();
+        try {
+            CollectedItemCache collectedItemCache = collectedItemCacheMap.get(collectedItemId);
+            if (collectedItemCache == null) {
+                collectedItemCache = new CollectedItemCache();
+
+                CollectedItemCache.BaseInfo baseInfo = CacheUtil.read(collectedItemId, CacheName.COLLECTED_ITEM_BASE_INFO);
+                ConcurrentHashMap<String, ConcurrentHashMap<String, Set<KvIndex>>> kvIndexMap = CacheUtil.read(collectedItemId, CacheName.KV_INDEX);
+
+                collectedItemCache.setBaseInfo(baseInfo);
+                collectedItemCache.setKvIndexMap(kvIndexMap);
+
+                collectedItemCacheMap.put(collectedItemId, collectedItemCache);
+
+                return kvIndexMap;
+            } else {
+                ConcurrentHashMap<String, ConcurrentHashMap<String, Set<KvIndex>>> kvIndexMap = collectedItemCache.getKvIndexMap();
+                if (kvIndexMap == null) {
+                    kvIndexMap = CacheUtil.read(collectedItemId, CacheName.KV_INDEX);
+                    collectedItemCache.setKvIndexMap(kvIndexMap);
+                    return kvIndexMap;
+                } else {
+                    return kvIndexMap;
+                }
+            }
+        } finally {
+            writeLock.unlock();
+        }
     }
 }

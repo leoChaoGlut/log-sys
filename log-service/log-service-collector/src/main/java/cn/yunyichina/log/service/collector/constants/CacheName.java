@@ -7,5 +7,15 @@ package cn.yunyichina.log.service.collector.constants;
  * @Description:
  */
 public interface CacheName {
-    String REAL_TIME = "realtimeSearch";
+
+    String NORMAL = "normal";
+
+    String COLLECTED_ITEM_BASE_INFO = "application.cache";
+
+    String CONTEXT_INDEX = "context.cache";
+
+    String KV_INDEX = "keyValueIndex.cache";
+
+    String KEYWORD_INDEX = "keywordIndex.cache";
+    
 }

@@ -1,14 +1,19 @@
 package cn.yunyichina.log.component.index.builder.imp;
 
 import cn.yunyichina.log.common.constant.Tag;
+import cn.yunyichina.log.component.index.base.AbstractBuilder;
 import cn.yunyichina.log.component.index.builder.IndexBuilder;
+import cn.yunyichina.log.component.index.entity.KeywordIndex;
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @Author: Leo
@@ -16,27 +21,25 @@ import java.util.*;
  * @CreateTime: 2016/11/3 15:53
  * @Description: 关键词索引构造器
  */
-public class KeywordIndexBuilder implements IndexBuilder<Map<String, Set<KeywordIndexBuilder.IndexInfo>>>, Serializable {
+public class KeywordIndexBuilder extends AbstractBuilder implements IndexBuilder<ConcurrentHashMap<String, Set<KeywordIndex>>>, Serializable {
+
     private static final long serialVersionUID = -1228607753528629475L;
-    private File logFile;
+
     /**
-     * set保证关键词不重复
+     * key: context count
+     * value: keyword index set
      */
-    private Set<String> keywordSet;
+    private ConcurrentHashMap<String, Set<KeywordIndex>> keywordIndexMap = new ConcurrentHashMap<>(1024);
+    private Set<String> keywordTagSet;
 
-    private Map<String, Set<IndexInfo>> keywordIndexMap = new HashMap<>(1024);
-    private String logContent;
-
-
-    public KeywordIndexBuilder(File logFile, Set<String> keywordSet) {
+    public KeywordIndexBuilder(File logFile, Set<String> keywordTagSet) {
         this.logFile = logFile;
-        this.keywordSet = keywordSet;
+        this.keywordTagSet = keywordTagSet;
         try {
-            String logFileName = this.logFile.getName();
-            if (logFileName.lastIndexOf(".log") == -1) {
-                logContent = "";
-            } else {
+            if (this.logFile.getName().endsWith(LOG_SUFFIX)) {
                 logContent = Files.asCharSource(logFile, Charsets.UTF_8).read();
+            } else {
+                logContent = "";
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -51,83 +54,31 @@ public class KeywordIndexBuilder implements IndexBuilder<Map<String, Set<Keyword
      * @return
      */
     @Override
-    public Map<String, Set<IndexInfo>> build() {
-        for (String keyword : keywordSet) {
-            int keywordTagIndex = 0;
-            while (0 <= (keywordTagIndex = logContent.indexOf(keyword, keywordTagIndex))) {
-                int rowEndTagIndex = logContent.indexOf(Tag.ROW_END, keywordTagIndex + keyword.length());
-                int contextCountBeginTagIndex = rowEndTagIndex + Tag.ROW_END.length();
+    public ConcurrentHashMap<String, Set<KeywordIndex>> build() {
+        int rowEndTagLength = Tag.ROW_END.length();
+        for (String keywordTag : keywordTagSet) {
+            int keywordTagLength = keywordTag.length();
+            int cursor = 0;
+            while (0 <= (cursor = logContent.indexOf(keywordTag, cursor))) {
+                int rowEndTagIndex = logContent.indexOf(Tag.ROW_END, cursor + keywordTagLength);
+                int contextCountBeginTagIndex = rowEndTagIndex + rowEndTagLength;
                 int contextCountEndTagIndex = logContent.indexOf(Tag.CONTEXT_COUNT_END, contextCountBeginTagIndex);
-                String count = logContent.substring(contextCountBeginTagIndex, contextCountEndTagIndex);
-                IndexInfo indexInfo = new IndexInfo(logFile, keywordTagIndex, Long.valueOf(count));
-                Set<IndexInfo> indexInfoSet = keywordIndexMap.get(keyword);
-                if (indexInfoSet == null) {
-                    indexInfoSet = new HashSet<>();
+                if (0 <= contextCountBeginTagIndex && contextCountBeginTagIndex < contextCountEndTagIndex) {
+                    String count = logContent.substring(contextCountBeginTagIndex, contextCountEndTagIndex);
+                    if (StringUtils.isNumeric(count)) {
+                        KeywordIndex keywordIndex = new KeywordIndex(logFile, cursor, Long.valueOf(count));
+                        Set<KeywordIndex> keywordIndexSet = keywordIndexMap.get(keywordTag);
+                        if (keywordIndexSet == null) {
+                            keywordIndexSet = new HashSet<>();
+                        }
+                        keywordIndexSet.add(keywordIndex);
+                        keywordIndexMap.put(keywordTag, keywordIndexSet);
+                    }
                 }
-                indexInfoSet.add(indexInfo);
-                keywordIndexMap.put(keyword, indexInfoSet);
-                keywordTagIndex = contextCountEndTagIndex;
+                cursor = contextCountEndTagIndex;
             }
         }
         return keywordIndexMap;
-    }
-
-    public static class IndexInfo implements Serializable {
-        private static final long serialVersionUID = 5922961444464197133L;
-        private File logFile;
-        private int indexOfLogFile;
-        private Long contextCount;
-
-        public IndexInfo() {
-        }
-
-        public IndexInfo(File logFile, int indexOfLogFile, Long contextCount) {
-            this.logFile = logFile;
-            this.indexOfLogFile = indexOfLogFile;
-            this.contextCount = contextCount;
-        }
-
-        public File getLogFile() {
-            return logFile;
-        }
-
-        public int getIndexOfLogFile() {
-            return indexOfLogFile;
-        }
-
-        public Long getContextCount() {
-            return contextCount;
-        }
-
-        public IndexInfo setLogFile(File logFile) {
-            this.logFile = logFile;
-            return this;
-        }
-
-        public IndexInfo setIndexOfLogFile(int indexOfLogFile) {
-            this.indexOfLogFile = indexOfLogFile;
-            return this;
-        }
-
-        public IndexInfo setContextCount(Long contextCount) {
-            this.contextCount = contextCount;
-            return this;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            IndexInfo indexInfo = (IndexInfo) o;
-            return indexOfLogFile == indexInfo.indexOfLogFile &&
-                    Objects.equals(logFile, indexInfo.logFile) &&
-                    Objects.equals(contextCount, indexInfo.contextCount);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(logFile, indexOfLogFile, contextCount);
-        }
     }
 
 }

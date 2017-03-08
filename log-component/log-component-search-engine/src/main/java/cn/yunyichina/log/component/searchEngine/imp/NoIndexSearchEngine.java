@@ -1,15 +1,16 @@
-package cn.yunyichina.log.component.searchEngine.imp;
+package cn.yunyichina.log.component.searchengine.imp;
 
 import cn.yunyichina.log.common.constant.Tag;
-import cn.yunyichina.log.component.index.builder.imp.ContextIndexBuilder;
-import cn.yunyichina.log.component.index.builder.imp.KeywordIndexBuilder;
-import cn.yunyichina.log.component.searchEngine.AbstractSearchEngine;
-import cn.yunyichina.log.component.searchEngine.SearchEngine;
+import cn.yunyichina.log.component.index.entity.ContextInfo;
+import cn.yunyichina.log.component.searchengine.AbstractSearchEngine;
+import cn.yunyichina.log.component.searchengine.SearchEngine;
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @Author: Leo
@@ -17,59 +18,53 @@ import java.util.*;
  * @CreateTime: 2016/11/18 15:43
  * @Description:
  */
-public class NoIndexSearchEngine extends AbstractSearchEngine implements SearchEngine<Set<ContextIndexBuilder.ContextInfo>> {
+public class NoIndexSearchEngine extends AbstractSearchEngine implements SearchEngine<Set<ContextInfo>> {
 
     private String keyword;
-    private Collection<File> logFiles;
-    private Map<Long, ContextIndexBuilder.ContextInfo> contextIndexMap;
+    private Collection<File> logs;
+    private ConcurrentHashMap<Long, ContextInfo> contextInfoMap;
 
-    public NoIndexSearchEngine(Collection<File> logFiles, Map<Long, ContextIndexBuilder.ContextInfo> contextIndexMap, String keyword) {
+    public NoIndexSearchEngine(Collection<File> logs, ConcurrentHashMap<Long, ContextInfo> contextInfoMap, String keyword) {
         this.keyword = keyword;
-        this.contextIndexMap = contextIndexMap;
-        this.logFiles = logFiles;
+        this.contextInfoMap = contextInfoMap;
+        this.logs = logs;
     }
 
     @Override
-    public Set<ContextIndexBuilder.ContextInfo> search() throws Exception {
-        Map<String, Set<KeywordIndexBuilder.IndexInfo>> keywordIndexMap = new HashMap<>(1024);
-        for (File logFile : logFiles) {
-            if (logFile.exists()) {
-                String logContent = Files.asCharSource(logFile, Charsets.UTF_8).read();
-
-                int keywordTagIndex = 0;
-                while (0 <= (keywordTagIndex = logContent.indexOf(keyword, keywordTagIndex))) {
-                    int rowEndTagIndex = logContent.indexOf(Tag.ROW_END, keywordTagIndex + keyword.length());
-                    int contextCountBeginTagIndex = rowEndTagIndex + Tag.ROW_END.length();
+    public Set<ContextInfo> search() throws Exception {
+        int keywordLength = keyword.length();
+        int rowEndTagLength = Tag.ROW_END.length();
+        List<Long> contextCountList = new ArrayList<>(1024);
+        for (File log : logs) {
+            if (log.exists()) {
+                String logContent = Files.asCharSource(log, Charsets.UTF_8).read();
+                int cursor = 0;
+                while (0 <= (cursor = logContent.indexOf(keyword, cursor))) {
+                    int rowEndTagIndex = logContent.indexOf(Tag.ROW_END, cursor + keywordLength);
+                    int contextCountBeginTagIndex = rowEndTagIndex + rowEndTagLength;
                     int contextCountEndTagIndex = logContent.indexOf(Tag.CONTEXT_COUNT_END, contextCountBeginTagIndex);
-                    String count = logContent.substring(contextCountBeginTagIndex, contextCountEndTagIndex);
-                    KeywordIndexBuilder.IndexInfo indexInfo = new KeywordIndexBuilder.IndexInfo(logFile, keywordTagIndex, Long.valueOf(count));
-                    Set<KeywordIndexBuilder.IndexInfo> indexInfoSet = keywordIndexMap.get(keyword);
-                    if (indexInfoSet == null) {
-                        indexInfoSet = new HashSet<>();
+                    if (0 <= contextCountBeginTagIndex && contextCountBeginTagIndex < contextCountEndTagIndex) {
+                        String count = logContent.substring(contextCountBeginTagIndex, contextCountEndTagIndex);
+                        if (StringUtils.isNumeric(count)) {
+                            contextCountList.add(Long.valueOf(count));
+                        }
                     }
-                    indexInfoSet.add(indexInfo);
-                    keywordIndexMap.put(keyword, indexInfoSet);
-                    keywordTagIndex = contextCountEndTagIndex;
+                    cursor = contextCountEndTagIndex;
                 }
             }
         }
-        if (null == keywordIndexMap || keywordIndexMap.isEmpty()) {
-
+        if (contextCountList.isEmpty()) {
+            return new HashSet<>();
         } else {
-            Set<KeywordIndexBuilder.IndexInfo> indexInfoSet = keywordIndexMap.get(keyword);
-            if (null == indexInfoSet || indexInfoSet.isEmpty()) {
-
-            } else {
-                matchedContextInfoSet = new HashSet<>(indexInfoSet.size());
-                for (KeywordIndexBuilder.IndexInfo indexInfo : indexInfoSet) {
-                    Long contextCount = indexInfo.getContextCount();
-                    ContextIndexBuilder.ContextInfo contextInfo = contextIndexMap.get(contextCount);
+            matchedContextInfoSet = new HashSet<>(contextCountList.size());
+            for (Long contextCount : contextCountList) {
+                ContextInfo contextInfo = contextInfoMap.get(contextCount);
+                if (contextInfo != null) {
                     matchedContextInfoSet.add(contextInfo);
                 }
             }
+            return matchedContextInfoSet;
         }
-
-        return matchedContextInfoSet;
     }
 
 }

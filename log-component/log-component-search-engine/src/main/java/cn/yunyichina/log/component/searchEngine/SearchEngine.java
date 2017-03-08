@@ -1,4 +1,4 @@
-package cn.yunyichina.log.component.searchEngine;
+package cn.yunyichina.log.component.searchengine;
 
 /**
  * @Author: Jonven

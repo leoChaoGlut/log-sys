@@ -1,0 +1,12 @@
+spring:
+  application:
+    name: log-service-collector-service
+  cloud:
+    config:
+      discovery:
+        enabled: true
+        service-id: log-service-center-config-center
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://192.168.1.150:10100/eureka/

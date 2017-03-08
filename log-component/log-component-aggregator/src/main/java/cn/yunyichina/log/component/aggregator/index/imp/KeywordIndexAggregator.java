@@ -1,11 +1,11 @@
 package cn.yunyichina.log.component.aggregator.index.imp;
 
 import cn.yunyichina.log.component.aggregator.index.AbstractIndexAggregator;
-import cn.yunyichina.log.component.index.builder.imp.KeywordIndexBuilder;
+import cn.yunyichina.log.component.index.entity.KeywordIndex;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @Author: Leo
@@ -13,26 +13,26 @@ import java.util.Set;
  * @CreateTime: 2016/11/15 15:26
  * @Description:
  */
-public class KeywordIndexAggregator extends AbstractIndexAggregator<Map<String, Set<KeywordIndexBuilder.IndexInfo>>> {
+public class KeywordIndexAggregator extends AbstractIndexAggregator<ConcurrentHashMap<String, Set<KeywordIndex>>> {
 
     public KeywordIndexAggregator() {
-        this.aggregatedCollection = new HashMap<>(DEFAULT_CAPACITY);
+        this.aggregatedCollection = new ConcurrentHashMap<>(DEFAULT_CAPACITY);
     }
 
     @Override
-    public Map<String, Set<KeywordIndexBuilder.IndexInfo>> aggregate(Map<String, Set<KeywordIndexBuilder.IndexInfo>> input) {
+    public ConcurrentHashMap<String, Set<KeywordIndex>> aggregate(ConcurrentHashMap<String, Set<KeywordIndex>> input) {
         if (null == input || input.isEmpty()) {
 
         } else {
-            Set<Map.Entry<String, Set<KeywordIndexBuilder.IndexInfo>>> inputEntrySet = input.entrySet();
-            for (Map.Entry<String, Set<KeywordIndexBuilder.IndexInfo>> inputEntry : inputEntrySet) {
-                Set<KeywordIndexBuilder.IndexInfo> indexInfoSet = aggregatedCollection.get(inputEntry.getKey());
-                if (indexInfoSet == null) {
-                    indexInfoSet = inputEntry.getValue();
+            Set<Entry<String, Set<KeywordIndex>>> inputEntrySet = input.entrySet();
+            for (Entry<String, Set<KeywordIndex>> inputEntry : inputEntrySet) {
+                Set<KeywordIndex> keywordIndexSet = aggregatedCollection.get(inputEntry.getKey());
+                if (keywordIndexSet == null) {
+                    keywordIndexSet = inputEntry.getValue();
                 } else {
-                    indexInfoSet.addAll(inputEntry.getValue());
+                    keywordIndexSet.addAll(inputEntry.getValue());
                 }
-                aggregatedCollection.put(inputEntry.getKey(), indexInfoSet);
+                aggregatedCollection.put(inputEntry.getKey(), keywordIndexSet);
             }
         }
         return aggregatedCollection;

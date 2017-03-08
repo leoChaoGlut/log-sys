@@ -1,0 +1,25 @@
+spring:
+  datasource:
+    url: jdbc:mysql://127.0.0.1:3306/log_sys?characterEncoding=UTF-8
+    username: test
+    password: 1234
+    driver-class-name: com.mysql.jdbc.Driver
+eureka:
+  client:
+    healthcheck:
+      enabled: true
+  instance:
+    instance-id: ${eureka.instance.ip-address}:${server.port}
+    prefer-ip-address: true
+#    ip-address: 127.0.0.1
+    ip-address: 192.168.1.150
+logging:
+  config: classpath:logback.xml
+mybatis:
+  mapper-locations: classpath:mapper/*Mapper.xml
+  configuration:
+    mapUnderscoreToCamelCase: true
+    defaultStatementTimeout: 30
+  type-aliases-package: cn.yunyichina.log.common.entity.do_
+server:
+  port: 10403

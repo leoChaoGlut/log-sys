@@ -1,11 +1,12 @@
 package cn.yunyichina.log.component.aggregator.index.imp;
 
 import cn.yunyichina.log.component.aggregator.index.AbstractIndexAggregator;
-import cn.yunyichina.log.component.index.builder.imp.ContextIndexBuilder;
+import cn.yunyichina.log.component.index.entity.ContextIndex;
+import cn.yunyichina.log.component.index.entity.ContextInfo;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 
 /**
@@ -14,7 +15,7 @@ import java.util.Set;
  * @CreateTime: 2016/11/15 14:48
  * @Description:
  */
-public class ContextIndexAggregator extends AbstractIndexAggregator<Map<Long, ContextIndexBuilder.ContextInfo>> {
+public class ContextIndexAggregator extends AbstractIndexAggregator<ConcurrentHashMap<Long, ContextInfo>> {
 
     /**
      * 是否替换旧值
@@ -22,31 +23,31 @@ public class ContextIndexAggregator extends AbstractIndexAggregator<Map<Long, Co
     protected boolean replaceOldValue = false;
 
     public ContextIndexAggregator() {
-        this.aggregatedCollection = new HashMap<>(DEFAULT_CAPACITY);
+        this(false);
     }
 
     public ContextIndexAggregator(boolean replaceOldValue) {
         this.replaceOldValue = replaceOldValue;
-        this.aggregatedCollection = new HashMap<>(DEFAULT_CAPACITY);
+        this.aggregatedCollection = new ConcurrentHashMap<>(DEFAULT_CAPACITY);
     }
 
     @Override
-    public Map<Long, ContextIndexBuilder.ContextInfo> aggregate(Map<Long, ContextIndexBuilder.ContextInfo> input) {
+    public ConcurrentHashMap<Long, ContextInfo> aggregate(ConcurrentHashMap<Long, ContextInfo> input) {
         if (null == input || input.isEmpty()) {
 
         } else {
-            Set<Map.Entry<Long, ContextIndexBuilder.ContextInfo>> entrySet = input.entrySet();
-            for (Map.Entry<Long, ContextIndexBuilder.ContextInfo> entry : entrySet) {
-                ContextIndexBuilder.ContextInfo contextInfo = aggregatedCollection.get(entry.getKey());
+            Set<Entry<Long, ContextInfo>> inputEntrySet = input.entrySet();
+            for (Entry<Long, ContextInfo> inputEntry : inputEntrySet) {
+                ContextInfo contextInfo = aggregatedCollection.get(inputEntry.getKey());
                 if (contextInfo == null) {
-                    contextInfo = entry.getValue();
+                    contextInfo = inputEntry.getValue();
                 } else {
-                    ContextIndexBuilder.ContextInfo inputConextInfo = entry.getValue();
+                    ContextInfo inputConextInfo = inputEntry.getValue();
                     if (inputConextInfo == null) {
 
                     } else {
-                        ContextIndexBuilder.IndexInfo inputBegin = inputConextInfo.getBegin();
-                        ContextIndexBuilder.IndexInfo inputEnd = inputConextInfo.getEnd();
+                        ContextIndex inputBegin = inputConextInfo.getBegin();
+                        ContextIndex inputEnd = inputConextInfo.getEnd();
                         if (replaceOldValue) {
                             if (inputBegin != null) {
                                 contextInfo.setBegin(inputBegin);
@@ -64,7 +65,7 @@ public class ContextIndexAggregator extends AbstractIndexAggregator<Map<Long, Co
                         }
                     }
                 }
-                aggregatedCollection.put(entry.getKey(), contextInfo);
+                aggregatedCollection.put(inputEntry.getKey(), contextInfo);
             }
         }
         return aggregatedCollection;

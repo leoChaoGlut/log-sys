@@ -5,9 +5,8 @@
 <configuration>
 
     <property name="log.path" value="./log"></property>
-    <property name="log.context" value="serviceCenter.gateway"></property>
+    <property name="log.context" value="log-service-center-gateway"></property>
 
-    <!-- 设置上下文名称后,可以方便地区分来自不同应用程序的记录 -->
     <contextName>${log.context}</contextName>
 
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
@@ -25,15 +24,10 @@
         </encoder>
     </appender>
 
-    <!-- name代表:该包名下的log会被打印-->
-    <!--现在保持和平台一致,所有log打在同一个文件,不分info和error了-->
-    <!--注意,STDOUT 只会打印com.yy下打出的日志.-->
-    <!--如果在生产环境,则要把root中的appender注释掉.否则会打印到控制台 ,debug时可以打开.-->
     <logger name="cn.yunyichina.log" level="INFO">
         <appender-ref ref="ALL"/>
     </logger>
 
-    <!--打印任意包日志-->
     <root level="INFO">
         <appender-ref ref="STDOUT"/>
     </root>

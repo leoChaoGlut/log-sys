@@ -5,7 +5,9 @@ spring:
     config:
       server:
         git:
-          uri: file:///D:/gitRepo/gitHub/log-sys/log-resource/config
+          uri: file:///D:/gitRepo/yunyi/src/log/log-sys/log-resource/config-repo
+          username: test
+          password: test
   application:
     name: log-service-center-config-center
 eureka:
@@ -13,9 +15,12 @@ eureka:
     healthcheck:
       enabled: true
     service-url:
-      defaultZone: http://127.0.0.1:10100/eureka/
+      defaultZone: http://192.168.1.150:10100/eureka/
   instance:
-    hostname: localhost
+    prefer-ip-address: true
+#    ip-address: 127.0.0.1
+    ip-address: 192.168.1.150
+    instance-id: ${eureka.instance.ip-address}:${server.port}
 server:
   port: 10200
 logging:

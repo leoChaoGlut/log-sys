@@ -2,17 +2,15 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-
     <parent>
-        <groupId>cn.yunyichina.log</groupId>
         <artifactId>log-service</artifactId>
+        <groupId>cn.yunyichina.log</groupId>
         <version>1.0-SNAPSHOT</version>
     </parent>
+    <modelVersion>4.0.0</modelVersion>
 
     <groupId>cn.yunyichina.log.service</groupId>
     <artifactId>log-service-collector</artifactId>
-    <version>1.0-SNAPSHOT</version>
 
     <properties>
         <mainClass>cn.yunyichina.log.service.collector.Application</mainClass>
@@ -23,13 +21,26 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
-
-        <!--Log System Begin-->
         <dependency>
-            <groupId>cn.yunyichina.log.common</groupId>
-            <artifactId>log-common-entity</artifactId>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>fluent-hc</artifactId>
+            <version>4.5.2</version>
+        </dependency>
+        <dependency>
+            <groupId>cn.yunyichina.log</groupId>
+            <artifactId>log-common</artifactId>
             <version>1.0-SNAPSHOT</version>
-            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>1.2.24</version>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.16.14</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>cn.yunyichina.log.component</groupId>
@@ -42,24 +53,8 @@
             <version>1.0-SNAPSHOT</version>
         </dependency>
         <dependency>
-            <groupId>cn.yunyichina.log.common</groupId>
-            <artifactId>log-common-util</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
-        <!--Log System End-->
-
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>fluent-hc</artifactId>
-            <version>4.5.2</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpmime</artifactId>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-websocket</artifactId>
         </dependency>
     </dependencies>
 

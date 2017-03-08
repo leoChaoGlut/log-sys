@@ -7,11 +7,15 @@
 
 var Common = (function () {
 
-    var TIME_OUT = 15000;
+    var TIME_OUT = 10000;
 
-    var DOMAIN = "http://log.yunyichina.cn";
-    var GATEWAY = DOMAIN + ":10300";
-    var SEARCHER_GATEWAY = DOMAIN + ":10500";
+    var DOMAIN = "http://localhost";
+    var GATEWAY = DOMAIN + ":10301";
+
+    var Status = {
+        OK: "0",
+        ERROR: "-1"
+    }
 
     var get = function (url, completeCallback) {
         $.ajax({
@@ -39,6 +43,7 @@ var Common = (function () {
         post: post,
         DOMAIN: DOMAIN,
         GATEWAY: GATEWAY,
-        SEARCHER_GATEWAY: SEARCHER_GATEWAY,
+        TIME_OUT: TIME_OUT,
+        Status: Status,
     }
 })()

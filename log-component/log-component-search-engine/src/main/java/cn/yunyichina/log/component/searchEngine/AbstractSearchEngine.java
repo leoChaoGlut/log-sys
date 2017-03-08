@@ -1,11 +1,11 @@
-package cn.yunyichina.log.component.searchEngine;
+package cn.yunyichina.log.component.searchengine;
 
-import cn.yunyichina.log.common.entity.entity.dto.SearchCondition;
-import cn.yunyichina.log.component.index.builder.imp.ContextIndexBuilder;
+import cn.yunyichina.log.common.entity.dto.SearchConditionDTO;
+import cn.yunyichina.log.component.index.entity.ContextIndex;
+import cn.yunyichina.log.component.index.entity.ContextInfo;
+import org.apache.commons.lang3.time.FastDateFormat;
 
-import java.io.File;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Set;
 
@@ -17,7 +17,9 @@ import java.util.Set;
  */
 public abstract class AbstractSearchEngine {
 
-    protected SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmm");
+    public static final String DOT = ".";
+
+    protected FastDateFormat dateFormat = FastDateFormat.getInstance("yyyyMMddHHmm");
 
     /**
      * 是否模糊搜索
@@ -42,9 +44,9 @@ public abstract class AbstractSearchEngine {
     protected boolean allowIncompleteContextInfo = false;
 
 
-    protected String rootDir;
-    protected SearchCondition searchCondition;
-    protected Set<ContextIndexBuilder.ContextInfo> matchedContextInfoSet;
+    protected String logDir;
+    protected SearchConditionDTO searchCondition;
+    protected Set<ContextInfo> matchedContextInfoSet;
 
     /**
      * 时间区间交集判断
@@ -53,7 +55,7 @@ public abstract class AbstractSearchEngine {
      * @return
      * @throws ParseException
      */
-    protected boolean inDateTimeRange(ContextIndexBuilder.ContextInfo contextInfo) {
+    protected boolean inDateTimeRange(ContextInfo contextInfo) {
         try {
             if (contextInfo == null) {
                 return false;
@@ -67,20 +69,11 @@ public abstract class AbstractSearchEngine {
                     return false;
                 }
             } else {
-                ContextIndexBuilder.IndexInfo contextInfoBegin = contextInfo.getBegin();
-                File contextInfoBeginLogFile = contextInfoBegin.getLogFile();
-                String beginLogFileName = contextInfoBeginLogFile.getName();
-                beginLogFileName = beginLogFileName.substring(0, beginLogFileName.lastIndexOf("."));
-
-                ContextIndexBuilder.IndexInfo contextInfoEnd = contextInfo.getEnd();
-                File contextInfoEndLogFile = contextInfoEnd.getLogFile();
-                String endLogFileName = contextInfoEndLogFile.getName();
-                endLogFileName = endLogFileName.substring(0, endLogFileName.lastIndexOf("."));
-
                 Date conditionBeginDateTime = searchCondition.getBeginDateTime();
                 Date conditionEndDateTime = searchCondition.getEndDateTime();
-                Date contextBeginDateTime = sdf.parse(beginLogFileName);
-                Date contextEndDateTime = sdf.parse(endLogFileName);
+
+                Date contextBeginDateTime = parseDate(contextInfo.getBegin());
+                Date contextEndDateTime = parseDate(contextInfo.getEnd());
 
                 if (conditionBeginDateTime.after(contextEndDateTime)) {
                     return false;
@@ -108,6 +101,11 @@ public abstract class AbstractSearchEngine {
 //            TODO 这里是否需要打印异常?如果出现异常,默认返回false
             return false;
         }
+    }
+
+    private Date parseDate(ContextIndex contextInfo) throws ParseException {
+        String beginLogFileName = contextInfo.getLogFile().getName();
+        return dateFormat.parse(beginLogFileName.substring(0, beginLogFileName.lastIndexOf(DOT)));
     }
 
 
@@ -138,21 +136,30 @@ public abstract class AbstractSearchEngine {
         return this;
     }
 
-    public String getRootDir() {
-        return rootDir;
+    public String getLogDir() {
+        return logDir;
     }
 
-    public AbstractSearchEngine setRootDir(String rootDir) {
-        this.rootDir = rootDir;
+    public AbstractSearchEngine setLogDir(String logDir) {
+        this.logDir = logDir;
         return this;
     }
 
-    public SearchCondition getSearchCondition() {
+    public SearchConditionDTO getSearchCondition() {
         return searchCondition;
     }
 
-    public AbstractSearchEngine setSearchCondition(SearchCondition searchCondition) {
+    public AbstractSearchEngine setSearchCondition(SearchConditionDTO searchCondition) {
         this.searchCondition = searchCondition;
+        return this;
+    }
+
+    public Set<ContextInfo> getMatchedContextInfoSet() {
+        return matchedContextInfoSet;
+    }
+
+    public AbstractSearchEngine setMatchedContextInfoSet(Set<ContextInfo> matchedContextInfoSet) {
+        this.matchedContextInfoSet = matchedContextInfoSet;
         return this;
     }
 }

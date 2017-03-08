@@ -6,17 +6,15 @@
 
     <groupId>cn.yunyichina.log</groupId>
     <artifactId>log-sys</artifactId>
-    <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
+    <version>1.0-SNAPSHOT</version>
 
     <modules>
         <module>log-common</module>
-        <module>log-common/log-common-entity</module>
-        <module>log-common/log-common-util</module>
         <module>log-component</module>
+        <module>log-resource</module>
         <module>log-service</module>
         <module>log-service-center</module>
-        <module>log-resource</module>
         <module>log-front-end</module>
     </modules>
 
@@ -134,7 +132,6 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <!-- Import dependency management from Spring Boot -->
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-dependencies</artifactId>
                 <version>1.4.0.RELEASE</version>
@@ -150,30 +147,5 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
-
-    <dependencies>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-actuator</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-devtools</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-eureka</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>cn.yunyichina.log</groupId>
-            <artifactId>common</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
-    </dependencies>
 
 </project>

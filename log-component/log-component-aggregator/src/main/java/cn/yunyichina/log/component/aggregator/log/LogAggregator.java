@@ -1,13 +1,14 @@
 package cn.yunyichina.log.component.aggregator.log;
 
-import cn.yunyichina.log.common.log.LoggerWrapper;
-import cn.yunyichina.log.component.index.builder.imp.ContextIndexBuilder;
-import cn.yunyichina.log.component.index.scanner.imp.LogFileScanner;
-import com.alibaba.fastjson.JSON;
+import cn.yunyichina.log.common.exception.AggregatorException;
+import cn.yunyichina.log.component.index.entity.ContextIndex;
+import cn.yunyichina.log.component.index.entity.ContextInfo;
+import cn.yunyichina.log.component.scanner.imp.LogScanner;
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -20,45 +21,41 @@ import java.util.Map;
  */
 public class LogAggregator {
 
-    private static final LoggerWrapper logger = LoggerWrapper.getLogger(LogAggregator.class);
-
     private int beginIndex;
     private int endIndex;
     private List<File> logList;
 
-    protected LogAggregator(ContextIndexBuilder.ContextInfo contextInfo, String baseDir) throws Exception {
-        ContextIndexBuilder.IndexInfo begin = contextInfo.getBegin();
-        ContextIndexBuilder.IndexInfo end = contextInfo.getEnd();
-        if (begin == null || end == null) {
-            throw new Exception("日志聚合器无法聚合残缺的上下文.");
-        }
-        this.beginIndex = begin.getIndexOfLogFile();
-        this.endIndex = end.getIndexOfLogFile();
-        logger.info("正在初始化聚合器:" + this.beginIndex + "," + this.endIndex + "," + baseDir);
-        LogFileScanner scanner = new LogFileScanner(begin.getLogFile(), end.getLogFile(), baseDir);
-        Map<String, File> fileMap = scanner.scan();
-        logger.info("扫描到的文件总数:" + fileMap.values().size());
-        logList = new ArrayList<>(fileMap.values());
-    }
+    private final int DEFAULT_LOG_SIZE = 1024 * 1024 * 10;
 
-    public static String aggregate(ContextIndexBuilder.ContextInfo contextInfo, String baseDir) {
+    public static String aggregate(ContextInfo contextInfo, String logDir) {
         try {
-            logger.info("即将初始化聚合器:" + JSON.toJSONString(contextInfo, true) + "," + baseDir);
-            LogAggregator aggregator = new LogAggregator(contextInfo, baseDir);
+            LogAggregator aggregator = new LogAggregator(contextInfo, logDir);
             return aggregator.aggregate();
         } catch (Exception e) {
-            logger.error("聚合异常:" + JSON.toJSONString(contextInfo, true) + " , 异常信息:" + e.getLocalizedMessage(), e);
             return "";
         }
     }
 
-    protected String aggregate() throws Exception {
+    protected LogAggregator(ContextInfo contextInfo, String logDir) throws AggregatorException {
+        ContextIndex begin = contextInfo.getBegin();
+        ContextIndex end = contextInfo.getEnd();
+        if (begin == null || end == null) {
+            throw new AggregatorException("日志聚合器无法聚合残缺的上下文.");
+        }
+        this.beginIndex = begin.getIndexOfLogFile();
+        this.endIndex = end.getIndexOfLogFile();
+        Map<String, File> logMap = LogScanner.scan(begin.getLogFile(), end.getLogFile(), logDir);
+        logList = new ArrayList<>(logMap.values());
+    }
+
+
+    protected String aggregate() throws IOException {
         if (logList.size() == 1) {
             File log = logList.get(0);
             String logContent = Files.asCharSource(log, Charsets.UTF_8).read();
             return logContent.substring(beginIndex, endIndex);
         } else if (logList.size() > 1) {
-            StringBuilder logBuilder = new StringBuilder(1024 * 1024 * 10);
+            StringBuilder logBuilder = new StringBuilder(DEFAULT_LOG_SIZE);
             int logListSize = logList.size();
 
             String firstLogConetnt = Files.asCharSource(logList.get(0), Charsets.UTF_8).read();

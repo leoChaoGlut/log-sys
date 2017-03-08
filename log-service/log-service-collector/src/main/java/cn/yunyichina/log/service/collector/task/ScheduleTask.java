@@ -1,42 +1,39 @@
 package cn.yunyichina.log.service.collector.task;
 
-import cn.yunyichina.log.common.log.LoggerWrapper;
-import cn.yunyichina.log.common.util.ZipUtil;
+import cn.yunyichina.log.common.entity.do_.CollectedItemDO;
+import cn.yunyichina.log.common.entity.do_.CollectorDO;
+import cn.yunyichina.log.common.entity.do_.KeywordTagDO;
+import cn.yunyichina.log.common.entity.do_.KvTagDO;
 import cn.yunyichina.log.component.aggregator.index.imp.ContextIndexAggregator;
-import cn.yunyichina.log.component.aggregator.index.imp.KeyValueIndexAggregator;
 import cn.yunyichina.log.component.aggregator.index.imp.KeywordIndexAggregator;
+import cn.yunyichina.log.component.aggregator.index.imp.KvIndexAggregator;
 import cn.yunyichina.log.component.index.builder.imp.ContextIndexBuilder;
-import cn.yunyichina.log.component.index.builder.imp.KeyValueIndexBuilder;
 import cn.yunyichina.log.component.index.builder.imp.KeywordIndexBuilder;
-import cn.yunyichina.log.component.index.scanner.imp.LogFileScanner;
-import cn.yunyichina.log.service.collector.constants.Key;
-import cn.yunyichina.log.service.collector.constants.ServiceConfig;
-import cn.yunyichina.log.service.collector.service.ScheduleService;
-import cn.yunyichina.log.service.collector.util.PropertiesMapUtil;
+import cn.yunyichina.log.component.index.builder.imp.KvIndexBuilder;
+import cn.yunyichina.log.component.index.entity.ContextInfo;
+import cn.yunyichina.log.component.index.entity.KeywordIndex;
+import cn.yunyichina.log.component.index.entity.KvIndex;
+import cn.yunyichina.log.component.scanner.imp.LogScanner;
+import cn.yunyichina.log.service.collector.cache.CollectedItemCache;
+import cn.yunyichina.log.service.collector.constants.CacheName;
+import cn.yunyichina.log.service.collector.service.CacheService;
+import cn.yunyichina.log.service.collector.util.CacheUtil;
+import cn.yunyichina.log.service.collector.util.IndexManager;
 import com.alibaba.fastjson.JSON;
-import com.google.common.io.Files;
-import org.apache.http.HttpEntity;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.mime.MultipartEntityBuilder;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.FastDateFormat;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.ObjectOutputStream;
-import java.nio.charset.Charset;
-import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
-import static cn.yunyichina.log.component.index.builder.imp.KeyValueIndexBuilder.IndexInfo;
-import static cn.yunyichina.log.component.index.builder.imp.KeyValueIndexBuilder.KvTag;
 
 /**
  * @Author: Leo
@@ -46,217 +43,206 @@ import static cn.yunyichina.log.component.index.builder.imp.KeyValueIndexBuilder
  */
 @Service
 public class ScheduleTask {
+    final Logger logger = LoggerFactory.getLogger(ScheduleTask.class);
 
-    final LoggerWrapper logger = LoggerWrapper.getLogger(ScheduleTask.class);
-
-    private final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-
-    @Autowired
-    private ServiceConfig serviceConfig;
+    private final FastDateFormat dateFormat = FastDateFormat.getInstance("yyyy-MM-dd HH:mm");
 
     @Autowired
-    private PropertiesMapUtil propUtil;
+    IndexManager indexManager;
+
+    @Value("${fixedRate}")
+    private String fixedRate;
 
     @Autowired
-    private ScheduleService scheduleService;
+    CacheService cacheService;
 
-    private final File[] FILE = new File[0];
+    private List<CollectedItemDO> collectedItemList = new ArrayList<>();
+
+    /**
+     * 在回调ApplicationReadyListener处理完成后手动回调
+     */
+    public void initCollectedItemList() {
+        CollectorDO collector = cacheService.getCollector();
+        logger.info(collector.toString());
+        if (collector == null) {
+
+        } else {
+            collectedItemList = collector.getCollectedItemList();
+            if (null == collectedItemList) {
+                collectedItemList = new ArrayList<>();
+            }
+        }
+    }
 
     @Scheduled(fixedRateString = "${fixedRate}")
     public void execute() {
-        Map<String, ServiceConfig.ConfigCollector> collectorMap = serviceConfig.getCollectorMap();
-        for (Map.Entry<String, ServiceConfig.ConfigCollector> entry : collectorMap.entrySet()) {
-            String logCollectorName = entry.getKey();
-            ServiceConfig.ConfigCollector config = entry.getValue();
-
-            logger.contextBegin(logCollectorName + "定时任务开始,间隔: " + config.getFixedRate() + " ms");
-            Set<File> fileSet = null;
-            try {
-                Date now = new Date();
-                Map<String, File> logFileMap = scanLastestLogFiles(now.getTime(), config, logCollectorName);
-                logger.info(logCollectorName + "扫描到的日志文件:" + JSON.toJSONString(logFileMap));
-                if (CollectionUtils.isEmpty(logFileMap)) {
-                    logger.contextEnd(logCollectorName + "没有需要上传的日志文件");
-                } else {
-                    String json = propUtil.get(logCollectorName, Key.UPLOAD_FAILED_FILE_LIST);
-                    logger.info(logCollectorName + "上传失败文件列表:" + json);
-                    List<File> uploadFailedFileList = JSON.parseArray(json, File.class);//获取上传失败的文件
-                    int uploadFailedFileSize = uploadFailedFileList == null ? 0 : uploadFailedFileList.size();
-                    Collection<File> fileCollection = logFileMap.values();
-                    fileSet = new HashSet<>(fileCollection.size() + uploadFailedFileSize);
-                    fileSet.addAll(fileCollection);
-
-                    if (CollectionUtils.isEmpty(uploadFailedFileList)) {
-
-                    } else {
-                        fileSet.addAll(uploadFailedFileList);
-                    }
-
-                    buildIndexAndFlushToDisk(fileSet, config, logCollectorName);
-                    boolean uploadSucceed = uploadFiles(fileSet, config, logCollectorName);
-                    if (uploadSucceed) {
-                        propUtil.remove(logCollectorName, Key.UPLOAD_FAILED_FILE_LIST);
-                        propUtil.put(logCollectorName, Key.LAST_MODIFY_TIME, sdf.format(now));
-                    } else {
-                        propUtil.put(logCollectorName, Key.UPLOAD_FAILED_FILE_LIST, JSON.toJSONString(fileSet));
-                    }
-                    logger.contextEnd(logCollectorName + "上传" + (uploadSucceed ? "成功" : "失败"));
-                }
-            } catch (Exception e) {
-                if (fileSet != null) {
-                    propUtil.put(logCollectorName, Key.UPLOAD_FAILED_FILE_LIST, JSON.toJSONString(fileSet));
-                }
-                logger.error(logCollectorName + "定时任务抛出异常:" + e.getLocalizedMessage(), e);
-                logger.contextEnd(logCollectorName + "定时任务抛出异常:" + e.getLocalizedMessage());
-            }
+        logger.info(JSON.toJSONString(collectedItemList, true));
+        for (CollectedItemDO collectedItem : collectedItemList) {
+            scanLogsAndBuildIndex(collectedItem);
         }
     }
 
-    /**
-     * Date传递是的引用,不是传值,所以要传timestamp
-     *
-     * @param currentTimestamp
-     * @return
-     */
-    private Map<String, File> scanLastestLogFiles(long currentTimestamp, ServiceConfig.ConfigCollector config, String logCollectorName) {
-        String beginDatetime = propUtil.get(logCollectorName, Key.LAST_MODIFY_TIME);
-        logger.info(logCollectorName + "从cache.properties中获取上一次上传日志的时间:" + beginDatetime);
-        String endDatetime = sdf.format(new Date(currentTimestamp));
-        if (beginDatetime == null || "".equals(beginDatetime.trim())) {
-            long fixedRateAgo = currentTimestamp - config.getFixedRate();
-            beginDatetime = sdf.format(new Date(fixedRateAgo));
-            logger.info(logCollectorName + "开始时间为空,以现在时间往后推: " + config.getFixedRate() + " ms");
-        }
-        logger.info(logCollectorName + "时间区间:" + beginDatetime + " - " + endDatetime);
-        LogFileScanner scanner = new LogFileScanner(beginDatetime, endDatetime, config.getLogRootDir());
-        Map<String, File> logFileMap = scanner.scan();
-        return logFileMap;
-    }
+    private void scanLogsAndBuildIndex(CollectedItemDO collectedItem) {
+        try {
+            Collection<File> logs = scanLastestLogs(collectedItem);
+            logger.info(JSON.toJSONString(logs, true));
+            if (CollectionUtils.isEmpty(logs)) {
 
-    private void buildIndexAndFlushToDisk(Set<File> fileSet, ServiceConfig.ConfigCollector config, String logCollectorName) throws Exception {
-        Map<Long, ContextIndexBuilder.ContextInfo> contextInfoMap = buildContextIndexByFiles(fileSet);
-
-        scheduleService.recordLastestContextCount(contextInfoMap, logCollectorName);
-
-        Map<String, Set<KeywordIndexBuilder.IndexInfo>> keywordIndexMap = buildKeywordIndexByFiles(fileSet, logCollectorName);
-        Map<String, Map<String, Set<IndexInfo>>> keyValueIndexMap = buildKeyValueIndexByFiles(fileSet, logCollectorName);
-
-        File contextIndexFile = new File(config.getTmpZipDir() + File.separator + Key.CONTEXT_INFO_INDEX_FILE_NAME);
-        indexPersistence(contextIndexFile, contextInfoMap);
-        fileSet.add(contextIndexFile);
-
-        File keywordIndexFile = new File(config.getTmpZipDir() + File.separator + Key.KEYWORD_INDEX_FILE_NAME);
-        indexPersistence(keywordIndexFile, keywordIndexMap);
-        fileSet.add(keywordIndexFile);
-
-        File keyValueIndexFile = new File(config.getTmpZipDir() + File.separator + Key.KEY_VALUE_INDEX_FILE_NAME);
-        indexPersistence(keyValueIndexFile, keyValueIndexMap);
-        fileSet.add(keyValueIndexFile);
-    }
-
-
-    private boolean uploadFiles(Set<File> fileSet, ServiceConfig.ConfigCollector config, String logCollectorName) throws Exception {
-        String zipFilePath = config.getTmpZipDir() + File.separator + Key.ZIP_FILE_NAME;
-        logger.info(logCollectorName + "上传文件总数:" + fileSet.size());
-        ZipUtil.zip(zipFilePath, fileSet.toArray(FILE));
-        File zipFile = new File(zipFilePath);
-        if (zipFile.exists()) {
-            logger.info(logCollectorName + " zip大小:" + zipFile.getTotalSpace());
-            ContentType contentType = ContentType.create("text/plain", Charset.forName("UTF-8"));
-            CloseableHttpClient httpClient = HttpClients.createDefault();
-            HttpPost post = new HttpPost(config.getUploadServerUrl());
-            HttpEntity entity = MultipartEntityBuilder.create().
-                    addBinaryBody("zipFile", zipFile).
-                    addTextBody("applicationName", logCollectorName, contentType).build();
-            post.setEntity(entity);
-            CloseableHttpResponse response = null;
-            try {
-                response = httpClient.execute(post);
-                if (response.getStatusLine().getStatusCode() == HttpStatus.OK.value()) {
-                    boolean succeed = zipFile.delete();
-                    if (succeed) {
-
-                    } else {
-                        throw new Exception(logCollectorName + "上传日志文件成功,但删除zip文件失败.");
-                    }
-                    return true;
-                } else {
-                    return false;
-                }
-            } finally {
-                if (response != null) {
-                    response.close();
-                }
+            } else {
+                buildIndexAndWriteToDisk(logs, collectedItem);
+                recordLastestModifyTime(collectedItem.getId());
             }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private Collection<File> scanLastestLogs(CollectedItemDO collectedItem) throws Exception {
+        Date now = new Date();
+        String beginDatetime = getLastModifyTime(collectedItem.getId());
+        String endDatetime = dateFormat.format(now);
+
+        if (StringUtils.isBlank(beginDatetime)) {
+            long fixedRateAgo = now.getTime() - Long.valueOf(fixedRate);
+            beginDatetime = dateFormat.format(new Date(fixedRateAgo));
+        }
+        logger.info(beginDatetime + " - " + endDatetime);
+        Map<String, File> logMap = LogScanner.scan(beginDatetime, endDatetime, collectedItem.getCollectedLogDir());
+        return logMap.values();
+    }
+
+    private String getLastModifyTime(Integer collectedItemId) throws Exception {
+        CollectedItemCache.BaseInfo baseInfo = CacheUtil.read(collectedItemId, CacheName.COLLECTED_ITEM_BASE_INFO);
+        if (baseInfo == null) {
+            return null;
         } else {
-            return false;
+            return baseInfo.getLastModifyTimeStr();
         }
     }
 
-    private Map<String, Map<String, Set<IndexInfo>>> buildKeyValueIndexByFiles(Set<File> fileSet, String logCollectorName) {
-        KeyValueIndexAggregator aggregator = new KeyValueIndexAggregator();
-        List<KvTag> kvTagList = JSON.parseArray(propUtil.get(logCollectorName, Key.KV_TAG_SET), KvTag.class);
+    private void buildIndexAndWriteToDisk(Collection<File> logs, CollectedItemDO collectedItem) throws Exception {
+        Integer collectedItemId = collectedItem.getId();
+
+        ConcurrentHashMap<Long, ContextInfo> contextInfoMap = buildContextIndexBy(logs);
+        ConcurrentHashMap<String, Set<KeywordIndex>> keywordIndexMap = buildKeywordIndexBy(logs, collectedItem);
+        ConcurrentHashMap<String, ConcurrentHashMap<String, Set<KvIndex>>> kvIndexMap = buildKvIndexBy(logs, collectedItem);
+
+        recordLastestContextCount(collectedItemId, contextInfoMap);
+
+        cacheContextIndex(contextInfoMap, collectedItemId);
+        cacheKeywordIndex(keywordIndexMap, collectedItemId);
+        cacheKvIndex(kvIndexMap, collectedItemId);
+    }
+
+    private void recordLastestModifyTime(Integer collectedItemId) throws Exception {
+        String lastModifyTime = dateFormat.format(new Date());
+        CollectedItemCache.BaseInfo baseInfo = CacheUtil.read(collectedItemId, CacheName.COLLECTED_ITEM_BASE_INFO);
+        if (baseInfo == null) {
+            baseInfo = new CollectedItemCache.BaseInfo();
+        }
+        baseInfo.setLastModifyTimeStr(lastModifyTime);
+        CacheUtil.write(baseInfo, collectedItemId, CacheName.COLLECTED_ITEM_BASE_INFO);
+    }
+
+
+    private void recordLastestContextCount(Integer collectedItemId, Map<Long, ContextInfo> contextInfoMap) throws Exception {
+        Set<Long> countSet = contextInfoMap.keySet();
+        Long lastestCount = Collections.max(countSet);
+        CollectedItemCache.BaseInfo baseInfo = CacheUtil.read(collectedItemId, CacheName.COLLECTED_ITEM_BASE_INFO);
+        if (baseInfo == null) {
+            baseInfo = new CollectedItemCache.BaseInfo();
+        }
+        baseInfo.setContextCount(lastestCount);
+        CacheUtil.write(baseInfo, collectedItemId, CacheName.COLLECTED_ITEM_BASE_INFO);
+    }
+
+    private ConcurrentHashMap<String, ConcurrentHashMap<String, Set<KvIndex>>> buildKvIndexBy(Collection<File> logs, CollectedItemDO collectedItem) {
+        KvIndexAggregator aggregator = new KvIndexAggregator();
+        List<KvTagDO> kvTagList = collectedItem.getKvTagList();
         if (CollectionUtils.isEmpty(kvTagList)) {
             return null;
         } else {
-            Set<KvTag> kvTagSet = new HashSet<>(kvTagList);
-            for (File file : fileSet) {
-                KeyValueIndexBuilder builder = new KeyValueIndexBuilder(kvTagSet, file);
-                Map<String, Map<String, Set<IndexInfo>>> keyValueIndexMap = builder.build();
+            Set<KvTagDO> kvTagSet = new HashSet<>(kvTagList);
+            for (File log : logs) {
+                ConcurrentHashMap<String, ConcurrentHashMap<String, Set<KvIndex>>> keyValueIndexMap = new KvIndexBuilder(log, kvTagSet).build();
                 aggregator.aggregate(keyValueIndexMap);
             }
             return aggregator.getAggregatedCollection();
         }
     }
 
-    private Map<String, Set<KeywordIndexBuilder.IndexInfo>> buildKeywordIndexByFiles(Set<File> fileSet, String logCollectorName) {
+    private ConcurrentHashMap<String, Set<KeywordIndex>> buildKeywordIndexBy(Collection<File> logs, CollectedItemDO collectedItem) {
         KeywordIndexAggregator aggregator = new KeywordIndexAggregator();
-        List<String> keywordList = JSON.parseArray(propUtil.get(logCollectorName, Key.KEYWORD_SET), String.class);
-        if (CollectionUtils.isEmpty(keywordList)) {
+        List<KeywordTagDO> keywordTagList = collectedItem.getKeywordTagList();
+        if (CollectionUtils.isEmpty(keywordTagList)) {
             return null;
         } else {
-            Set<String> keywordSet = new HashSet<>(keywordList);
-            for (File file : fileSet) {
-                KeywordIndexBuilder builder = new KeywordIndexBuilder(file, keywordSet);
-                Map<String, Set<KeywordIndexBuilder.IndexInfo>> keywordeIndexMap = builder.build();
-                aggregator.aggregate(keywordeIndexMap);
+            Set<String> keywordSet = new HashSet<>(keywordTagList.size());
+            for (KeywordTagDO keywordTag : keywordTagList) {
+                keywordSet.add(keywordTag.getKeyword());
+            }
+            for (File log : logs) {
+                ConcurrentHashMap<String, Set<KeywordIndex>> keywordIndexMap = new KeywordIndexBuilder(log, keywordSet).build();
+                aggregator.aggregate(keywordIndexMap);
             }
             return aggregator.getAggregatedCollection();
         }
     }
 
-    private Map<Long, ContextIndexBuilder.ContextInfo> buildContextIndexByFiles(Set<File> fileSet) {
+    private ConcurrentHashMap<Long, ContextInfo> buildContextIndexBy(Collection<File> logs) {
         ContextIndexAggregator aggregator = new ContextIndexAggregator();
-        for (File file : fileSet) {
-            ContextIndexBuilder builder = new ContextIndexBuilder(file);
-            Map<Long, ContextIndexBuilder.ContextInfo> contextInfoMap = builder.build();
+        for (File log : logs) {
+            ConcurrentHashMap<Long, ContextInfo> contextInfoMap = new ContextIndexBuilder(log).build();
             aggregator.aggregate(contextInfoMap);
         }
         return aggregator.getAggregatedCollection();
     }
 
+    public void cacheContextIndex(ConcurrentHashMap<Long, ContextInfo> contextInfoMap, Integer collectedItemId) throws Exception {
+        ConcurrentHashMap<Long, ContextInfo> contextInfoCacheMap = indexManager.getContextIndexBy(collectedItemId);
+        if (contextInfoCacheMap == null) {
+            CacheUtil.write(contextInfoMap, collectedItemId, CacheName.CONTEXT_INDEX);
+        } else {
+            ContextIndexAggregator aggregator = new ContextIndexAggregator();
+            aggregator.aggregate(contextInfoMap);
+            aggregator.aggregate(contextInfoCacheMap);
 
-    private void indexPersistence(File indexFile, Object indexObj) throws Exception {
-        ObjectOutputStream oos = null;
-        try {
-            if (indexFile.exists()) {
+            ConcurrentHashMap<Long, ContextInfo> aggregatedContextInfoMap = aggregator.getAggregatedCollection();
+            indexManager.setContextIndexBy(collectedItemId, aggregatedContextInfoMap);
 
-            } else {
-                Files.createParentDirs(indexFile);
-                boolean succeed = indexFile.createNewFile();
-                if (succeed) {
+            CacheUtil.write(aggregatedContextInfoMap, collectedItemId, CacheName.CONTEXT_INDEX);
+        }
+    }
 
-                } else {
-                    throw new Exception("持久化索引文件失败");
-                }
-            }
-            oos = new ObjectOutputStream(new FileOutputStream(indexFile));
-            oos.writeObject(indexObj);
-            oos.flush();
-        } finally {
-            if (oos != null) {
-                oos.close();
-            }
+    public void cacheKeywordIndex(ConcurrentHashMap<String, Set<KeywordIndex>> keywordIndexMap, Integer collectedItemId) throws Exception {
+        ConcurrentHashMap<String, Set<KeywordIndex>> keywordIndexCacheMap = indexManager.getKeywordIndexBy(collectedItemId);
+        if (keywordIndexCacheMap == null) {
+            CacheUtil.write(keywordIndexMap, collectedItemId, CacheName.KEYWORD_INDEX);
+        } else {
+            KeywordIndexAggregator aggregator = new KeywordIndexAggregator();
+            aggregator.aggregate(keywordIndexMap);
+            aggregator.aggregate(keywordIndexCacheMap);
+
+            ConcurrentHashMap<String, Set<KeywordIndex>> aggregatedKeywordIndexMap = aggregator.getAggregatedCollection();
+            indexManager.setKeywordIndexBy(collectedItemId, aggregatedKeywordIndexMap);
+
+            CacheUtil.write(aggregatedKeywordIndexMap, collectedItemId, CacheName.KEYWORD_INDEX);
+        }
+    }
+
+    public void cacheKvIndex(ConcurrentHashMap<String, ConcurrentHashMap<String, Set<KvIndex>>> kvIndexMap, Integer collectedItemId) throws Exception {
+        ConcurrentHashMap<String, ConcurrentHashMap<String, Set<KvIndex>>> kvIndexCacheMap = indexManager.getKvIndexBy(collectedItemId);
+        if (kvIndexCacheMap == null) {
+            CacheUtil.write(kvIndexMap, collectedItemId, CacheName.KV_INDEX);
+        } else {
+            KvIndexAggregator aggregator = new KvIndexAggregator();
+            aggregator.aggregate(kvIndexMap);
+            aggregator.aggregate(kvIndexCacheMap);
+
+            ConcurrentHashMap<String, ConcurrentHashMap<String, Set<KvIndex>>> aggregatedKvIndexMap = aggregator.getAggregatedCollection();
+            indexManager.setKvIndexBy(collectedItemId, kvIndexMap);
+
+            CacheUtil.write(aggregatedKvIndexMap, collectedItemId, CacheName.KV_INDEX);
         }
     }
 

@@ -1,16 +1,14 @@
-package cn.yunyichina.log.component.searchEngine.imp;
+package cn.yunyichina.log.component.searchengine.imp;
 
-import cn.yunyichina.log.common.entity.entity.dto.SearchCondition;
-import cn.yunyichina.log.common.log.LoggerWrapper;
-import cn.yunyichina.log.component.index.builder.imp.ContextIndexBuilder;
-import cn.yunyichina.log.component.index.builder.imp.KeywordIndexBuilder;
-import cn.yunyichina.log.component.searchEngine.AbstractSearchEngine;
-import cn.yunyichina.log.component.searchEngine.SearchEngine;
-import com.alibaba.fastjson.JSON;
+import cn.yunyichina.log.common.entity.dto.SearchConditionDTO;
+import cn.yunyichina.log.component.index.entity.ContextInfo;
+import cn.yunyichina.log.component.index.entity.KeywordIndex;
+import cn.yunyichina.log.component.searchengine.AbstractSearchEngine;
+import cn.yunyichina.log.component.searchengine.SearchEngine;
 
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 
 /**
@@ -20,18 +18,14 @@ import java.util.Set;
  * @CreateTime: 2016/11/14 18:13
  * @Description: 关键词搜索引擎, 不支持模糊搜索.
  */
-public class KeywordSearchEngine extends AbstractSearchEngine implements SearchEngine<Set<ContextIndexBuilder.ContextInfo>> {
+public class KeywordSearchEngine extends AbstractSearchEngine implements SearchEngine<Set<ContextInfo>> {
 
-    final LoggerWrapper logger = LoggerWrapper.getLogger(KeywordSearchEngine.class);
+    private ConcurrentHashMap<String, Set<KeywordIndex>> keywordIndexMap;
+    private ConcurrentHashMap<Long, ContextInfo> contextInfoMap;
 
-    private Map<String, Set<KeywordIndexBuilder.IndexInfo>> keywordIndexMap;
-    private Map<Long, ContextIndexBuilder.ContextInfo> contextIndexMap;
-
-
-    public KeywordSearchEngine(Map<String, Set<KeywordIndexBuilder.IndexInfo>> keywordIndexMap, Map<Long, ContextIndexBuilder.ContextInfo> contextIndexMap, SearchCondition searchCondition) throws Exception {
-        logger.info("初始化关键词搜索引擎:" + JSON.toJSONString(keywordIndexMap) + " =========== " + JSON.toJSONString(contextIndexMap));
+    public KeywordSearchEngine(ConcurrentHashMap<String, Set<KeywordIndex>> keywordIndexMap, ConcurrentHashMap<Long, ContextInfo> contextInfoMap, SearchConditionDTO searchCondition) throws Exception {
         this.keywordIndexMap = keywordIndexMap;
-        this.contextIndexMap = contextIndexMap;
+        this.contextInfoMap = contextInfoMap;
         if (searchCondition.getBeginDateTime().after(searchCondition.getEndDateTime())) {
             throw new Exception("开始时间不能小于结束时间");
         }
@@ -39,22 +33,21 @@ public class KeywordSearchEngine extends AbstractSearchEngine implements SearchE
     }
 
     @Override
-    public Set<ContextIndexBuilder.ContextInfo> search() throws Exception {
-        logger.info("关键词搜索引擎开始搜索");
-        Set<KeywordIndexBuilder.IndexInfo> indexInfoSet = keywordIndexMap.get(searchCondition.getKeyword());
-        if (null == indexInfoSet || indexInfoSet.isEmpty()) {
-
+    public Set<ContextInfo> search() throws Exception {
+        Set<KeywordIndex> keywordIndexSet = keywordIndexMap.get(searchCondition.getKeyword());
+        if (null == keywordIndexSet || keywordIndexSet.isEmpty()) {
+            return new HashSet<>();
         } else {
-            matchedContextInfoSet = new HashSet<>(indexInfoSet.size());
-            for (KeywordIndexBuilder.IndexInfo indexInfo : indexInfoSet) {
-                Long contextCount = indexInfo.getContextCount();
-                ContextIndexBuilder.ContextInfo contextInfo = contextIndexMap.get(contextCount);
+            matchedContextInfoSet = new HashSet<>(keywordIndexSet.size());
+            for (KeywordIndex keywordIndex : keywordIndexSet) {
+                Long contextCount = keywordIndex.getContextCount();
+                ContextInfo contextInfo = contextInfoMap.get(contextCount);
                 if (inDateTimeRange(contextInfo)) {
                     matchedContextInfoSet.add(contextInfo);
                 }
             }
+            return matchedContextInfoSet;
         }
-        return matchedContextInfoSet;
     }
 
 }

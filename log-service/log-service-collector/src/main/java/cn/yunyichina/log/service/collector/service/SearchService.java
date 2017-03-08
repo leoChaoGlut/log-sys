@@ -1,28 +1,25 @@
 package cn.yunyichina.log.service.collector.service;
 
-import cn.yunyichina.log.common.entity.constant.SearchEngineType;
-import cn.yunyichina.log.common.entity.entity.dto.LogResult;
-import cn.yunyichina.log.common.entity.entity.dto.SearchCondition;
-import cn.yunyichina.log.common.log.LoggerWrapper;
+import cn.yunyichina.log.common.constant.SearchEngineType;
+import cn.yunyichina.log.common.entity.do_.CollectedItemDO;
+import cn.yunyichina.log.common.entity.dto.LogResultDTO;
+import cn.yunyichina.log.common.entity.dto.SearchConditionDTO;
+import cn.yunyichina.log.common.exception.CollectorException;
 import cn.yunyichina.log.component.aggregator.log.LogAggregator;
-import cn.yunyichina.log.component.index.builder.imp.ContextIndexBuilder;
-import cn.yunyichina.log.component.index.builder.imp.KeyValueIndexBuilder;
-import cn.yunyichina.log.component.index.scanner.imp.LogFileScanner;
-import cn.yunyichina.log.component.searchEngine.imp.KeyValueSearchEngine;
-import cn.yunyichina.log.component.searchEngine.imp.KeywordSearchEngine;
-import cn.yunyichina.log.component.searchEngine.imp.NoIndexSearchEngine;
-import cn.yunyichina.log.service.collector.constants.CacheName;
-import cn.yunyichina.log.service.collector.constants.Config;
-import cn.yunyichina.log.service.collector.constants.Key;
-import cn.yunyichina.log.service.collector.constants.ServiceConfig;
+import cn.yunyichina.log.component.index.entity.ContextInfo;
+import cn.yunyichina.log.component.scanner.imp.LogScanner;
+import cn.yunyichina.log.component.searchengine.imp.KeywordSearchEngine;
+import cn.yunyichina.log.component.searchengine.imp.KvSearchEngine;
+import cn.yunyichina.log.component.searchengine.imp.NoIndexSearchEngine;
 import cn.yunyichina.log.service.collector.util.IndexManager;
-import cn.yunyichina.log.service.collector.util.PropertiesUtil;
 import com.alibaba.fastjson.JSON;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.FastDateFormat;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
 
 import java.io.File;
 import java.util.*;
@@ -30,109 +27,104 @@ import java.util.*;
 /**
  * @Author: Leo
  * @Blog: http://blog.csdn.net/lc0817
- * @CreateTime: 2016/11/18 14:49
+ * @CreateTime: 2017/3/3 16:42
  * @Description:
  */
 @Service
 public class SearchService {
 
-    final LoggerWrapper logger = LoggerWrapper.getLogger(SearchService.class);
+    final Logger logger = LoggerFactory.getLogger(SearchService.class);
 
     @Autowired
-    Config config;
+    IndexManager indexManager;
 
     @Autowired
-    ServiceConfig serviceConfig;
+    CacheService cacheService;
 
-    @Autowired
-    PropertiesUtil propUtil;
+    private FastDateFormat dateFormat = FastDateFormat.getInstance("yyyy-MM-dd HH:mm");
 
-    @Cacheable(cacheNames = {CacheName.REAL_TIME}, key = "#condition.toString()")
-    public List<LogResult> realtime(SearchCondition condition) throws Exception {
-        List<String> keywordList = JSON.parseArray(propUtil.get(Key.KEYWORD_SET), String.class);
-        List<KeyValueIndexBuilder.KvTag> kvTagList = JSON.parseArray(propUtil.get(Key.KV_TAG_SET), KeyValueIndexBuilder.KvTag.class);
-        if (CollectionUtils.isEmpty(keywordList) && CollectionUtils.isEmpty(kvTagList)) {
-            throw new Exception("keyword和keyValue为空,请检查properties.");
+    public List<LogResultDTO> searchHistory(SearchConditionDTO condition) throws Exception {
+        Integer collectedItemId = condition.getCollectedItemId();
+        Set<ContextInfo> contextInfoSet;
+        switch (condition.getSearchEngineType()) {
+            case SearchEngineType.KEYWORD:
+                contextInfoSet = useKeywordSearchEngine(condition, collectedItemId);
+                break;
+            case SearchEngineType.KEY_VALUE:
+                contextInfoSet = useKvSearchEngine(condition, collectedItemId);
+                break;
+            case SearchEngineType.NO_INDEX:
+                contextInfoSet = useNoIndexSearchEngine(condition, collectedItemId);
+                break;
+            default:
+                throw new CollectorException("不支持的搜索引擎类型:" + condition.getSearchEngineType());
+        }
+
+        List<LogResultDTO> logResultList = getLogResultListBy(collectedItemId, contextInfoSet);
+        return logResultList;
+    }
+
+    private List<LogResultDTO> getLogResultListBy(Integer collectedItemId, Set<ContextInfo> contextInfoSet) throws CollectorException {
+        logger.info(JSON.toJSONString(contextInfoSet, true));
+        if (CollectionUtils.isEmpty(contextInfoSet)) {
+            throw new CollectorException("查不到符合条件的上下文");
         } else {
-            if (CollectionUtils.isEmpty(keywordList)) {//防止hashset初始化null异常
-                keywordList = new ArrayList<>();
-            } else if (CollectionUtils.isEmpty(kvTagList)) {
-                kvTagList = new ArrayList<>();
-            }
-            Set<String> keywordSet = new HashSet<>(keywordList);
-            Set<KeyValueIndexBuilder.KvTag> kvTagSet = new HashSet<>(kvTagList);
-            String beginDatetime = propUtil.get(Key.LAST_MODIFY_TIME);
-            IndexManager indexManager = new IndexManager(condition, kvTagSet, keywordSet, beginDatetime, config.getLogRootDir());
-            Set<ContextIndexBuilder.ContextInfo> contextInfoSet;
-            switch (condition.getSearchEngineType()) {
-                case SearchEngineType.KEYWORD:
-                    KeywordSearchEngine keywordSearchEngine = new KeywordSearchEngine(indexManager.getKeywordIndexMap(), indexManager.getContextIndexMap(), condition);
-                    keywordSearchEngine.setFuzzySearch(condition.isFuzzy());
-                    contextInfoSet = keywordSearchEngine.search();
-                    break;
-                case SearchEngineType.KEY_VALUE:
-                    KeyValueSearchEngine keyValueSearchEngine = new KeyValueSearchEngine(indexManager.getKeyValueIndexMap(), indexManager.getContextIndexMap(), condition);
-                    keyValueSearchEngine.setFuzzySearch(condition.isFuzzy());
-                    contextInfoSet = keyValueSearchEngine.search();
-                    break;
-                case SearchEngineType.NO_INDEX:
-                    LogFileScanner scanner = new LogFileScanner(condition.getBeginDateTimeStr(), condition.getEndDateTimeStr(), config.getLogRootDir());
-                    Map<String, File> logFileMap = scanner.scan();
-                    if (CollectionUtils.isEmpty(logFileMap)) {
-                        return new ArrayList<>();
-                    } else {
-                        NoIndexSearchEngine noIndexSearchEngine = new NoIndexSearchEngine(logFileMap.values(), indexManager.getContextIndexMap(), condition.getNoIndexKeyword());
-                        contextInfoSet = noIndexSearchEngine.search();
-                    }
-                    break;
-                default:
-                    throw new Exception("不支持的搜索引擎类型:" + condition.getSearchEngineType());
-            }
 
-            if (contextInfoSet == null) {
-                return new ArrayList<>();
+            CollectedItemDO collectedItem = cacheService.getCollectedItemBy(collectedItemId);
+            if (collectedItem == null) {
+                throw new CollectorException(collectedItemId + " 对应的采集项不存在");
             } else {
-                List<LogResult> logResultList = new ArrayList<>(contextInfoSet.size());
-                for (ContextIndexBuilder.ContextInfo contextInfo : contextInfoSet) {
-                    String contextStr = LogAggregator.aggregate(contextInfo, config.getLogRootDir());
-                    if (StringUtils.isEmpty(contextStr)) {
-                        contextStr = null;//告诉GC,可以清理了.因为这里是比较耗内存的,所以要主动赋null
-                    } else {
-                        TreeSet<String> logRegionSet = scanLogRegion(contextInfo);
-                        LogResult logResult = new LogResult()
-                                .setLogRegionSet(logRegionSet)
-                                .setContextStr(contextStr);
+                List<LogResultDTO> logResultList = new ArrayList<>(contextInfoSet.size());
+
+                String collectedLogDir = collectedItem.getCollectedLogDir();
+                String contextContent;
+
+                for (ContextInfo contextInfo : contextInfoSet) {
+                    contextContent = LogAggregator.aggregate(contextInfo, collectedLogDir);
+                    if (StringUtils.isNotBlank(contextContent)) {
+                        LogResultDTO logResult = buildLogResult(collectedLogDir, contextContent, contextInfo);
 
                         logResultList.add(logResult);
                     }
                 }
-                Collections.sort(logResultList, new Comparator<LogResult>() {
+                //按照上下文开始时间排序，用于前端显示
+                Collections.sort(logResultList, new Comparator<LogResultDTO>() {
                     @Override
-                    public int compare(LogResult o1, LogResult o2) {
+                    public int compare(LogResultDTO o1, LogResultDTO o2) {
                         return o1.getLogRegionSet().first().compareTo(o2.getLogRegionSet().first());
                     }
                 });
+                logger.info(JSON.toJSONString(logResultList, true));
                 return logResultList;
             }
         }
     }
 
-    public String getLastUploadDatetime() {
-        String lastUploadDatetime = propUtil.get(Key.LAST_MODIFY_TIME);
-        return lastUploadDatetime;
+    private LogResultDTO buildLogResult(String collectedLogDir, String contextContent, ContextInfo contextInfo) {
+        TreeSet<String> logRegionSet = scanLogRegion(contextInfo, collectedLogDir);
+
+        return new LogResultDTO()
+                .setContextContent(contextContent)
+                .setLogRegionSet(logRegionSet);
     }
 
-    //    @Cacheable(cacheNames = {OPTION}, key = "#contextInfo.getBeginLogAndEndLogName()")
-    private TreeSet<String> scanLogRegion(ContextIndexBuilder.ContextInfo contextInfo) {
+    /**
+     * 获取上下文所贯穿的所有日志
+     *
+     * @param contextInfo
+     * @param collectedLogDir
+     * @return
+     */
+    private TreeSet<String> scanLogRegion(ContextInfo contextInfo, String collectedLogDir) {
+        logger.info(JSON.toJSONString(contextInfo, true));
         File beginLogFile = contextInfo.getBegin().getLogFile();
         File endLogFile = contextInfo.getEnd().getLogFile();
-        logger.info("=======scanLogRegion:" + contextInfo.getBeginLogAndEndLogName());
-        LogFileScanner scanner = new LogFileScanner(beginLogFile, endLogFile, config.getLogRootDir());
-        Map<String, File> logFileMap = scanner.scan();
-        if (null == logFileMap) {
+        Map<String, File> logMap = LogScanner.scan(beginLogFile, endLogFile, collectedLogDir);
+        logger.info(JSON.toJSONString(logMap, true));
+        if (CollectionUtils.isEmpty(logMap)) {
             return new TreeSet<>();
         } else {
-            Collection<File> logs = logFileMap.values();
+            Collection<File> logs = logMap.values();
             TreeSet<String> logRegionSet = new TreeSet<>();
             for (File log : logs) {
                 String logName = log.getName();
@@ -147,8 +139,44 @@ public class SearchService {
         }
     }
 
-    public Map<String, ServiceConfig.ConfigCollector> getDirs() {
-        return serviceConfig.getCollectorMap();
+    private Set<ContextInfo> useNoIndexSearchEngine(SearchConditionDTO condition, Integer collectedItemId) throws Exception {
+        CollectedItemDO collectedItem = cacheService.getCollectedItemBy(collectedItemId);
+        if (collectedItem == null) {
+            throw new CollectorException(collectedItemId + " 对应的采集项不存在");
+        } else {
+            String collectedLogDir = collectedItem.getCollectedLogDir();
+
+            Map<String, File> logMap = LogScanner.scan(
+                    dateFormat.format(condition.getBeginDateTime()),
+                    dateFormat.format(condition.getEndDateTime()),
+                    collectedLogDir);
+
+            Set<ContextInfo> contextInfoSet = new NoIndexSearchEngine(
+                    logMap.values(),
+                    indexManager.getContextIndexBy(collectedItemId),
+                    condition.getNoIndexKeyword()
+            ).search();
+
+            return contextInfoSet;
+        }
+    }
+
+    private Set<ContextInfo> useKvSearchEngine(SearchConditionDTO condition, Integer collectedItemId) throws Exception {
+        Set<ContextInfo> contextInfoSet = new KvSearchEngine(
+                indexManager.getKvIndexBy(collectedItemId),
+                indexManager.getContextIndexBy(collectedItemId),
+                condition
+        ).search();
+        return contextInfoSet;
+    }
+
+    private Set<ContextInfo> useKeywordSearchEngine(SearchConditionDTO condition, Integer collectedItemId) throws Exception {
+        Set<ContextInfo> contextInfoSet = new KeywordSearchEngine(
+                indexManager.getKeywordIndexBy(collectedItemId),
+                indexManager.getContextIndexBy(collectedItemId),
+                condition
+        ).search();
+        return contextInfoSet;
     }
 
 }

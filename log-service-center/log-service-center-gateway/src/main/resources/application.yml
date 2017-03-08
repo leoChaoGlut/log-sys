@@ -1,22 +1,20 @@
 spring:
   application:
-    name: gateway
+    name: log-service-center-gateway
   profiles:
-    active: test
+    active: default
 eureka:
   instance:
     prefer-ip-address: true
-    ip-address: 127.0.0.1
+#    ip-address: 127.0.0.1
+    ip-address: 192.168.1.150
     instance-id: ${eureka.instance.ip-address}:${server.port}
-    lease-renewal-interval-in-seconds: 30
-    lease-expiration-duration-in-seconds: 90
-#    hostname: log.yunyichina.cn
   client:
     healthcheck:
       enabled: true
     serviceUrl:
-      defaultZone: http://120.77.59.164:10100/eureka/
+      defaultZone: http://192.168.1.150:10100/eureka/
 logging:
-  config: classpath:logback/logback-${spring.profiles.active}.xml
+  config: classpath:logback.xml
 server:
   port: 10300

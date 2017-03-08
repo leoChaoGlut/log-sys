@@ -8,5 +8,7 @@ package cn.yunyichina.log.component.index.builder;
  */
 public interface IndexBuilder<T> {
 
+    String LOG_SUFFIX = ".log";
+
     T build();
 }

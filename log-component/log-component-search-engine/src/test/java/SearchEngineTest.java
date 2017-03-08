@@ -1,162 +1,149 @@
-import cn.yunyichina.log.common.entity.entity.dto.SearchCondition;
+import cn.yunyichina.log.common.constant.SearchEngineType;
+import cn.yunyichina.log.common.entity.do_.KvTagDO;
+import cn.yunyichina.log.common.entity.dto.SearchConditionDTO;
 import cn.yunyichina.log.component.aggregator.index.imp.ContextIndexAggregator;
-import cn.yunyichina.log.component.aggregator.index.imp.KeyValueIndexAggregator;
 import cn.yunyichina.log.component.aggregator.index.imp.KeywordIndexAggregator;
-import cn.yunyichina.log.component.aggregator.log.LogAggregator;
+import cn.yunyichina.log.component.aggregator.index.imp.KvIndexAggregator;
 import cn.yunyichina.log.component.index.builder.imp.ContextIndexBuilder;
-import cn.yunyichina.log.component.index.builder.imp.KeyValueIndexBuilder;
 import cn.yunyichina.log.component.index.builder.imp.KeywordIndexBuilder;
-import cn.yunyichina.log.component.index.scanner.imp.LogFileScanner;
-import cn.yunyichina.log.component.searchEngine.imp.KeyValueSearchEngine;
-import cn.yunyichina.log.component.searchEngine.imp.KeywordSearchEngine;
-import cn.yunyichina.log.component.searchEngine.imp.NoIndexSearchEngine;
+import cn.yunyichina.log.component.index.builder.imp.KvIndexBuilder;
+import cn.yunyichina.log.component.index.entity.ContextInfo;
+import cn.yunyichina.log.component.index.entity.KeywordIndex;
+import cn.yunyichina.log.component.index.entity.KvIndex;
+import cn.yunyichina.log.component.scanner.imp.LogScanner;
+import cn.yunyichina.log.component.searchengine.imp.KeywordSearchEngine;
+import cn.yunyichina.log.component.searchengine.imp.KvSearchEngine;
+import cn.yunyichina.log.component.searchengine.imp.MultNoIndexSearchEngine;
+import cn.yunyichina.log.component.searchengine.imp.NoIndexSearchEngine;
 import com.alibaba.fastjson.JSON;
-import org.junit.Before;
+import org.apache.commons.lang3.time.FastDateFormat;
 import org.junit.Test;
 
 import java.io.File;
 import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @Author: Leo
  * @Blog: http://blog.csdn.net/lc0817
- * @CreateTime: 2016/11/23 16:45
+ * @CreateTime: 2017/2/28 17:12
  * @Description:
  */
 public class SearchEngineTest {
 
-    Map<Long, ContextIndexBuilder.ContextInfo> contextIndexMap;
-    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+    final String LOG_DIR = "D:\\gitRepo\\yunyi\\src\\log\\log-sys\\log-resource\\test-resource\\log";
+    //    final String LOG_DIR = "E:\\log";
+    final FastDateFormat dateFormat = FastDateFormat.getInstance("yyyy-MM-dd HH:mm");
+    String beginDatetime = "2016-11-15 14:21";
+    String endDatetime = "2018-11-15 14:25";
 
-    @Before
-    public void before() {
-        LogFileScanner logFileScanner = new LogFileScanner("2016-11-15 14:23", "2016-11-15 14:25", "D:\\tmp");
-        Map<String, File> fileMap = logFileScanner.scan();
-        Collection<File> values = fileMap.values();
-        ContextIndexAggregator aggregator = new ContextIndexAggregator();
-        for (File f : values) {
-            ContextIndexBuilder builder = new ContextIndexBuilder(f);
-            Map<Long, ContextIndexBuilder.ContextInfo> map = builder.build();
-//            System.out.println(JSON.toJSONString(map, true));
-//            System.out.println("===================");
-            aggregator.aggregate(map);
-        }
-
-        this.contextIndexMap = aggregator.getAggregatedCollection();
-//        System.out.println(JSON.toJSONString(this.contextIndexMap, true));
+    @Test
+    public void noIndexSearchEngineTest() throws Exception {
+        String keyword = "Exception1";
+        Collection<File> logs = getLogs();
+        long beginTime = System.nanoTime();
+        NoIndexSearchEngine noIndexSearchEngine = new NoIndexSearchEngine(logs, getContextInfoMap(logs), keyword);
+        Set<ContextInfo> contextInfoSet = noIndexSearchEngine.search();
+        long endTime = System.nanoTime();
+        System.out.println(JSON.toJSONString(contextInfoSet, true));
+        System.out.println("耗时:" + BigDecimal.valueOf(endTime - beginTime, 9) + " 秒");
     }
 
+    @Test
+    public void multNoIndexSearchEngineTest() throws Exception {
+        String keyword = "Exception1";
+        Collection<File> logs = getLogs();
+        long beginTime = System.nanoTime();
+        MultNoIndexSearchEngine multNoIndexSearchEngine = new MultNoIndexSearchEngine(logs, getContextInfoMap(logs), keyword);
+        Set<ContextInfo> contextInfoSet = multNoIndexSearchEngine.search();
+        long endTime = System.nanoTime();
+//        System.out.println(JSON.toJSONString(contextInfoSet, true));
+        System.out.println("耗时:" + BigDecimal.valueOf(endTime - beginTime, 9) + " 秒");
+    }
 
     @Test
     public void keywordSearchEngineTest() throws Exception {
-        LogFileScanner logFileScanner = new LogFileScanner("2016-11-15 14:23", "2016-11-15 14:25", "D:\\tmp");
-        Map<String, File> fileMap = logFileScanner.scan();
-        Collection<File> files = fileMap.values();
+        String keyword = "pat_card_no";
 
-        Set<String> keywordSet = new HashSet<>();
+        SearchConditionDTO condition = new SearchConditionDTO()
+                .setBeginDateTime(dateFormat.parse(beginDatetime))
+                .setEndDateTime(dateFormat.parse(endDatetime))
+                .setKeyword(keyword)
+                .setSearchEngineType(SearchEngineType.KEYWORD);
 
-        keywordSet.add("pat_card_no");
-//        keywordSet.add("将要返回给平台的Response As Follow");
-//        keywordSet.add("patCardNo");
-//        keywordSet.add("patCardNo1");
-
-        KeywordIndexAggregator aggregator = new KeywordIndexAggregator();
-
-        for (File file : files) {
-            KeywordIndexBuilder builder = new KeywordIndexBuilder(file, keywordSet);
-            Map<String, Set<KeywordIndexBuilder.IndexInfo>> map = builder.build();
-//            System.out.println(JSON.toJSONString(map, true));
-            aggregator.aggregate(map);
-        }
-
-        Map<String, Set<KeywordIndexBuilder.IndexInfo>> keywordIndexMap = aggregator.getAggregatedCollection();
-
-//        System.out.println(JSON.toJSONString(keywordIndexMap, true));
-
-        SearchCondition searchCondition = new SearchCondition();
-        searchCondition.setBeginDateTime(sdf.parse("2016-11-15 14:23"));
-        searchCondition.setEndDateTime(sdf.parse("2016-11-15 14:25"));
-        searchCondition.setKeyword("pat_card_no");
-
-        KeywordSearchEngine searchEngine = new KeywordSearchEngine(keywordIndexMap, contextIndexMap, searchCondition);
-//        searchEngine.setAllowOverTimeRange(true);
-//        searchEngine.setExactlyBetweenTimeRange(true);
-        Set<ContextIndexBuilder.ContextInfo> contextInfoSet = searchEngine.search();
+        Collection<File> logs = getLogs();
+        Set<ContextInfo> contextInfoSet = new KeywordSearchEngine(getKeywordIndexMap(logs), getContextInfoMap(logs), condition).search();
+        System.out.println(contextInfoSet.size());
         System.out.println(JSON.toJSONString(contextInfoSet, true));
-        System.out.println(contextInfoSet.size());
-//        for (ContextIndexBuilder.ContextInfo contextInfo : contextInfoSet) {
-//            String contextStr = LogAggregator.aggregate(contextInfo);
-//            System.out.println(contextStr);
-//            TimeUnit.SECONDS.sleep(5);
-//        }
-
     }
 
     @Test
-    public void keyValueSearchEngineTest() throws Exception {
-        LogFileScanner logFileScanner = new LogFileScanner("2016-11-15 14:23", "2016-11-15 14:25", "D:\\tmp");
-        Map<String, File> fileMap = logFileScanner.scan();
-        Collection<File> files = fileMap.values();
-        KeyValueIndexAggregator aggregator = new KeyValueIndexAggregator();
+    public void kvSearchEngineTest() throws Exception {
+        String key = "pat_card_no";
+        String value = "0000013797";
+        boolean fuzzy = false;
 
-        Set<KeyValueIndexBuilder.KvTag> kvTagSet = new HashSet<>();
+        SearchConditionDTO condition = new SearchConditionDTO()
+                .setSearchEngineType(SearchEngineType.KEY_VALUE)
+                .setBeginDateTime(dateFormat.parse(beginDatetime))
+                .setEndDateTime(dateFormat.parse(endDatetime))
+                .setKey(key)
+                .setValue(value)
+                .setFuzzy(fuzzy);
 
-        kvTagSet.add(new KeyValueIndexBuilder.KvTag("pat_card_no", "\"pat_card_no\":\"", "\""));
-        kvTagSet.add(new KeyValueIndexBuilder.KvTag("pat_id_no", "\"pat_id_no\":\"", "\""));
-        kvTagSet.add(new KeyValueIndexBuilder.KvTag("patName", "<patName>", "</patName>"));
-
-        for (File file : files) {
-            KeyValueIndexBuilder builder = new KeyValueIndexBuilder(kvTagSet, file);
-            Map<String, Map<String, Set<KeyValueIndexBuilder.IndexInfo>>> map = builder.build();
-//            System.out.println(JSON.toJSONString(map, true));
-//            System.out.println("===============");
-            aggregator.aggregate(map);
-        }
-
-        Map<String, Map<String, Set<KeyValueIndexBuilder.IndexInfo>>> keyValueIndexMap = aggregator.getAggregatedCollection();
-//        System.out.println(JSON.toJSONString(keyValueIndexMap, true));
-        SearchCondition searchCondition = new SearchCondition();
-
-        searchCondition.setKey("pat_card_no");
-        searchCondition.setValue("0000426666");
-        searchCondition.setBeginDateTime(sdf.parse("2016-11-15 14:23"));
-        searchCondition.setEndDateTime(sdf.parse("2016-11-15 14:25"));
-
-        KeyValueSearchEngine searchEngine = new KeyValueSearchEngine(keyValueIndexMap, contextIndexMap, searchCondition);
-        searchEngine.setExactlyBetweenTimeRange(true);
-        Set<ContextIndexBuilder.ContextInfo> contextInfoSet = searchEngine.search();
-//        System.out.println(JSON.toJSONString(contextInfoSet, true));
+        Collection<File> logs = getLogs();
+        Set<ContextInfo> contextInfoSet = new KvSearchEngine(getKvIndexMap(logs), getContextInfoMap(logs), condition).search();
         System.out.println(contextInfoSet.size());
-        for (ContextIndexBuilder.ContextInfo contextInfo : contextInfoSet) {
-            String contextStr = LogAggregator.aggregate(contextInfo, "D://tmp");
-            System.out.println(contextStr);
-        }
-
+        System.out.println(JSON.toJSONString(contextInfoSet, true));
     }
 
-    @Test
-    public void noIndexSearchEngineTest() {
+    private ConcurrentHashMap<String, ConcurrentHashMap<String, Set<KvIndex>>> getKvIndexMap(Collection<File> logs) {
+        Set<KvTagDO> kvTagSet = new HashSet<>();
+        kvTagSet.add(new KvTagDO("data", "\"data\":\"", "\""));
+        kvTagSet.add(new KvTagDO("hospital_code", "\"hospital_code\":\"", "\""));
+        kvTagSet.add(new KvTagDO("patCardNo", "<patCardNo>", "</"));
+        kvTagSet.add(new KvTagDO("pat_card_no", "\"pat_card_no\":\"", "\""));
 
-        LogFileScanner logFileScanner = new LogFileScanner("2016-11-15 14:24", "2016-11-15 14:24", "D:\\tmp");
-        Map<String, File> fileMap = logFileScanner.scan();
-        Collection<File> files = fileMap.values();
-
-        String keyword = "getMZPatient";
-
-        long start = System.nanoTime();
-        NoIndexSearchEngine searchEngine = new NoIndexSearchEngine(files, contextIndexMap, keyword);
-        try {
-            Set<ContextIndexBuilder.ContextInfo> contextInfoSet = searchEngine.search();
-            System.out.println(JSON.toJSONString(contextInfoSet, true));
-        } catch (Exception e) {
-            e.printStackTrace();
+        KvIndexAggregator kvIndexAggregator = new KvIndexAggregator();
+        for (File log : logs) {
+            ConcurrentHashMap<String, ConcurrentHashMap<String, Set<KvIndex>>> kvIndexSetMap = new KvIndexBuilder(log, kvTagSet).build();
+            kvIndexAggregator.aggregate(kvIndexSetMap);
         }
+        return kvIndexAggregator.getAggregatedCollection();
+    }
 
-        System.out.println("总共消耗" + BigDecimal.valueOf(System.nanoTime() - start, 9));
+    private ConcurrentHashMap<String, Set<KeywordIndex>> getKeywordIndexMap(Collection<File> logs) {
+        Set<String> keywordTagSet = new HashSet<>();
+        keywordTagSet.add("pat_card_no");
+        keywordTagSet.add("data");
+        keywordTagSet.add("pat_mobile");
+        keywordTagSet.add("pat_name");
+
+        KeywordIndexAggregator keywordIndexAggregator = new KeywordIndexAggregator();
+        for (File log : logs) {
+            ConcurrentHashMap<String, Set<KeywordIndex>> keywordIndexSetMap = new KeywordIndexBuilder(log, keywordTagSet).build();
+            keywordIndexAggregator.aggregate(keywordIndexSetMap);
+        }
+        return keywordIndexAggregator.getAggregatedCollection();
+    }
+
+
+    private Collection<File> getLogs() {
+        Map<String, File> logMap = LogScanner.scan(beginDatetime, endDatetime, LOG_DIR);
+        Collection<File> logs = logMap.values();
+        return logs;
+    }
+
+    public ConcurrentHashMap<Long, ContextInfo> getContextInfoMap(Collection<File> logs) {
+        ContextIndexAggregator contextIndexAggregator = new ContextIndexAggregator();
+        for (File log : logs) {
+            ConcurrentHashMap<Long, ContextInfo> contextInfoMap = new ContextIndexBuilder(log).build();
+            contextIndexAggregator.aggregate(contextInfoMap);
+        }
+        return contextIndexAggregator.getAggregatedCollection();
     }
 }
