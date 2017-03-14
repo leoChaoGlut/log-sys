@@ -7,6 +7,8 @@ import cn.yunyichina.log.component.index.entity.KeywordIndex;
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,7 +26,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class KeywordIndexBuilder extends AbstractBuilder implements IndexBuilder<ConcurrentHashMap<String, Set<KeywordIndex>>>, Serializable {
 
     private static final long serialVersionUID = -1228607753528629475L;
-
+    private final Logger logger = LoggerFactory.getLogger(KeywordIndexBuilder.class);
     /**
      * key: context count
      * value: keyword index set
@@ -42,7 +44,7 @@ public class KeywordIndexBuilder extends AbstractBuilder implements IndexBuilder
                 logContent = "";
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("关键词索引构造器初始化异常", e);
         }
     }
 
@@ -55,30 +57,35 @@ public class KeywordIndexBuilder extends AbstractBuilder implements IndexBuilder
      */
     @Override
     public ConcurrentHashMap<String, Set<KeywordIndex>> build() {
-        int rowEndTagLength = Tag.ROW_END.length();
-        for (String keywordTag : keywordTagSet) {
-            int keywordTagLength = keywordTag.length();
-            int cursor = 0;
-            while (0 <= (cursor = logContent.indexOf(keywordTag, cursor))) {
-                int rowEndTagIndex = logContent.indexOf(Tag.ROW_END, cursor + keywordTagLength);
-                int contextCountBeginTagIndex = rowEndTagIndex + rowEndTagLength;
-                int contextCountEndTagIndex = logContent.indexOf(Tag.CONTEXT_COUNT_END, contextCountBeginTagIndex);
-                if (0 <= contextCountBeginTagIndex && contextCountBeginTagIndex < contextCountEndTagIndex) {
-                    String count = logContent.substring(contextCountBeginTagIndex, contextCountEndTagIndex);
-                    if (StringUtils.isNumeric(count)) {
-                        KeywordIndex keywordIndex = new KeywordIndex(logFile, cursor, Long.valueOf(count));
-                        Set<KeywordIndex> keywordIndexSet = keywordIndexMap.get(keywordTag);
-                        if (keywordIndexSet == null) {
-                            keywordIndexSet = new HashSet<>();
+        try {
+            int rowEndTagLength = Tag.ROW_END.length();
+            for (String keywordTag : keywordTagSet) {
+                int keywordTagLength = keywordTag.length();
+                int cursor = 0;
+                while (0 <= (cursor = logContent.indexOf(keywordTag, cursor))) {
+                    int rowEndTagIndex = logContent.indexOf(Tag.ROW_END, cursor + keywordTagLength);
+                    int contextCountBeginTagIndex = rowEndTagIndex + rowEndTagLength;
+                    int contextCountEndTagIndex = logContent.indexOf(Tag.CONTEXT_COUNT_END, contextCountBeginTagIndex);
+                    if (0 <= contextCountBeginTagIndex && contextCountBeginTagIndex < contextCountEndTagIndex) {
+                        String count = logContent.substring(contextCountBeginTagIndex, contextCountEndTagIndex);
+                        if (StringUtils.isNumeric(count)) {
+                            KeywordIndex keywordIndex = new KeywordIndex(logFile, cursor, Long.valueOf(count));
+                            Set<KeywordIndex> keywordIndexSet = keywordIndexMap.get(keywordTag);
+                            if (keywordIndexSet == null) {
+                                keywordIndexSet = new HashSet<>();
+                            }
+                            keywordIndexSet.add(keywordIndex);
+                            keywordIndexMap.put(keywordTag, keywordIndexSet);
                         }
-                        keywordIndexSet.add(keywordIndex);
-                        keywordIndexMap.put(keywordTag, keywordIndexSet);
                     }
+                    cursor = contextCountEndTagIndex;
                 }
-                cursor = contextCountEndTagIndex;
             }
+            return keywordIndexMap;
+        } catch (Exception e) {
+            logger.error("关键词索引构造器构造期间异常", e);
+            return new ConcurrentHashMap<>();
         }
-        return keywordIndexMap;
     }
 
 }

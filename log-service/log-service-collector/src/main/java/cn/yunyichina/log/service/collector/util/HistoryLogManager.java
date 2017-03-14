@@ -42,7 +42,6 @@ public class HistoryLogManager {
     @Autowired
     CacheService cacheService;
 
-
     public void loadMore(WebSocketSession session, String conditionJSON) {
         try {
             HistoryLogListener historyLogListener = getListenerBy(session.getId());
@@ -55,11 +54,10 @@ public class HistoryLogManager {
             }
         } catch (Exception e) {
             e.printStackTrace();
-        } finally {
             try {
                 session.close();
-            } catch (IOException e) {
-                e.printStackTrace();
+            } catch (IOException e1) {
+                e1.printStackTrace();
             }
         }
     }

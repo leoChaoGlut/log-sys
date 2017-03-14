@@ -1,0 +1,24 @@
+eureka:
+  client:
+    healthcheck:
+      enabled: true
+  instance:
+    instance-id: ${eureka.instance.ip-address}:${server.port}
+    prefer-ip-address: true
+    ipAddress: 192.168.1.154 #必须提供ip
+logging:
+  config: classpath:logback.xml
+mybatis:
+  mapper-locations: classpath:mapper/*Mapper.xml
+  configuration:
+    mapUnderscoreToCamelCase: true
+    defaultStatementTimeout: 30
+  type-aliases-package: cn.yunyichina.log.common.cache.do_
+server:
+  port: 10402
+#  extra
+collectorServiceName: log-service-collector-service
+url:
+  gateway: http://192.168.1.150:10300
+fixedRate: "10000" #ms
+chineseName: 深三

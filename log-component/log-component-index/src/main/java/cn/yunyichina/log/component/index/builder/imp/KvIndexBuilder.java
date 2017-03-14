@@ -8,6 +8,8 @@ import cn.yunyichina.log.component.index.entity.KvIndex;
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -25,6 +27,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class KvIndexBuilder extends AbstractBuilder implements IndexBuilder<ConcurrentHashMap<String, ConcurrentHashMap<String, Set<KvIndex>>>>, Serializable {
 
     private static final long serialVersionUID = 8379700811052368709L;
+    private final Logger logger = LoggerFactory.getLogger(KvIndexBuilder.class);
     /**
      * key: context count
      * value keyValuTagSetMap
@@ -42,50 +45,55 @@ public class KvIndexBuilder extends AbstractBuilder implements IndexBuilder<Conc
                 logContent = "";
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("键值对索引构造器构造期间异常", e);
         }
     }
 
     @Override
     public ConcurrentHashMap<String, ConcurrentHashMap<String, Set<KvIndex>>> build() {
-        int rowEndTagLength = Tag.ROW_END.length();
-        for (KvTagDO kvTag : kvTagSet) {
-            String key = kvTag.getKey();
-            String keyTag = kvTag.getKeyTag();
-            int cursor = 0;
-            int keyTagLength = keyTag.length();
-            String valueEndTag = kvTag.getValueEndTag();
-            while (0 <= (cursor = logContent.indexOf(keyTag, cursor))) {
-                int valueBeginIndex = cursor + keyTagLength;
-                int valueEndIndex = logContent.indexOf(valueEndTag, valueBeginIndex);
-                if (0 <= valueBeginIndex && valueBeginIndex < valueEndIndex) {
-                    String value = logContent.substring(valueBeginIndex, valueEndIndex);
-                    if (StringUtils.isNotBlank(value)) {
-                        int rowEndTagIndex = logContent.indexOf(Tag.ROW_END, valueEndIndex);
-                        int contextCountBeginTagIndex = rowEndTagIndex + rowEndTagLength;
-                        int contextCountEndTagIndex = logContent.indexOf(Tag.CONTEXT_COUNT_END, contextCountBeginTagIndex);
-                        if (0 <= contextCountBeginTagIndex && contextCountBeginTagIndex < contextCountEndTagIndex) {
-                            String count = logContent.substring(contextCountBeginTagIndex, contextCountEndTagIndex);
-                            if (StringUtils.isNumeric(count)) {
-                                ConcurrentHashMap<String, Set<KvIndex>> valueMap = kvIndexMap.get(key);
-                                if (valueMap == null) {
-                                    valueMap = new ConcurrentHashMap<>();
+        try {
+            int rowEndTagLength = Tag.ROW_END.length();
+            for (KvTagDO kvTag : kvTagSet) {
+                String key = kvTag.getKey();
+                String keyTag = kvTag.getKeyTag();
+                int cursor = 0;
+                int keyTagLength = keyTag.length();
+                String valueEndTag = kvTag.getValueEndTag();
+                while (0 <= (cursor = logContent.indexOf(keyTag, cursor))) {
+                    int valueBeginIndex = cursor + keyTagLength;
+                    int valueEndIndex = logContent.indexOf(valueEndTag, valueBeginIndex);
+                    if (0 <= valueBeginIndex && valueBeginIndex < valueEndIndex) {
+                        String value = logContent.substring(valueBeginIndex, valueEndIndex);
+                        if (StringUtils.isNotBlank(value)) {
+                            int rowEndTagIndex = logContent.indexOf(Tag.ROW_END, valueEndIndex);
+                            int contextCountBeginTagIndex = rowEndTagIndex + rowEndTagLength;
+                            int contextCountEndTagIndex = logContent.indexOf(Tag.CONTEXT_COUNT_END, contextCountBeginTagIndex);
+                            if (0 <= contextCountBeginTagIndex && contextCountBeginTagIndex < contextCountEndTagIndex) {
+                                String count = logContent.substring(contextCountBeginTagIndex, contextCountEndTagIndex);
+                                if (StringUtils.isNumeric(count)) {
+                                    ConcurrentHashMap<String, Set<KvIndex>> valueMap = kvIndexMap.get(key);
+                                    if (valueMap == null) {
+                                        valueMap = new ConcurrentHashMap<>();
+                                    }
+                                    Set<KvIndex> kvIndexSet = valueMap.get(value);
+                                    if (kvIndexSet == null) {
+                                        kvIndexSet = new HashSet<>();
+                                    }
+                                    kvIndexSet.add(new KvIndex(logFile, cursor, Long.valueOf(count)));
+                                    valueMap.put(value, kvIndexSet);
+                                    kvIndexMap.put(key, valueMap);
                                 }
-                                Set<KvIndex> kvIndexSet = valueMap.get(value);
-                                if (kvIndexSet == null) {
-                                    kvIndexSet = new HashSet<>();
-                                }
-                                kvIndexSet.add(new KvIndex(logFile, cursor, Long.valueOf(count)));
-                                valueMap.put(value, kvIndexSet);
-                                kvIndexMap.put(key, valueMap);
                             }
                         }
                     }
+                    cursor = valueEndIndex;
                 }
-                cursor = valueEndIndex;
             }
+            return kvIndexMap;
+        } catch (Exception e) {
+            logger.error("键值对索引构造器构造期间异常", e);
+            return new ConcurrentHashMap<>();
         }
-        return kvIndexMap;
     }
 
 

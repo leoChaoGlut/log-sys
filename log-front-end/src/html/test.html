@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<video id="vdo" src="http://leo-bucket-test-0.oss-cn-shanghai.aliyuncs.com/c95e697468f8277be0a72a8645b4672d.mp4"
+       controls width="450px" height="800px" loop></video>
+<button onclick="play()">Play</button>
+<button onclick="stop()">Stop</button>
+</body>
+<script>
+    function play() {
+        document.getElementById("vdo").play();
+    }
+    function stop() {
+        document.getElementById("vdo").pause();
+    }
+   
+</script>
+</html>

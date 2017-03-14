@@ -1,5 +1,9 @@
 package cn.yunyichina.log.component.index.entity;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -11,6 +15,9 @@ import java.util.Objects;
  * 注意,begin和end是有可能为null的!!!!!!!!!!
  * 注意,begin和end是有可能为null的!!!!!!!!!!
  */
+@Getter
+@Setter
+@ToString
 public class ContextInfo implements Serializable {
 
     private static final long serialVersionUID = -8753201735866113930L;
@@ -33,25 +40,6 @@ public class ContextInfo implements Serializable {
     @Override
     public int hashCode() {
         return Objects.hash(begin, end);
-    }
-
-
-    public ContextIndex getBegin() {
-        return begin;
-    }
-
-    public ContextInfo setBegin(ContextIndex begin) {
-        this.begin = begin;
-        return this;
-    }
-
-    public ContextIndex getEnd() {
-        return end;
-    }
-
-    public ContextInfo setEnd(ContextIndex end) {
-        this.end = end;
-        return this;
     }
 
 }

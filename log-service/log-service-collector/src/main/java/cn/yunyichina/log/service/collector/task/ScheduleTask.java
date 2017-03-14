@@ -47,6 +47,8 @@ public class ScheduleTask {
 
     private final FastDateFormat dateFormat = FastDateFormat.getInstance("yyyy-MM-dd HH:mm");
 
+    private boolean hasInit = false;
+
     @Autowired
     IndexManager indexManager;
 
@@ -62,30 +64,37 @@ public class ScheduleTask {
      * 在回调ApplicationReadyListener处理完成后手动回调
      */
     public void initCollectedItemList() {
-        CollectorDO collector = cacheService.getCollector();
-        logger.info(collector.toString());
-        if (collector == null) {
+        if (hasInit) {
 
         } else {
-            collectedItemList = collector.getCollectedItemList();
-            if (null == collectedItemList) {
-                collectedItemList = new ArrayList<>();
+            CollectorDO collector = cacheService.getCollector();
+            logger.info(collector.toString());
+            if (collector == null) {
+
+            } else {
+                collectedItemList = collector.getCollectedItemList();
+                if (null == collectedItemList) {
+                    collectedItemList = new ArrayList<>();
+                }
             }
+            hasInit = true;
         }
     }
 
     @Scheduled(fixedRateString = "${fixedRate}")
     public void execute() {
         logger.info(JSON.toJSONString(collectedItemList, true));
-        for (CollectedItemDO collectedItem : collectedItemList) {
-            scanLogsAndBuildIndex(collectedItem);
+        if (hasInit) {
+            for (CollectedItemDO collectedItem : collectedItemList) {
+                scanLogsAndBuildIndex(collectedItem);
+            }
         }
     }
 
     private void scanLogsAndBuildIndex(CollectedItemDO collectedItem) {
         try {
             Collection<File> logs = scanLastestLogs(collectedItem);
-            logger.info(JSON.toJSONString(logs, true));
+//            logger.info(JSON.toJSONString(logs, true));
             if (CollectionUtils.isEmpty(logs)) {
 
             } else {
@@ -144,7 +153,13 @@ public class ScheduleTask {
         CacheUtil.write(baseInfo, collectedItemId, CacheName.COLLECTED_ITEM_BASE_INFO);
     }
 
-
+    /**
+     * TODO 好像没啥用?
+     *
+     * @param collectedItemId
+     * @param contextInfoMap
+     * @throws Exception
+     */
     private void recordLastestContextCount(Integer collectedItemId, Map<Long, ContextInfo> contextInfoMap) throws Exception {
         Set<Long> countSet = contextInfoMap.keySet();
         Long lastestCount = Collections.max(countSet);

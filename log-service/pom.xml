@@ -18,6 +18,7 @@
         <module>log-service-collector</module>
         <module>log-service-api</module>
         <module>log-service-collector-service</module>
+        <module>log-service-tracer</module>
     </modules>
 
     <dependencies>
@@ -36,6 +37,11 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-devtools</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 

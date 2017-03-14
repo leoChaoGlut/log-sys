@@ -7,108 +7,142 @@
 
 var Home = (function () {
 
-    var MSG_DURATION = 1500;
-    var USER_NAME_LIST = ["老板", "大兄弟", "大兄弟", "客官", "大佬", "亲", "亲", "亲"]
+    var ANIMATION_DURATION = 1500;
+    var USER_NAME_LIST = ["老板", "大兄弟", "大兄弟", "客官", "大佬", "亲", "亲", "亲"];
+
+    /**
+     * @See cn.yunyichina.log.common.constant.SearchEngineType
+     */
     var SEARCH_ENGINE_TYPE = {
         KEYWORD: 200,
         KEY_VALUE: 201,
         NO_INDEX: 202,
     }
     var DOUBLE_CLICK_DURATION = 400;
+    var MAX_CHAR_SIZE = 50000;
 
     var loading,
         realtimeSocket,
         historySocket
         ;
+    //================= tips begin =====================
 
-    function success(msg) {
-        vm.$message({
-            message: msg,
-            type: 'success',
-            duration: MSG_DURATION,
-        });
-    }
+    var Tips = (function () {
 
-    function info(msg) {
-        vm.$message({
-            message: msg,
-            type: 'info',
-            duration: MSG_DURATION,
-        });
-    }
+        var Type = {
+            success: 'success',
+            info: 'info',
+            warning: 'warning',
+            danger: 'danger',
+        }
 
-    function warning(msg) {
-        vm.$message({
-            message: msg,
-            type: 'warning',
-            duration: MSG_DURATION,
-        });
-    }
+        var success = function (msg) {
+            vm.$message({
+                message: msg,
+                type: Type.success,
+                duration: ANIMATION_DURATION,
+            });
+        }
 
-    function danger(msg) {
-        vm.$message({
-            message: msg,
-            type: 'danger',
-            duration: MSG_DURATION,
-        });
-    }
+        var info = function (msg) {
+            vm.$message({
+                message: msg,
+                type: Type.info,
+                duration: ANIMATION_DURATION,
+            });
+        }
 
-    function get(url, successCallback) {
-        $.ajax({
-            timeout: Common.TIME_OUT,
-            url: url,
-            complete: function (resp) {
-                if (200 == resp.status) {
-                    var respBody = JSON.parse(resp.responseText);
-                    if (Common.Status.OK == respBody.code) {
-                        if (successCallback) {
-                            successCallback(respBody.result);
+        var warning = function (msg) {
+            vm.$message({
+                message: msg,
+                type: Type.warning,
+                duration: ANIMATION_DURATION,
+            });
+        }
+
+        var danger = function (msg) {
+            vm.$message({
+                message: msg,
+                type: Type.danger,
+                duration: ANIMATION_DURATION,
+            });
+        }
+
+        return {
+            success: success,
+            info: info,
+            warning: warning,
+            danger: danger,
+            Type: Type,
+        }
+
+    })()
+    //================= tips end =====================
+
+    //================= http util begin =====================
+    var Http = (function () {
+        var get = function (url, successCallback) {
+            $.ajax({
+                timeout: Common.TIME_OUT,
+                url: url,
+                complete: function (resp) {
+                    if (200 == resp.status) {
+                        var respBody = JSON.parse(resp.responseText);
+                        if (Common.Status.OK == respBody.code) {
+                            if (successCallback) {
+                                successCallback(respBody.result);
+                            }
+                        } else {
+                            Tips.danger('code:' + respBody.code + ", msg:" + respBody.msg);
                         }
                     } else {
-                        danger('code:' + respBody.code + ", msg:" + respBody.msg);
+                        if ("timeout" == resp.statusText) {
+                            Tips.danger("请求超时")
+                        } else {
+                            Tips.danger("连接服务器异常,code:" + resp.status + ",msg:" + resp.statusText);
+                        }
                     }
-                } else {
-                    if ("timeout" == resp.statusText) {
-                        danger("请求超时")
-                    } else {
-                        danger("连接服务器异常,code:" + resp.status + ",msg:" + resp.statusText);
+                },
+            })
+        }
+        var post = function (url, data, successCallback) {
+            $.ajax({
+                url: url,
+                data: JSON.stringify(data),
+                timeout: Common.TIME_OUT,
+                type: "POST",
+                dataType: "json",
+                contentType: "application/json",
+                complete: function (resp) {
+                    if (loading) {
+                        loading.close();
                     }
-                }
-            },
-        })
-    }
-
-    function post(url, data, successCallback) {
-        $.ajax({
-            url: url,
-            data: JSON.stringify(data),
-            type: "POST",
-            dataType: "json",
-            contentType: "application/json",
-            complete: function (resp) {
-                if (loading) {
-                    loading.close();
-                }
-                if (200 == resp.status) {
-                    var respBody = JSON.parse(resp.responseText);
-                    if (Common.Status.OK == respBody.code) {
-                        if (successCallback) {
-                            successCallback(respBody.result);
+                    if (200 == resp.status) {
+                        var respBody = JSON.parse(resp.responseText);
+                        if (Common.Status.OK == respBody.code) {
+                            if (successCallback) {
+                                successCallback(respBody.result);
+                            }
+                        } else {
+                            Tips.danger('code:' + respBody.code + ", msg:" + respBody.msg);
                         }
                     } else {
-                        danger('code:' + respBody.code + ", msg:" + respBody.msg);
+                        if ("timeout" == resp.statusText) {
+                            Tips.danger("请求超时")
+                        } else {
+                            Tips.danger("连接服务器异常,code:" + resp.status + ",msg:" + resp.statusText);
+                        }
                     }
-                } else {
-                    if ("timeout" == resp.statusText) {
-                        danger("请求超时")
-                    } else {
-                        danger("连接服务器异常,code:" + resp.status + ",msg:" + resp.statusText);
-                    }
-                }
-            },
-        })
-    }
+                },
+            })
+        }
+        return {
+            get: get,
+            post: post,
+        }
+    })()
 
+    //================= http util end =====================
     function menu(title, icon, subMenuList) {
         return {
             title: title,
@@ -157,7 +191,7 @@ var Home = (function () {
 
     (function () {
         var url = Common.GATEWAY + "/log-service-collector-service/collector/all";
-        get(url, function (result) {
+        Http.get(url, function (result) {
             var interval = setInterval(function () {
                 if (vm) {
                     vm.collectorList = result;
@@ -202,7 +236,7 @@ var Home = (function () {
                 "overflow-y": "auto",
                 "word-wrap": "break-word",
             }
-            $("#app").fadeIn(MSG_DURATION);
+            $("#app").fadeIn(ANIMATION_DURATION);
         },
         data: {
             logResultList: [],
@@ -254,49 +288,55 @@ var Home = (function () {
             reading: false,
             logContentTitle: "",
             showLogContentDialog: false,
+            lockScroll: false,
+            readingRealtimeLog: false,
+            noMoreContentToBeLoad: false,
         },
         methods: {
             menuSelect: function (index, indexPath) {
                 vm.activedMenu = index;
-                vm.logContent = "";
 
             },
             search: function () {
                 var validate = validation();
                 if (validate.pass) {
+                    vm.logContent = "";
                     loading = vm.$loading();
                     var collectorId = vm.collectedItem.collectorId;
                     var collector = getCollectorBy(vm.collectorList, collectorId);
                     var url = buildUrlBy(collector, "search/history");
-                    post(url, vm.searchCondition, function (result) {
-                        console.log(result);
-                        var logResultList = [];
-                        var firstLogResult = result[0];
-                        if (firstLogResult) {
-                            vm.logContent = firstLogResult.contextContent;
-                        } else {
-                            vm.logContent = "";
-                        }
-                        for (var i = 0; i < result.length; i++) {//result 不会为空
-                            var logResult = result[i];
-                            var logRegionSet = logResult.logRegionSet;
-                            var logTreeNode = {
-                                beginLog: logRegionSet[0],
-                                contextContent: logResult.contextContent,
-                                endLogList: [],
+                    Http.post(url, vm.searchCondition, function (result) {
+                        if (result.length > 0) {
+                            var logResultList = [];
+                            var firstLogResult = result[0];
+                            if (firstLogResult) {
+                                vm.logContent = firstLogResult.contextContent;
+                            } else {
+                                vm.logContent = "";
                             }
-                            for (var j = 1; j < logRegionSet.length; j++) {
-                                logTreeNode.endLogList.push({
-                                    beginLog: logRegionSet[j],
+                            for (var i = 0; i < result.length; i++) {//result 不会为空
+                                var logResult = result[i];
+                                var logRegionSet = logResult.logRegionSet;
+                                var logTreeNode = {
+                                    beginLog: logRegionSet[0],
                                     contextContent: logResult.contextContent,
-                                });
+                                    endLogList: [],
+                                }
+                                for (var j = 1; j < logRegionSet.length; j++) {
+                                    logTreeNode.endLogList.push({
+                                        beginLog: logRegionSet[j],
+                                        contextContent: logResult.contextContent,
+                                    });
+                                }
+                                logResultList.push(logTreeNode);
                             }
-                            logResultList.push(logTreeNode);
+                            vm.logResultList = logResultList;
+                        } else {
+                            Tips.warning("无匹配日志");
                         }
-                        vm.logResultList = logResultList;
                     })
                 } else {
-                    warning(validate.msg);
+                    Tips.warning(validate.msg);
                 }
             },
             loadLogContent: function (obj, node, component) {
@@ -316,12 +356,13 @@ var Home = (function () {
                         historySocket = new SockJS(url);
                         historySocket.onopen = function (e) {
                             loading.close();
-                            success("连接成功");
+                            Tips.success("连接成功");
                             var data = {
                                 collectedItemId: vm.searchCondition.collectedItemId,
                                 beginDateTime: vm.logContentTitle,
                                 endDateTime: vm.logContentTitle,
                             }
+                            vm.logContent = "";
                             historySocket.send(JSON.stringify(data));
                         }
                         historySocket.onmessage = function (e) {
@@ -329,7 +370,7 @@ var Home = (function () {
                         }
                         historySocket.onerror = function (error) {
                             loading.close();
-                            danger(JSON.stringify(error));
+                            Tips.danger(JSON.stringify(error));
                         }
                         historySocket.onclose = function (e) {
                             vm.reading = false;
@@ -340,12 +381,14 @@ var Home = (function () {
                     vm.lastClickNodeTime = new Date().getTime();
                 }
             },
-            link: function () {
+            readRealtimeLog: function () {
+                vm.noMoreContentToBeLoad = false;
+                vm.readingRealtimeLog = true;
                 if (vm.linking) {
                     vm.linking = false;
                     if (realtimeSocket) {
                         realtimeSocket.close();
-                        warning("已 断开");
+                        Tips.warning("已 断开");
                     }
                 } else {
                     vm.linking = true;
@@ -358,27 +401,32 @@ var Home = (function () {
                     realtimeSocket = new SockJS(url);
                     realtimeSocket.onopen = function (e) {
                         loading.close();
-                        success("已 连接");
+                        Tips.success("已 连接");
                         realtimeSocket.send(vm.collectedItem.id);
+                        vm.logContent = "";
                     }
                     realtimeSocket.onmessage = function (e) {
                         vm.logContent += "<br/>" + e.data;
                     }
                     realtimeSocket.onerror = function (error) {
                         loading.close();
-                        danger(JSON.stringify(error));
+                        Tips.danger(JSON.stringify(error));
+                    }
+                    realtimeSocket.onclose = function (e) {
+                        Tips.warning("连接已断开");
                     }
                 }
             },
             readHistoryLog: function () {
+                vm.noMoreContentToBeLoad = false;
+                vm.readingRealtimeLog = false;
                 if (vm.reading) {
                     vm.reading = false;
                     if (historySocket) {
                         historySocket.close();
-                        warning("已 中断");
+                        Tips.warning("已 中断");
                     }
                 } else {
-                    vm.logContent = "";
                     var user = USER_NAME_LIST[parseInt(Math.random() * USER_NAME_LIST.length)];
                     var validate = {
                         pass: true,
@@ -401,11 +449,12 @@ var Home = (function () {
 
                         historySocket = new SockJS(url);
                         historySocket.onopen = function (e) {
+                            vm.logContent = "";
                             loading.close();
                             vm.$message({
                                 message: "正在获取,获取完毕后,在日志最下方会有 '===结束===' 字样",
                                 type: 'success',
-                                duration: MSG_DURATION * 2,
+                                duration: ANIMATION_DURATION * 2,
                             });
                             historySocket.send(JSON.stringify(vm.searchCondition));
                         }
@@ -414,18 +463,23 @@ var Home = (function () {
                         }
                         historySocket.onerror = function (error) {
                             loading.close();
-                            danger(JSON.stringify(error));
+                            Tips.danger(JSON.stringify(error));
                         }
                         historySocket.onclose = function (e) {
+                            vm.noMoreContentToBeLoad = true;
                             vm.reading = false;
+                            Tips.warning("连接已断开");
+                        }
+                        historySocket.onerror = function (e) {
+                            Tips.warning(JSON.stringify(e));
                         }
                     } else {
-                        warning(validate.msg);
+                        Tips.warning(validate.msg);
                     }
                 }
             },
             readMoreHistoryLog: function () {
-
+                historySocket.send();
             }
         },
         watch: {
@@ -437,13 +491,11 @@ var Home = (function () {
                 vm.searchCondition.collectedItemId = collectedItem.id;
                 if ("1-0" == vm.activedMenu) {
                     vm.linking = false;
-                    vm.logContent = "";
                     if (realtimeSocket) {
                         realtimeSocket.close();
                     }
                 } else if ("1-1" == vm.activedMenu) {
                     vm.reading = false;
-                    vm.logContent = "";
                     if (historySocket) {
                         historySocket.close();
                     }
@@ -454,7 +506,7 @@ var Home = (function () {
                 if (endDateTime) {
                     if (val >= endDateTime) {
                         var user = USER_NAME_LIST[parseInt(Math.random() * USER_NAME_LIST.length)];
-                        warning(user + ",开始时间大于结束时间了~");
+                        Tips.warning(user + ",开始时间大于结束时间了~");
                         vm.searchCondition.beginDateTime = "";
                     } else {
 
@@ -468,7 +520,7 @@ var Home = (function () {
                 if (beginDateTime) {
                     if (val <= beginDateTime) {
                         var user = USER_NAME_LIST[parseInt(Math.random() * USER_NAME_LIST.length)];
-                        warning(user + ",开始时间大于结束时间了~");
+                        Tips.warning(user + ",开始时间大于结束时间了~");
                         vm.searchCondition.endDateTime = "";
                     } else {
 
@@ -480,21 +532,30 @@ var Home = (function () {
             "activedMenu": function (val) {
                 if ("1-0" != val) {
                     vm.linking = false;
-                    vm.logContent = "";
                     if (realtimeSocket) {
                         realtimeSocket.close();
                     }
                 } else if ("1-1" != val) {
                     vm.reading = false;
-                    vm.logContent = "";
                     if (historySocket) {
                         historySocket.close();
                     }
                 }
             },
             "logContent": function (val) {
-                if (val.length > 50000) {
-                    vm.logContent = "";
+                if (vm.lockScroll) {
+
+                } else {
+                    var realtimeLogContentPanel = document.getElementById('realtimeLogContentPanel');
+                    realtimeLogContentPanel.scrollTop = realtimeLogContentPanel.scrollHeight
+                }
+
+                if (val.length > MAX_CHAR_SIZE) {
+                    if (vm.readingRealtimeLog) {
+                        vm.logContent = "";
+                    } else {
+                        Tips.warning("日志长度超过 2万 字符,继续加载能会造成卡顿");
+                    }
                 }
             }
         },

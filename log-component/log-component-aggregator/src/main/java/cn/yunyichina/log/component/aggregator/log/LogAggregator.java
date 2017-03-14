@@ -6,6 +6,8 @@ import cn.yunyichina.log.component.index.entity.ContextInfo;
 import cn.yunyichina.log.component.scanner.imp.LogScanner;
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -20,18 +22,20 @@ import java.util.Map;
  * @Description:
  */
 public class LogAggregator {
+    private static final Logger logger = LoggerFactory.getLogger(LogAggregator.class);
 
     private int beginIndex;
     private int endIndex;
     private List<File> logList;
 
-    private final int DEFAULT_LOG_SIZE = 1024 * 1024 * 10;
+    private final int DEFAULT_LOG_SIZE_10M = 1024 * 1024 * 10;
 
     public static String aggregate(ContextInfo contextInfo, String logDir) {
         try {
             LogAggregator aggregator = new LogAggregator(contextInfo, logDir);
             return aggregator.aggregate();
         } catch (Exception e) {
+            logger.error("聚合日志出现异常,logDir:" + logDir + " , " + contextInfo.toString(), e);
             return "";
         }
     }
@@ -55,7 +59,7 @@ public class LogAggregator {
             String logContent = Files.asCharSource(log, Charsets.UTF_8).read();
             return logContent.substring(beginIndex, endIndex);
         } else if (logList.size() > 1) {
-            StringBuilder logBuilder = new StringBuilder(DEFAULT_LOG_SIZE);
+            StringBuilder logBuilder = new StringBuilder(DEFAULT_LOG_SIZE_10M);
             int logListSize = logList.size();
 
             String firstLogConetnt = Files.asCharSource(logList.get(0), Charsets.UTF_8).read();

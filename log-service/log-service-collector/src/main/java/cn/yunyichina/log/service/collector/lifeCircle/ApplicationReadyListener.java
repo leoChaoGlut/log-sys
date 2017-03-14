@@ -92,7 +92,7 @@ public class ApplicationReadyListener implements ApplicationListener<Application
         }
     }
 
-    private void registerAndGetData() throws IOException, CollectorException, ClassNotFoundException {
+    public void registerAndGetData() throws IOException, CollectorException, ClassNotFoundException {
         String url = gatewayUrl + "/" + collectorServiceName + "/collector/register";
         logger.info("即将发送请求到: " + url);
         List<BasicNameValuePair> paramList = Arrays.asList(

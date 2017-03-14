@@ -5,6 +5,8 @@ import cn.yunyichina.log.component.index.entity.ContextInfo;
 import cn.yunyichina.log.component.index.entity.KeywordIndex;
 import cn.yunyichina.log.component.searchengine.AbstractSearchEngine;
 import cn.yunyichina.log.component.searchengine.SearchEngine;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -19,6 +21,8 @@ import java.util.concurrent.ConcurrentHashMap;
  * @Description: 关键词搜索引擎, 不支持模糊搜索.
  */
 public class KeywordSearchEngine extends AbstractSearchEngine implements SearchEngine<Set<ContextInfo>> {
+
+    private static final Logger logger = LoggerFactory.getLogger(KeywordSearchEngine.class);
 
     private ConcurrentHashMap<String, Set<KeywordIndex>> keywordIndexMap;
     private ConcurrentHashMap<Long, ContextInfo> contextInfoMap;

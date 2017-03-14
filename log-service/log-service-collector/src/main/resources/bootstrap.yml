@@ -9,4 +9,4 @@ spring:
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://localhost:10101/eureka/
+      defaultZone: http://log.yunyichina.cn:10101/eureka/

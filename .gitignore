@@ -5,3 +5,4 @@ yylog/
 *.iml
 *.log
 node_modules/
+dist/

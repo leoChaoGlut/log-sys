@@ -12,7 +12,6 @@ import cn.yunyichina.log.component.searchengine.imp.KeywordSearchEngine;
 import cn.yunyichina.log.component.searchengine.imp.KvSearchEngine;
 import cn.yunyichina.log.component.searchengine.imp.NoIndexSearchEngine;
 import cn.yunyichina.log.service.collector.util.IndexManager;
-import com.alibaba.fastjson.JSON;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.FastDateFormat;
 import org.slf4j.Logger;
@@ -65,7 +64,6 @@ public class SearchService {
     }
 
     private List<LogResultDTO> getLogResultListBy(Integer collectedItemId, Set<ContextInfo> contextInfoSet) throws CollectorException {
-        logger.info(JSON.toJSONString(contextInfoSet, true));
         if (CollectionUtils.isEmpty(contextInfoSet)) {
             throw new CollectorException("查不到符合条件的上下文");
         } else {
@@ -94,7 +92,6 @@ public class SearchService {
                         return o1.getLogRegionSet().first().compareTo(o2.getLogRegionSet().first());
                     }
                 });
-                logger.info(JSON.toJSONString(logResultList, true));
                 return logResultList;
             }
         }
@@ -116,11 +113,9 @@ public class SearchService {
      * @return
      */
     private TreeSet<String> scanLogRegion(ContextInfo contextInfo, String collectedLogDir) {
-        logger.info(JSON.toJSONString(contextInfo, true));
         File beginLogFile = contextInfo.getBegin().getLogFile();
         File endLogFile = contextInfo.getEnd().getLogFile();
         Map<String, File> logMap = LogScanner.scan(beginLogFile, endLogFile, collectedLogDir);
-        logger.info(JSON.toJSONString(logMap, true));
         if (CollectionUtils.isEmpty(logMap)) {
             return new TreeSet<>();
         } else {

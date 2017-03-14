@@ -26,7 +26,7 @@ public class HistoryLogListener {
     private WebSocketSession session;
 
     private final String SEPARATOR = "========↓↓ %s ↓↓========\n";
-    private final String END_TAG = "\n======================= 结束 =======================";
+    private final String END_TAG = "\n======================= 所有日志已加载完毕 =======================";
     private final int SEGMENT_SIZE = 2000;
     private final File[] FILE = new File[0];
 
@@ -54,13 +54,13 @@ public class HistoryLogListener {
 
     public void sendMsg() throws IOException {
         if (segmentCount == 0) {
-            String separator = String.format(SEPARATOR, logs[logIndex].getName());
+            String separator = String.format(SEPARATOR, logs[logIndex - 1].getName());
             session.sendMessage(new TextMessage(separator + logContent));
             initDataForNextRound();
         } else {
             if (segmentIndex < segmentCount) {
                 if (segmentIndex == 0) {
-                    String separator = String.format(SEPARATOR, logs[logIndex].getName());
+                    String separator = String.format(SEPARATOR, logs[logIndex - 1].getName());
                     session.sendMessage(new TextMessage(separator + logContent.substring(segmentIndex * SEGMENT_SIZE, (segmentIndex + 1) * SEGMENT_SIZE)));
                 } else {
                     session.sendMessage(new TextMessage(logContent.substring(segmentIndex * SEGMENT_SIZE, (segmentIndex + 1) * SEGMENT_SIZE)));

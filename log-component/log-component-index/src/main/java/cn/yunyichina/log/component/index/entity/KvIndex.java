@@ -1,6 +1,9 @@
 package cn.yunyichina.log.component.index.entity;
 
 import cn.yunyichina.log.component.index.base.AbstractIndex;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 import java.io.File;
 import java.io.Serializable;
@@ -12,6 +15,9 @@ import java.util.Objects;
  * @CreateTime: 2017/2/27 18:20
  * @Description:
  */
+@Getter
+@Setter
+@ToString
 public class KvIndex extends AbstractIndex implements Serializable {
 
     private static final long serialVersionUID = 3099478568862317302L;
@@ -42,12 +48,4 @@ public class KvIndex extends AbstractIndex implements Serializable {
         return Objects.hash(logFile, indexOfLogFile, contextCount);
     }
 
-    public Long getContextCount() {
-        return contextCount;
-    }
-
-    public KvIndex setContextCount(Long contextCount) {
-        this.contextCount = contextCount;
-        return this;
-    }
 }

@@ -8,6 +8,8 @@ import cn.yunyichina.log.component.index.entity.ContextInfo;
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -21,8 +23,8 @@ import java.util.concurrent.ConcurrentHashMap;
  * @Description: 上下文索引构造器
  */
 public class ContextIndexBuilder extends AbstractBuilder implements IndexBuilder<ConcurrentHashMap<Long, ContextInfo>>, Serializable {
-
     private static final long serialVersionUID = -6007560470667273849L;
+    private final Logger logger = LoggerFactory.getLogger(ContextIndexBuilder.class);
     /**
      * key: context count
      * value: @See ContextInfo
@@ -39,15 +41,20 @@ public class ContextIndexBuilder extends AbstractBuilder implements IndexBuilder
                 logContent = "";
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("上下文索引构造器初始化异常", e);
         }
     }
 
     @Override
     public ConcurrentHashMap<Long, ContextInfo> build() {
-        markTag(Tag.CONTEXT_BEGIN, true);
-        markTag(Tag.CONTEXT_END, false);
-        return contextInfoMap;
+        try {
+            markTag(Tag.CONTEXT_BEGIN, true);
+            markTag(Tag.CONTEXT_END, false);
+            return contextInfoMap;
+        } catch (Exception e) {
+            logger.error("上下文索引构造器构造期间异常", e);
+            return new ConcurrentHashMap<>();
+        }
     }
 
     private void markTag(String tag, boolean isBeginTag) {

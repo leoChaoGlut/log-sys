@@ -41,6 +41,7 @@ public class RealtimeLogService {
 
     /**
      * impl tail -f
+     * 该方法每读一行,推一次消息到客户端,可以优化为:缓存100行数据,如果1秒内没有变动,就推送
      *
      * @param collectedItemId
      * @param session

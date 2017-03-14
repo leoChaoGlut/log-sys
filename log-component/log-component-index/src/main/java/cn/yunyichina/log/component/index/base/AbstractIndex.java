@@ -1,6 +1,7 @@
 package cn.yunyichina.log.component.index.base;
 
 import java.io.File;
+import java.io.Serializable;
 
 /**
  * @Author: Leo
@@ -8,8 +9,10 @@ import java.io.File;
  * @CreateTime: 2017/2/28 11:01
  * @Description:
  */
-public abstract class AbstractIndex {
+public abstract class AbstractIndex implements Serializable {
 
+    private static final long serialVersionUID = 3382721186738490900L;
+    
     protected File logFile;
     protected int indexOfLogFile;
 

@@ -5,7 +5,7 @@
     <title>日志系统万世千秋</title>
     <link rel="stylesheet" href="../css/lib/element/1.2.3/index.css">
     <link rel="stylesheet" href="../css/common.css">
-    <link rel="stylesheet" href="../css/home.css">
+    <link rel="stylesheet" href="../css/index.css">
 </head>
 <body>
 <div id="app" style="display: none;">
@@ -54,7 +54,7 @@
                                                style="width:100%;">
                                         <el-option-group
                                                 v-for="collector in collectorList"
-                                                :label="collector.name">
+                                                :label="collector.applicationName">
                                             <el-option
                                                     v-for="collectedItem in collector.collectedItemList"
                                                     :label="collectedItem.name"
@@ -170,13 +170,16 @@
                                         </el-option-group>
                                     </el-select>
                                 </el-form-item>
+                                <el-form-item label="锁定滚动">
+                                    <el-switch on-text="" off-text="" v-model="lockScroll"></el-switch>
+                                </el-form-item>
                             </el-form>
                             <el-button
                                     size="large"
                                     :type="linking?'danger':'primary'"
                                     icon="upload"
                                     style="width:100%;"
-                                    @click="link">
+                                    @click="readRealtimeLog">
                                 {{linking?'断 开':'连 接'}}
                             </el-button>
                         </el-tab-pane>
@@ -184,14 +187,15 @@
                 </el-col>
                 <el-col :span="16" class="logContentPanel">
                     <el-tabs class="log-content-panel" value="context">
-                        <el-tab-pane label="实时日志" name="context" v-text="logContent" :style="style.logContent">
+                        <el-tab-pane id="realtimeLogContentPanel" label="实时日志" name="context" v-text="logContent"
+                                     :style="style.logContent">
 
                         </el-tab-pane>
                     </el-tabs>
                 </el-col>
             </el-row>
             <el-row :gutter="30" v-show="activedMenu == '1-1'">
-                <el-col :span="8" id="realtimeLogPanel">
+                <el-col :span="8" id="historyLogPanel">
                     <el-tabs v-model="activedPanel">
                         <el-tab-pane label="节点选择" name="panel">
                             <el-form ref="searchCondition" :model="searchCondition"
@@ -254,7 +258,8 @@
                 </el-col>
                 <el-col :span="16" class="logContentPanel">
                     <el-tabs class="log-content-panel" value="context">
-                        <el-tab-pane label="实时日志" name="context" v-text="logContent" :style="style.logContent">
+                        <el-tab-pane id="realtimeLogContentPanel" label="实时日志" name="context" v-text="logContent"
+                                     :style="style.logContent">
 
                         </el-tab-pane>
                     </el-tabs>
@@ -264,9 +269,11 @@
     </el-row>
     <!---->
     <el-dialog :title="logContentTitle" v-model="showLogContentDialog">
-        <div v-text="logContent" style="word-wrap: break-word;max-height:50vh;overflow-y: auto"></div>
+        <div id="logContentOfDialog" v-text="logContent"
+             style="word-wrap: break-word;max-height:50vh;overflow-y: auto"></div>
         <span slot="footer" class="dialog-footer">
-            <el-button type="primary" @click="dialogVisible = false" style="width:100%;">加 载 更 多</el-button>
+            <el-button type="primary" style="width:100%;"
+                       @click="readMoreHistoryLog" :diabled="noMoreContentToBeLoad">加 载 更 多</el-button>
         </span>
     </el-dialog>
 </div>
@@ -277,5 +284,5 @@
 <script src="../js/lib/sockjs/1.1.2/sockjs.js"></script>
 <!---->
 <script src="../js/common.js"></script>
-<script src="../js/home.js"></script>
+<script src="../js/index.js"></script>
 </html>
