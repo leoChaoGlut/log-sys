@@ -2,7 +2,6 @@ package cn.yunyichina.log.common.entity.do_;
 
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 
 import java.io.Serializable;
 
@@ -14,7 +13,6 @@ import java.io.Serializable;
  */
 @Getter
 @Setter
-@ToString
 public class KeywordTagDO implements Serializable {
     private static final long serialVersionUID = 261632408038467660L;
     private Integer id;

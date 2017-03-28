@@ -1,7 +1,8 @@
 package cn.yunyichina.log.service.collector.controller;
 
+import cn.yunyichina.log.common.base.AbstractController;
 import cn.yunyichina.log.common.entity.dto.LogResultDTO;
-import cn.yunyichina.log.common.entity.dto.ResponseDTO;
+import cn.yunyichina.log.common.entity.dto.ResponseBodyDTO;
 import cn.yunyichina.log.common.entity.dto.SearchConditionDTO;
 import cn.yunyichina.log.service.collector.service.SearchService;
 import com.alibaba.fastjson.JSON;
@@ -23,7 +24,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("search")
-public class SearchController {
+public class SearchController extends AbstractController {
 
     final Logger logger = LoggerFactory.getLogger(SearchController.class);
 
@@ -31,16 +32,11 @@ public class SearchController {
     SearchService searchService;
 
     @PostMapping("history")
-    ResponseDTO searchHistory(
+    ResponseBodyDTO<List<LogResultDTO>> searchHistory(
             @RequestBody SearchConditionDTO condition
-    ) {
-        try {
-            logger.info(JSON.toJSONString(condition, true));
-            List<LogResultDTO> logResultList = searchService.searchHistory(condition);
-            return ResponseDTO.ok(logResultList);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseDTO.error(e.getMessage());
-        }
+    ) throws Exception {
+        logger.info(JSON.toJSONString(condition, true));
+        List<LogResultDTO> logResultList = searchService.searchHistory(condition);
+        return ResponseBodyDTO.ok(logResultList);
     }
 }

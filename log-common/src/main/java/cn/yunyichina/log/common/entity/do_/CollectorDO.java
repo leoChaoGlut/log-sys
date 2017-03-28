@@ -1,9 +1,7 @@
 package cn.yunyichina.log.common.entity.do_;
 
-import com.alibaba.fastjson.annotation.JSONField;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -17,7 +15,6 @@ import java.util.List;
  */
 @Getter
 @Setter
-@ToString
 public class CollectorDO implements Serializable {
     private static final long serialVersionUID = -8466348104442220979L;
     private Integer id;
@@ -27,7 +24,7 @@ public class CollectorDO implements Serializable {
     private String remark;
     private String reachable;
 
-    @JSONField(format = "yyyy-MM-dd HH:mm")
+    //    @JSONField(format = "yyyy-MM-dd HH:mm")
     private Date createTime;
 
     private String applicationName;

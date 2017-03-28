@@ -1,6 +1,9 @@
 import cn.yunyichina.log.common.entity.do_.KvTagDO;
 import org.junit.Test;
 
+import java.math.BigDecimal;
+import java.util.UUID;
+
 /**
  * @Author: Leo
  * @Blog: http://blog.csdn.net/lc0817
@@ -15,7 +18,14 @@ public class CommonTest {
                 .setKey("")
                 .setId(1)
                 .setKeyOffset(1);
-        System.out.println(kvTagDO.toString());
 
+    }
+
+    @Test
+    public void test() {
+        long begin = System.nanoTime();
+        String uuid = UUID.randomUUID().toString();
+        System.out.println(uuid);
+        System.out.println(BigDecimal.valueOf(System.nanoTime() - begin, 9));
     }
 }

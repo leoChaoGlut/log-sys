@@ -4,8 +4,8 @@ package cn.yunyichina.log.common.entity.dto;
 import com.alibaba.fastjson.annotation.JSONField;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -16,10 +16,10 @@ import java.util.Date;
  */
 @Getter
 @Setter
-@ToString
-public class SearchConditionDTO {
+public class SearchConditionDTO implements Serializable {
+    private static final long serialVersionUID = 7472001448221572210L;
     /**
-     * @See cn.yunyichina.log.common.constant
+     * @See cn.yunyichina.log.common.constant.SearchEngineType
      */
     private int searchEngineType;
     private boolean fuzzy;

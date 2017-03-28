@@ -33,7 +33,7 @@ var Home = (function () {
             success: 'success',
             info: 'info',
             warning: 'warning',
-            danger: 'danger',
+            error: 'error',
         }
 
         var success = function (msg) {
@@ -60,10 +60,10 @@ var Home = (function () {
             });
         }
 
-        var danger = function (msg) {
+        var error = function (msg) {
             vm.$message({
                 message: msg,
-                type: Type.danger,
+                type: Type.error,
                 duration: ANIMATION_DURATION,
             });
         }
@@ -72,7 +72,7 @@ var Home = (function () {
             success: success,
             info: info,
             warning: warning,
-            danger: danger,
+            error: error,
             Type: Type,
         }
 
@@ -93,13 +93,13 @@ var Home = (function () {
                                 successCallback(respBody.result);
                             }
                         } else {
-                            Tips.danger('code:' + respBody.code + ", msg:" + respBody.msg);
+                            Tips.error('code:' + respBody.code + ", msg:" + respBody.msg);
                         }
                     } else {
                         if ("timeout" == resp.statusText) {
-                            Tips.danger("请求超时")
+                            Tips.error("请求超时")
                         } else {
-                            Tips.danger("连接服务器异常,code:" + resp.status + ",msg:" + resp.statusText);
+                            Tips.error("连接服务器异常,code:" + resp.status + ",msg:" + resp.statusText);
                         }
                     }
                 },
@@ -124,13 +124,13 @@ var Home = (function () {
                                 successCallback(respBody.result);
                             }
                         } else {
-                            Tips.danger('code:' + respBody.code + ", msg:" + respBody.msg);
+                            Tips.error('code:' + respBody.code + ", msg:" + respBody.msg);
                         }
                     } else {
                         if ("timeout" == resp.statusText) {
-                            Tips.danger("请求超时")
+                            Tips.error("请求超时")
                         } else {
-                            Tips.danger("连接服务器异常,code:" + resp.status + ",msg:" + resp.statusText);
+                            Tips.error("连接服务器异常,code:" + resp.status + ",msg:" + resp.statusText);
                         }
                     }
                 },
@@ -190,7 +190,8 @@ var Home = (function () {
 
 
     (function () {
-        var url = Common.GATEWAY + "/log-service-collector-service/collector/all";
+        var url = Common.GATEWAY + "/collector-service/collector/all";
+        // var url = Common.GATEWAY + "/log-service-collector-service/collector/all";
         Http.get(url, function (result) {
             var interval = setInterval(function () {
                 if (vm) {
@@ -370,7 +371,7 @@ var Home = (function () {
                         }
                         historySocket.onerror = function (error) {
                             loading.close();
-                            Tips.danger(JSON.stringify(error));
+                            Tips.error(JSON.stringify(error));
                         }
                         historySocket.onclose = function (e) {
                             vm.reading = false;
@@ -410,7 +411,7 @@ var Home = (function () {
                     }
                     realtimeSocket.onerror = function (error) {
                         loading.close();
-                        Tips.danger(JSON.stringify(error));
+                        Tips.error(JSON.stringify(error));
                     }
                     realtimeSocket.onclose = function (e) {
                         Tips.warning("连接已断开");
@@ -463,7 +464,7 @@ var Home = (function () {
                         }
                         historySocket.onerror = function (error) {
                             loading.close();
-                            Tips.danger(JSON.stringify(error));
+                            Tips.error(JSON.stringify(error));
                         }
                         historySocket.onclose = function (e) {
                             vm.noMoreContentToBeLoad = true;

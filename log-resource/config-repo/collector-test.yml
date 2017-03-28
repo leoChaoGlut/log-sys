@@ -3,11 +3,9 @@ eureka:
     healthcheck:
       enabled: true
   instance:
-#    hostname: localhost
     instance-id: ${eureka.instance.ipAddress}:${server.port}
     prefer-ip-address: true
     ipAddress: 127.0.0.1 #必须提供ip
-#    ipAddress: 192.168.1.150 #必须提供ip
 logging:
   config: classpath:logback.xml
 mybatis:
@@ -17,11 +15,13 @@ mybatis:
     defaultStatementTimeout: 30
   type-aliases-package: cn.yunyichina.log.common.cache.do_
 server:
-  port: 10402
+  port: 30008
+hystrix.command.default.execution.isolation.thread.timeoutInMilliseconds: 30000
+#collector-service-localhost:
+#  ribbon:
+#    ReadTimeout: 1000
+#    ConnectTimeout: 1000
+#    MaxAutoRetries: 1 # SR6版本,这里设为1,会重试3次
 #  extra
-collectorServiceName: log-service-collector-service
-url:
-  gateway: http://127.0.0.1:10300
-#  gateway: http://192.168.1.150:10300
-fixedRate: 10000 #ms
-chineseName: 深三
+fixedRate: 60000 #ms
+collector-service-name: collector-service-localhost # default value: collector-service

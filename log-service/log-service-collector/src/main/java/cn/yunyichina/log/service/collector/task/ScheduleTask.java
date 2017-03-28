@@ -26,6 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -42,12 +43,11 @@ import java.util.concurrent.ConcurrentHashMap;
  * @Description:
  */
 @Service
+@RefreshScope
 public class ScheduleTask {
     final Logger logger = LoggerFactory.getLogger(ScheduleTask.class);
 
     private final FastDateFormat dateFormat = FastDateFormat.getInstance("yyyy-MM-dd HH:mm");
-
-    private boolean hasInit = false;
 
     @Autowired
     IndexManager indexManager;
@@ -63,31 +63,23 @@ public class ScheduleTask {
     /**
      * 在回调ApplicationReadyListener处理完成后手动回调
      */
-    public void initCollectedItemList() {
-        if (hasInit) {
+    public void buildCollectedItemList() {
+        CollectorDO collector = cacheService.getCollector();
+        if (collector == null) {
 
         } else {
-            CollectorDO collector = cacheService.getCollector();
-            logger.info(collector.toString());
-            if (collector == null) {
-
-            } else {
-                collectedItemList = collector.getCollectedItemList();
-                if (null == collectedItemList) {
-                    collectedItemList = new ArrayList<>();
-                }
+            collectedItemList = collector.getCollectedItemList();
+            if (null == collectedItemList) {
+                collectedItemList = new ArrayList<>();
             }
-            hasInit = true;
         }
     }
 
     @Scheduled(fixedRateString = "${fixedRate}")
     public void execute() {
         logger.info(JSON.toJSONString(collectedItemList, true));
-        if (hasInit) {
-            for (CollectedItemDO collectedItem : collectedItemList) {
-                scanLogsAndBuildIndex(collectedItem);
-            }
+        for (CollectedItemDO collectedItem : collectedItemList) {
+            scanLogsAndBuildIndex(collectedItem);
         }
     }
 

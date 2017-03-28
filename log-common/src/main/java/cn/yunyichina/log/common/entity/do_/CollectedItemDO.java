@@ -2,7 +2,6 @@ package cn.yunyichina.log.common.entity.do_;
 
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 
 import java.io.Serializable;
 import java.util.List;
@@ -15,7 +14,6 @@ import java.util.List;
  */
 @Getter
 @Setter
-@ToString
 public class CollectedItemDO implements Serializable {
     private static final long serialVersionUID = 685370116673816671L;
     private Integer id;

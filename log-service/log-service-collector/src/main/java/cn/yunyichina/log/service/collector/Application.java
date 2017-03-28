@@ -1,11 +1,9 @@
 package cn.yunyichina.log.service.collector;
 
-import cn.yunyichina.log.service.collector.config.CacheConfig;
-import cn.yunyichina.log.service.collector.config.WebMvcConfig;
-import cn.yunyichina.log.service.collector.config.WebSocketConfig;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
+import org.springframework.cloud.netflix.feign.EnableFeignClients;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
@@ -18,13 +16,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableAsync
 @EnableScheduling
 @EnableEurekaClient
-@SpringBootApplication(
-        scanBasePackages = "cn.yunyichina.log.service.collector",
-        scanBasePackageClasses = {
-                CacheConfig.class,
-                WebMvcConfig.class,
-                WebSocketConfig.class,
-        })
+@EnableFeignClients
+@SpringBootApplication(scanBasePackages = "cn.yunyichina.log.service.collector")
 public class Application {
 
     public static void main(String[] args) {

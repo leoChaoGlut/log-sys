@@ -1,8 +1,13 @@
 package cn.yunyichina.log.service.collectorservice.controller;
 
+import cn.yunyichina.log.common.base.AbstractController;
 import cn.yunyichina.log.common.entity.do_.CollectorDO;
-import cn.yunyichina.log.common.entity.dto.ResponseDTO;
+import cn.yunyichina.log.common.entity.dto.ResponseBodyDTO;
+import cn.yunyichina.log.common.exception.CollectorException;
 import cn.yunyichina.log.service.collectorservice.service.CollectorService;
+import com.alibaba.fastjson.JSON;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,34 +24,30 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("collector")
-public class CollectorController {
+public class CollectorController extends AbstractController {
+
+    final Logger logger = LoggerFactory.getLogger(CollectorController.class);
 
     @Autowired
     CollectorService collectorService;
 
     @PostMapping("register")
-    ResponseDTO registerAndGetData(
+    ResponseBodyDTO<CollectorDO> registerAndGetData(
             String ip,
             String port,
             String applicationName
     ) {
-        try {
-            CollectorDO collector = collectorService.registerAndGetData(applicationName, ip, port);
-            return ResponseDTO.ok(collector);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseDTO.error(e.getMessage());
-        }
+        logger.info(ip + " - " + port + " - " + applicationName);
+        CollectorDO collector = collectorService.registerAndGetData(applicationName, ip, port);
+        logger.info(JSON.toJSONString(collector, true));
+        return ResponseBodyDTO.ok(collector);
     }
 
     @GetMapping("all")
-    ResponseDTO listAllCollector() {
-        try {
-            List<CollectorDO> collectorList = collectorService.listAllCollector();
-            return ResponseDTO.ok(collectorList);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseDTO.error(e.getMessage());
-        }
+    ResponseBodyDTO<List<CollectorDO>> listAllCollector() throws CollectorException {
+        logger.info("listAllCollector");
+        List<CollectorDO> collectorList = collectorService.listAllCollector();
+        logger.info(JSON.toJSONString(collectorList, true));
+        return ResponseBodyDTO.ok(collectorList);
     }
 }

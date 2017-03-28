@@ -10,7 +10,7 @@ jar=$(pwd)/$(ls | grep ".jar")
 #================== Method Begin ==================
 
 getRunningJarCount(){
-        pnameList=$(ps -ef | grep -w $jar | grep -v grep | awk '{print $10}')
+        pnameList=$(ps -ef | grep -w $jar | grep -v grep | awk '{print $NF}')
         runningJarCount=0
         for pname in ${pnameList[*]}
         do
@@ -23,7 +23,7 @@ getRunningJarCount(){
 
 getPid(){
         pidList=$(ps -ef | grep -w java | grep -v grep | awk '{print $2}')
-        pnameList=$(ps -ef | grep -w java | grep -v grep | awk '{print $10}')
+        pnameList=$(ps -ef | grep -w java | grep -v grep | awk '{print $NF}')
         index=0
         for pname in ${pnameList[*]}
         do
@@ -37,7 +37,7 @@ getPid(){
 startJar(){
         if [ $(getRunningJarCount) -eq 0 ];then
 #                nohup java -Xdebug -Xrunjdwp:transport=dt_socket,suspend=n,server=y,address=12345 -jar $jar &
-                nohup java -jar $jar &
+                nohup java -XX:+HeapDumpOnOutOfMemoryError -jar $jar &
                 echo "Starting $jar"
         else
                 echo "$jar is running now"

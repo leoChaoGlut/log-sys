@@ -1,9 +1,9 @@
+import com.alibaba.fastjson.JSON;
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 import org.junit.Test;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 
 /**
  * @Author: Leo
@@ -21,5 +21,31 @@ public class UnitTest {
         System.out.println(length);
         int segCount = length % 1000;
         System.out.println(segCount);
+    }
+
+    @Test
+    public void read() throws IOException, ClassNotFoundException {
+        String cachePath = "E:\\cache\\7\\context.cache";
+        File cacheFile = new File(cachePath);
+        if (cacheFile.exists()) {
+
+        } else {
+            Files.createParentDirs(cacheFile);
+            cacheFile.createNewFile();
+            try (
+                    FileOutputStream fos = new FileOutputStream(cachePath);
+                    ObjectOutputStream oos = new ObjectOutputStream(fos);
+            ) {
+                oos.writeObject(null);
+                oos.flush();
+            }
+        }
+        try (
+                FileInputStream fis = new FileInputStream(cachePath);
+                ObjectInputStream ois = new ObjectInputStream(fis);
+        ) {
+            System.out.println(JSON.toJSONString(ois.readObject(), true));
+            ;
+        }
     }
 }

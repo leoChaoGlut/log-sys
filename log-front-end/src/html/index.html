@@ -161,7 +161,7 @@
                                                style="width:100%;">
                                         <el-option-group
                                                 v-for="collector in collectorList"
-                                                :label="collector.name">
+                                                :label="collector.ip">
                                             <el-option
                                                     v-for="collectedItem in collector.collectedItemList"
                                                     :label="collectedItem.name"
@@ -206,7 +206,7 @@
                                                style="width:100%;">
                                         <el-option-group
                                                 v-for="collector in collectorList"
-                                                :label="collector.name">
+                                                :label="collector.ip">
                                             <el-option
                                                     v-for="collectedItem in collector.collectedItemList"
                                                     :label="collectedItem.name"

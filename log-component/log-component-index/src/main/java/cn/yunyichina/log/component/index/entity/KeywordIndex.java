@@ -3,7 +3,6 @@ package cn.yunyichina.log.component.index.entity;
 import cn.yunyichina.log.component.index.base.AbstractIndex;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 
 import java.io.File;
 import java.io.Serializable;
@@ -17,7 +16,6 @@ import java.util.Objects;
  */
 @Getter
 @Setter
-@ToString
 public class KeywordIndex extends AbstractIndex implements Serializable {
 
     private static final long serialVersionUID = 5922961444464197133L;

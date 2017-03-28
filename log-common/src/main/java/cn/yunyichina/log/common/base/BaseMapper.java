@@ -1,5 +1,8 @@
 package cn.yunyichina.log.common.base;
 
+import cn.yunyichina.log.common.wrapper.PageWrapper;
+import org.apache.ibatis.annotations.Param;
+
 import java.util.List;
 
 /**
@@ -15,6 +18,8 @@ public interface BaseMapper<T> {
     List<T> selectAll();
 
     List<T> selectList(T t);
+
+    PageWrapper<T> selectPaging(@Param("item") T item, @Param("beginIndex") int beginIndex, @Param("pageSize") int pageSize);
 
     int insertOne(T t);
 

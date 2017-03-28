@@ -25,7 +25,7 @@ public class LoggerWrapper {
     private static final AtomicLong counter = new AtomicLong();
     private static final AtomicBoolean counterHasInit = new AtomicBoolean(false);
 
-    private static final ConcurrentHashMap<String, Long> countMap = new ConcurrentHashMap<>(128);
+    private static final ConcurrentHashMap<String, Long> countMap = new ConcurrentHashMap<String, Long>(128);
     private Logger logger;
     private final int STACK_INDEX = 3;
 

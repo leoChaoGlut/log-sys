@@ -37,6 +37,7 @@ public class LogScanner implements Scanner<Map<String, File>> {
 
     public static Map<String, File> scan(String beginDatetime, String endDatetime, String logDir) {
         try {
+            logger.info(beginDatetime + " - " + endDatetime);
             return new LogScanner(beginDatetime, endDatetime, logDir)
                     .scan();
         } catch (Exception e) {
@@ -47,6 +48,7 @@ public class LogScanner implements Scanner<Map<String, File>> {
 
     public static Map<String, File> scan(File beginLogFile, File endLogFile, String logDir) {
         try {
+            logger.info(beginLogFile + " - " + endLogFile);
             return new LogScanner(beginLogFile, endLogFile, logDir)
                     .scan();
         } catch (Exception e) {
