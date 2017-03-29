@@ -19,7 +19,7 @@ import java.util.Date;
 public class SearchConditionDTO implements Serializable {
     private static final long serialVersionUID = 7472001448221572210L;
     /**
-     * @See cn.yunyichina.log.common.constant.SearchEngineType
+     * {@link cn.yunyichina.log.common.constant.SearchEngineType}
      */
     private int searchEngineType;
     private boolean fuzzy;
