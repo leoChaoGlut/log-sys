@@ -1,6 +1,6 @@
 spring:
   application:
-    name: log-service-tracer
+    name: tracer-localhost
   cloud:
     config:
       discovery:

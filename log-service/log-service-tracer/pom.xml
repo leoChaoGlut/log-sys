@@ -12,6 +12,10 @@
     <groupId>cn.yunyichina.log</groupId>
     <artifactId>log-service-tracer</artifactId>
 
+    <properties>
+        <mainClass>cn.yunyichina.log.service.tracer.Application</mainClass>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>cn.yunyichina.log</groupId>

@@ -21,10 +21,6 @@ public abstract class TraceNode implements Serializable {
      * 整条日志链路的唯一id
      */
     protected String traceId;
-    /**
-     * 链路节点深度
-     */
-    protected Integer depth;
     protected Long timestamp;
     protected Long contextCount;
     /**

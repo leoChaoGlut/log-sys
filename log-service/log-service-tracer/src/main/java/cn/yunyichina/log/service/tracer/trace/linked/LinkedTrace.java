@@ -1,11 +1,12 @@
 package cn.yunyichina.log.service.tracer.trace.linked;
 
+import cn.yunyichina.log.service.tracer.trace.ITrace;
 import cn.yunyichina.log.service.tracer.trace.Trace;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.io.Serializable;
-import java.util.PriorityQueue;
+import java.util.concurrent.PriorityBlockingQueue;
 
 /**
  * @Author: Leo
@@ -15,10 +16,21 @@ import java.util.PriorityQueue;
  */
 @Getter
 @Setter
-public class LinkedTrace extends Trace implements Serializable {
+public class LinkedTrace extends Trace implements ITrace<LinkedTraceNode>, Serializable {
     private static final long serialVersionUID = 5423874889297882682L;
 
-    private LinkedTraceNode rootTraceNode;
-    private PriorityQueue<LinkedTraceNode> priorityQueue;
+    protected String traceId;
+    private PriorityBlockingQueue<LinkedTraceNode> priorityQueue = new PriorityBlockingQueue<>();
+
+    @Override
+    public void addNode(LinkedTraceNode linkedTraceNode) {
+        this.priorityQueue.add(linkedTraceNode);
+    }
+
+    @Override
+    public LinkedTrace setTraceId(String traceId) {
+        super.setTraceId(traceId);
+        return this;
+    }
 
 }

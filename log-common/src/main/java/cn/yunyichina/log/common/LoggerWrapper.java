@@ -39,15 +39,17 @@ public class LoggerWrapper {
         logger = LoggerFactory.getLogger(targetClass);
     }
 
-    public void contextBegin(String msg) {
+    public Long contextBegin(String msg) {
         Long count = counter.getAndIncrement();
         countMap.put(buildThreadId(), count);
         logger.info(getInvokeClassAndMethod() + msg + Tag.CONTEXT_BEGIN + count + Tag.CONTEXT_COUNT_END + Tag.ROW_END + count + Tag.CONTEXT_COUNT_END);
+        return count;
     }
 
-    public void contextEnd(String msg) {
+    public Long contextEnd(String msg) {
         Long count = countMap.get(buildThreadId());
         logger.info(getInvokeClassAndMethod() + msg + Tag.CONTEXT_END + count + Tag.CONTEXT_COUNT_END + Tag.ROW_END + count + Tag.CONTEXT_COUNT_END);
+        return count;
     }
 
     /**
@@ -122,6 +124,10 @@ public class LoggerWrapper {
      */
     public static Long getCount(String threadName) {
         return countMap.get(threadName);
+    }
+
+    public Long getContextCount() {
+        return countMap.get(buildThreadId());
     }
 
     /**

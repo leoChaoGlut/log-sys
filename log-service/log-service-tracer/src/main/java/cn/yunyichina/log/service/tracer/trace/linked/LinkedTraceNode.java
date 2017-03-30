@@ -19,9 +19,6 @@ import java.io.Serializable;
 public class LinkedTraceNode extends TraceNode implements Serializable, Comparable<LinkedTraceNode> {
     private static final long serialVersionUID = 3301244492367991817L;
 
-    private LinkedTraceNode parent;
-    private LinkedTraceNode child;
-
     /**
      * desc
      *
@@ -36,12 +33,6 @@ public class LinkedTraceNode extends TraceNode implements Serializable, Comparab
     @Override
     public LinkedTraceNode setContextCount(Long contextCount) {
         super.setContextCount(contextCount);
-        return this;
-    }
-
-    @Override
-    public LinkedTraceNode setDepth(Integer depth) {
-        super.setDepth(depth);
         return this;
     }
 
