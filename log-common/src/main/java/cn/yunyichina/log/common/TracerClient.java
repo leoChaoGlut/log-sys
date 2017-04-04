@@ -38,17 +38,17 @@ public class TracerClient {
      * @param traceId
      * @param timestamp
      * @param serviceId
-     * @param beInvoked true:服务被调用 false:服务主动调用
+     * @param contextBegin true:服务被调用(代表上下文开始) false:服务主动调用(代表上下文结束)
      */
-    public void aroundRPC(String url, String traceId, String timestamp, String serviceId, boolean beInvoked) {
+    public void aroundRPC(String url, String traceId, String timestamp, String serviceId, boolean contextBegin) {
         String msg = url + " - " + traceId + " - " + timestamp + " - " + serviceId;
-        Long contextCount;
-        if (beInvoked) {
-            contextCount = loggerWrapper.contextBegin(msg);
+        String contextId;
+        if (contextBegin) {
+            contextId = loggerWrapper.contextBegin(msg);
         } else {
-            contextCount = loggerWrapper.contextEnd(msg);
+            contextId = loggerWrapper.contextEnd(msg);
         }
-        List<NameValuePair> traceNodeParamList = buildTraceParamList(contextCount.toString(), traceId, timestamp, serviceId);
+        List<NameValuePair> traceNodeParamList = buildTraceParamList(contextId, traceId, timestamp, serviceId);
         try {
             sendNewTraceNodeRequest(url, traceNodeParamList);
         } catch (IOException e) {
@@ -56,9 +56,9 @@ public class TracerClient {
         }
     }
 
-    private List<NameValuePair> buildTraceParamList(String contextCount, String traceId, String timestamp, String serviceId) {
+    private List<NameValuePair> buildTraceParamList(String contextId, String traceId, String timestamp, String serviceId) {
         List<NameValuePair> traceNodeParamList = new ArrayList<>();
-        traceNodeParamList.add(new BasicNameValuePair("contextCount", contextCount));
+        traceNodeParamList.add(new BasicNameValuePair("contextId", contextId));
         traceNodeParamList.add(new BasicNameValuePair("traceId", traceId));
         traceNodeParamList.add(new BasicNameValuePair("timestamp", timestamp));
         traceNodeParamList.add(new BasicNameValuePair("serviceId", serviceId));
@@ -67,7 +67,7 @@ public class TracerClient {
 
     /**
      * @param url                format:"http://$gatewayIp:$port/$tracerApplicationName"   eg: "http://127.0.0.1:10300/log-service-tracer"
-     * @param traceNodeParamList @link cn.yunyichina.log.service.tracer.trace.TraceNode} 必备参数:[traceId,timestamp,contextCount,serviceId]
+     * @param traceNodeParamList @link cn.yunyichina.log.service.tracer.trace.TraceNode} 必备参数:[traceId,timestamp,contextId,serviceId]
      * @param handleResponseBody 是否需要处理response body
      * @param <T>
      * @return

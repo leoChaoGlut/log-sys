@@ -26,7 +26,7 @@ public class IndexBuilderTest {
     @Test
     public void contextIndexBuilderTest() {
         ContextIndexBuilder contextIndexBuilder = new ContextIndexBuilder(LOG_FILE);
-        ConcurrentHashMap<Long, ContextInfo> contextInfoMap = contextIndexBuilder.build();
+        ConcurrentHashMap<String, ContextInfo> contextInfoMap = contextIndexBuilder.build();
         System.out.println(contextInfoMap.size());
     }
 
@@ -45,7 +45,7 @@ public class IndexBuilderTest {
             Set<KeywordIndex> keywordIndexSet = entry.getValue();
             System.out.println(entry.getKey());
             for (KeywordIndex li : keywordIndexSet) {
-                System.out.println("\t" + li.getContextCount() + " - " + li.getIndexOfLogFile() + "\t");
+                System.out.println("\t" + li.getContextId() + " - " + li.getIndexOfLogFile() + "\t");
             }
         }
     }
@@ -68,7 +68,7 @@ public class IndexBuilderTest {
                 Set<KvIndex> kvIndexSet = entry1.getValue();
                 System.out.println("\t" + entry1.getKey());
                 for (KvIndex kvIndex : kvIndexSet) {
-                    System.out.println("\t\t" + kvIndex.getContextCount() + " - " + kvIndex.getIndexOfLogFile() + " - " + kvIndex.getLogFile() + "\t");
+                    System.out.println("\t\t" + kvIndex.getContextId() + " - " + kvIndex.getIndexOfLogFile() + " - " + kvIndex.getLogFile() + "\t");
                 }
             }
         }

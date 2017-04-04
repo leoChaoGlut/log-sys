@@ -15,3 +15,7 @@ endpoints:
     enabled: true
   restart:
     enabled: true
+spring:
+  redis:
+    host: 192.168.1.168
+    password: 123

@@ -1,5 +1,6 @@
 package cn.yunyichina.log.component.index.builder.imp;
 
+import cn.yunyichina.log.common.constant.GlobalConst;
 import cn.yunyichina.log.common.constant.Tag;
 import cn.yunyichina.log.common.entity.do_.KvTagDO;
 import cn.yunyichina.log.component.index.base.AbstractBuilder;
@@ -66,11 +67,11 @@ public class KvIndexBuilder extends AbstractBuilder implements IndexBuilder<Conc
                         String value = logContent.substring(valueBeginIndex, valueEndIndex);
                         if (StringUtils.isNotBlank(value)) {
                             int rowEndTagIndex = logContent.indexOf(Tag.ROW_END, valueEndIndex);
-                            int contextCountBeginTagIndex = rowEndTagIndex + rowEndTagLength;
-                            int contextCountEndTagIndex = logContent.indexOf(Tag.CONTEXT_COUNT_END, contextCountBeginTagIndex);
-                            if (0 <= contextCountBeginTagIndex && contextCountBeginTagIndex < contextCountEndTagIndex) {
-                                String count = logContent.substring(contextCountBeginTagIndex, contextCountEndTagIndex);
-                                if (StringUtils.isNumeric(count)) {
+                            int contextIdBeginTagIndex = rowEndTagIndex + rowEndTagLength;
+                            int contextIdEndTagIndex = logContent.indexOf(Tag.CONTEXT_ID_END, contextIdBeginTagIndex);
+                            if (0 <= contextIdBeginTagIndex && contextIdBeginTagIndex < contextIdEndTagIndex) {
+                                String contextId = logContent.substring(contextIdBeginTagIndex, contextIdEndTagIndex);
+                                if (contextId.length() >= GlobalConst.UUID_LENGTH) {
                                     ConcurrentHashMap<String, Set<KvIndex>> valueMap = kvIndexMap.get(key);
                                     if (valueMap == null) {
                                         valueMap = new ConcurrentHashMap<>();
@@ -79,7 +80,7 @@ public class KvIndexBuilder extends AbstractBuilder implements IndexBuilder<Conc
                                     if (kvIndexSet == null) {
                                         kvIndexSet = new HashSet<>();
                                     }
-                                    kvIndexSet.add(new KvIndex(logFile, cursor, Long.valueOf(count)));
+                                    kvIndexSet.add(new KvIndex(logFile, cursor, contextId));
                                     valueMap.put(value, kvIndexSet);
                                     kvIndexMap.put(key, valueMap);
                                 }

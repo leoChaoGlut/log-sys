@@ -1,12 +1,12 @@
 package cn.yunyichina.log.component.searchengine.imp;
 
+import cn.yunyichina.log.common.constant.GlobalConst;
 import cn.yunyichina.log.common.constant.Tag;
 import cn.yunyichina.log.component.index.entity.ContextInfo;
 import cn.yunyichina.log.component.searchengine.AbstractSearchEngine;
 import cn.yunyichina.log.component.searchengine.SearchEngine;
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
-import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.util.*;
@@ -22,9 +22,9 @@ public class NoIndexSearchEngine extends AbstractSearchEngine implements SearchE
 
     private String keyword;
     private Collection<File> logs;
-    private ConcurrentHashMap<Long, ContextInfo> contextInfoMap;
+    private ConcurrentHashMap<String, ContextInfo> contextInfoMap;
 
-    public NoIndexSearchEngine(Collection<File> logs, ConcurrentHashMap<Long, ContextInfo> contextInfoMap, String keyword) {
+    public NoIndexSearchEngine(Collection<File> logs, ConcurrentHashMap<String, ContextInfo> contextInfoMap, String keyword) {
         this.keyword = keyword;
         this.contextInfoMap = contextInfoMap;
         this.logs = logs;
@@ -34,31 +34,31 @@ public class NoIndexSearchEngine extends AbstractSearchEngine implements SearchE
     public Set<ContextInfo> search() throws Exception {
         int keywordLength = keyword.length();
         int rowEndTagLength = Tag.ROW_END.length();
-        List<Long> contextCountList = new ArrayList<>(1024);
+        List<String> contextIdList = new ArrayList<>(1024);
         for (File log : logs) {
             if (log.exists()) {
                 String logContent = Files.asCharSource(log, Charsets.UTF_8).read();
                 int cursor = 0;
                 while (0 <= (cursor = logContent.indexOf(keyword, cursor))) {
                     int rowEndTagIndex = logContent.indexOf(Tag.ROW_END, cursor + keywordLength);
-                    int contextCountBeginTagIndex = rowEndTagIndex + rowEndTagLength;
-                    int contextCountEndTagIndex = logContent.indexOf(Tag.CONTEXT_COUNT_END, contextCountBeginTagIndex);
-                    if (0 <= contextCountBeginTagIndex && contextCountBeginTagIndex < contextCountEndTagIndex) {
-                        String count = logContent.substring(contextCountBeginTagIndex, contextCountEndTagIndex);
-                        if (StringUtils.isNumeric(count)) {
-                            contextCountList.add(Long.valueOf(count));
+                    int contextIdBeginTagIndex = rowEndTagIndex + rowEndTagLength;
+                    int contextIdEndTagIndex = logContent.indexOf(Tag.CONTEXT_ID_END, contextIdBeginTagIndex);
+                    if (0 <= contextIdBeginTagIndex && contextIdBeginTagIndex < contextIdEndTagIndex) {
+                        String contextId = logContent.substring(contextIdBeginTagIndex, contextIdEndTagIndex);
+                        if (contextId.length() >= GlobalConst.UUID_LENGTH) {
+                            contextIdList.add(contextId);
                         }
                     }
-                    cursor = contextCountEndTagIndex;
+                    cursor = contextIdEndTagIndex;
                 }
             }
         }
-        if (contextCountList.isEmpty()) {
+        if (contextIdList.isEmpty()) {
             return new HashSet<>();
         } else {
-            matchedContextInfoSet = new HashSet<>(contextCountList.size());
-            for (Long contextCount : contextCountList) {
-                ContextInfo contextInfo = contextInfoMap.get(contextCount);
+            matchedContextInfoSet = new HashSet<>(contextIdList.size());
+            for (String contextId : contextIdList) {
+                ContextInfo contextInfo = contextInfoMap.get(contextId);
                 if (contextInfo != null) {
                     matchedContextInfoSet.add(contextInfo);
                 }

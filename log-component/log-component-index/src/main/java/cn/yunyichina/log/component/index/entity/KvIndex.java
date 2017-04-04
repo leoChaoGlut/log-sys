@@ -20,15 +20,15 @@ public class KvIndex extends AbstractIndex implements Serializable {
 
     private static final long serialVersionUID = 3099478568862317302L;
 
-    private Long contextCount;
+    private String contextId;
 
     public KvIndex() {
     }
 
-    public KvIndex(File logFile, int indexOfLogFile, Long contextCount) {
+    public KvIndex(File logFile, int indexOfLogFile, String contextId) {
         this.logFile = logFile;
         this.indexOfLogFile = indexOfLogFile;
-        this.contextCount = contextCount;
+        this.contextId = contextId;
     }
 
     @Override
@@ -38,12 +38,12 @@ public class KvIndex extends AbstractIndex implements Serializable {
         KvIndex kvIndex = (KvIndex) o;
         return indexOfLogFile == kvIndex.indexOfLogFile &&
                 Objects.equals(logFile, kvIndex.logFile) &&
-                Objects.equals(contextCount, kvIndex.contextCount);
+                Objects.equals(contextId, kvIndex.contextId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(logFile, indexOfLogFile, contextCount);
+        return Objects.hash(logFile, indexOfLogFile, contextId);
     }
 
 }

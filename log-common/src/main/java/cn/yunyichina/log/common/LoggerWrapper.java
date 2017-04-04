@@ -1,12 +1,13 @@
 package cn.yunyichina.log.common;
 
 import cn.yunyichina.log.common.constant.Tag;
+import lombok.Getter;
+import lombok.Setter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * @Author: Leo
@@ -22,34 +23,72 @@ import java.util.concurrent.atomic.AtomicLong;
  * *************注意*************
  */
 public class LoggerWrapper {
-    private static final AtomicLong counter = new AtomicLong();
-    private static final AtomicBoolean counterHasInit = new AtomicBoolean(false);
-
-    private static final ConcurrentHashMap<String, Long> countMap = new ConcurrentHashMap<String, Long>(128);
+    /**
+     * key: current thread id
+     * value: context id (UUID)
+     */
+    private static final ConcurrentHashMap<String, String> map = new ConcurrentHashMap<>();
+    /**
+     * 实际的调用方法的栈深
+     */
+    @Getter
+    private final int STACK_DEPTH = 3;
+    public static final String SUFFIX_SEPARATOR = "_";
+    @Getter
     private Logger logger;
-    private final int STACK_INDEX = 3;
-
+    @Getter
+    @Setter
+    private String suffix;//可以用作子系统的区分标识
+    @Getter
     private Class<?> targetClass;
 
     public static LoggerWrapper getLogger(Class<?> targetClass) {
         return new LoggerWrapper(targetClass);
     }
 
+    public static LoggerWrapper getLogger(Class<?> targetClass, String prefix) {
+        return new LoggerWrapper(targetClass, prefix);
+    }
+
+    public static String getSuffixBy(String contextId) {
+        String[] split = contextId.split(SUFFIX_SEPARATOR);
+        if (2 == split.length) {
+            String suffix = split[1];
+            if (suffix == null || suffix.trim().isEmpty()) {
+                return "null";
+            } else {
+                return suffix;
+            }
+        } else {
+            return "null";
+        }
+    }
+
     private LoggerWrapper(Class<?> targetClass) {
+        this(targetClass, null);
+    }
+
+    private LoggerWrapper(Class<?> targetClass, String suffix) {
         logger = LoggerFactory.getLogger(targetClass);
+        this.suffix = suffix;
     }
 
-    public Long contextBegin(String msg) {
-        Long count = counter.getAndIncrement();
-        countMap.put(buildThreadId(), count);
-        logger.info(getInvokeClassAndMethod() + msg + Tag.CONTEXT_BEGIN + count + Tag.CONTEXT_COUNT_END + Tag.ROW_END + count + Tag.CONTEXT_COUNT_END);
-        return count;
+    public String contextBegin(String msg) {
+        String contextId;
+        if (null == suffix) {
+            contextId = UUID.randomUUID().toString();
+        } else {
+            contextId = UUID.randomUUID().toString() + SUFFIX_SEPARATOR + suffix;
+        }
+        map.put(buildThreadId(), contextId);
+        logger.info(getInvokeClassAndMethod() + msg + Tag.CONTEXT_BEGIN + contextId + Tag.CONTEXT_ID_END + Tag.ROW_END + contextId + Tag.CONTEXT_ID_END);
+        return contextId;
     }
 
-    public Long contextEnd(String msg) {
-        Long count = countMap.get(buildThreadId());
-        logger.info(getInvokeClassAndMethod() + msg + Tag.CONTEXT_END + count + Tag.CONTEXT_COUNT_END + Tag.ROW_END + count + Tag.CONTEXT_COUNT_END);
-        return count;
+    public String contextEnd(String msg) {
+        String contextId = map.get(buildThreadId());
+        logger.info(getInvokeClassAndMethod() + msg + Tag.CONTEXT_END + contextId + Tag.CONTEXT_ID_END + Tag.ROW_END + contextId + Tag.CONTEXT_ID_END);
+        return contextId;
     }
 
     /**
@@ -58,35 +97,35 @@ public class LoggerWrapper {
      * @param msg
      */
     public void warn(String msg) {
-        logger.warn(getInvokeClassAndMethod() + msg + Tag.ROW_END + countMap.get(buildThreadId()) + Tag.CONTEXT_COUNT_END);
+        logger.warn(getInvokeClassAndMethod() + msg + Tag.ROW_END + map.get(buildThreadId()) + Tag.CONTEXT_ID_END);
     }
 
     public void warn(String msg, Object... args) {
-        logger.warn(getInvokeClassAndMethod() + msg + Tag.ROW_END + countMap.get(buildThreadId()) + Tag.CONTEXT_COUNT_END, args);
+        logger.warn(getInvokeClassAndMethod() + msg + Tag.ROW_END + map.get(buildThreadId()) + Tag.CONTEXT_ID_END, args);
     }
 
     public void debug(String msg) {
-        logger.debug(getInvokeClassAndMethod() + msg + Tag.ROW_END + countMap.get(buildThreadId()) + Tag.CONTEXT_COUNT_END);
+        logger.debug(getInvokeClassAndMethod() + msg + Tag.ROW_END + map.get(buildThreadId()) + Tag.CONTEXT_ID_END);
     }
 
     public void debug(String msg, Object... args) {
-        logger.debug(getInvokeClassAndMethod() + msg + Tag.ROW_END + countMap.get(buildThreadId()) + Tag.CONTEXT_COUNT_END, args);
+        logger.debug(getInvokeClassAndMethod() + msg + Tag.ROW_END + map.get(buildThreadId()) + Tag.CONTEXT_ID_END, args);
     }
 
     public void info(String msg) {
-        logger.info(getInvokeClassAndMethod() + msg + Tag.ROW_END + countMap.get(buildThreadId()) + Tag.CONTEXT_COUNT_END);
+        logger.info(getInvokeClassAndMethod() + msg + Tag.ROW_END + map.get(buildThreadId()) + Tag.CONTEXT_ID_END);
     }
 
     public void info(String msg, Object... args) {
-        logger.info(getInvokeClassAndMethod() + msg + Tag.ROW_END + countMap.get(buildThreadId()) + Tag.CONTEXT_COUNT_END, args);
+        logger.info(getInvokeClassAndMethod() + msg + Tag.ROW_END + map.get(buildThreadId()) + Tag.CONTEXT_ID_END, args);
     }
 
     public void error(String msg) {
-        logger.error(getInvokeClassAndMethod() + msg + Tag.ROW_END + countMap.get(buildThreadId()) + Tag.CONTEXT_COUNT_END);
+        logger.error(getInvokeClassAndMethod() + msg + Tag.ROW_END + map.get(buildThreadId()) + Tag.CONTEXT_ID_END);
     }
 
     public void error(String msg, Throwable t) {
-        logger.error(getInvokeClassAndMethod() + msg + Tag.ROW_END + countMap.get(buildThreadId()) + Tag.CONTEXT_COUNT_END, t);
+        logger.error(getInvokeClassAndMethod() + msg + Tag.ROW_END + map.get(buildThreadId()) + Tag.CONTEXT_ID_END, t);
     }
 
     /**
@@ -99,7 +138,7 @@ public class LoggerWrapper {
      * @return
      */
     private String getInvokeClassAndMethod() {
-        StackTraceElement stackTraceElement = Thread.currentThread().getStackTrace()[STACK_INDEX];
+        StackTraceElement stackTraceElement = Thread.currentThread().getStackTrace()[STACK_DEPTH];
         return stackTraceElement.getClassName() + "." +
                 stackTraceElement.getMethodName() + ":" +
                 stackTraceElement.getLineNumber();
@@ -115,38 +154,8 @@ public class LoggerWrapper {
         return threadGroupName + "-" + Thread.currentThread().getName() + "-" + Thread.currentThread().getId();
     }
 
-    /**
-     * 根据线程名,获取当前线程的count值.
-     * 当线程执行结束后,下一次接任务的时候,count值会更新
-     *
-     * @param threadName
-     * @return
-     */
-    public static Long getCount(String threadName) {
-        return countMap.get(threadName);
-    }
-
-    public Long getContextCount() {
-        return countMap.get(buildThreadId());
-    }
-
-    /**
-     * 根据给定的count,初始化counter
-     * 用途:采集结点崩溃后,恢复索引值
-     *
-     * @param count
-     */
-    public static void initCounter(long count) {
-        if (counterHasInit.get()) {
-
-        } else {
-            counter.set(count);
-            counterHasInit.set(true);
-        }
-    }
-
-    public static AtomicLong getCounter() {
-        return counter;
+    public String getCurrentThreadContextId() {
+        return map.get(buildThreadId());
     }
 
 

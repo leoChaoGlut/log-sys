@@ -15,7 +15,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @CreateTime: 2016/11/15 14:48
  * @Description:
  */
-public class ContextIndexAggregator extends AbstractIndexAggregator<ConcurrentHashMap<Long, ContextInfo>> {
+public class ContextIndexAggregator extends AbstractIndexAggregator<ConcurrentHashMap<String, ContextInfo>> {
 
     /**
      * 是否替换旧值
@@ -32,12 +32,12 @@ public class ContextIndexAggregator extends AbstractIndexAggregator<ConcurrentHa
     }
 
     @Override
-    public ConcurrentHashMap<Long, ContextInfo> aggregate(ConcurrentHashMap<Long, ContextInfo> input) {
+    public ConcurrentHashMap<String, ContextInfo> aggregate(ConcurrentHashMap<String, ContextInfo> input) {
         if (null == input || input.isEmpty()) {
 
         } else {
-            Set<Entry<Long, ContextInfo>> inputEntrySet = input.entrySet();
-            for (Entry<Long, ContextInfo> inputEntry : inputEntrySet) {
+            Set<Entry<String, ContextInfo>> inputEntrySet = input.entrySet();
+            for (Entry<String, ContextInfo> inputEntry : inputEntrySet) {
                 ContextInfo contextInfo = aggregatedCollection.get(inputEntry.getKey());
                 if (contextInfo == null) {
                     contextInfo = inputEntry.getValue();

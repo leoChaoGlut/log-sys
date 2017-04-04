@@ -17,12 +17,12 @@ import java.io.Serializable;
 @ToString
 public abstract class TraceNode implements Serializable {
     private static final long serialVersionUID = -2560457016778910734L;
+    protected String contextId;
     /**
      * 整条日志链路的唯一id
      */
     protected String traceId;
     protected Long timestamp;
-    protected Long contextCount;
     /**
      * ip + port, 或 application name
      */

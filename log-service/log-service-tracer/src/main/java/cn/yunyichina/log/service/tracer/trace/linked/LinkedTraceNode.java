@@ -31,8 +31,8 @@ public class LinkedTraceNode extends TraceNode implements Serializable, Comparab
     }
 
     @Override
-    public LinkedTraceNode setContextCount(Long contextCount) {
-        super.setContextCount(contextCount);
+    public LinkedTraceNode setContextId(String contextId) {
+        super.setContextId(contextId);
         return this;
     }
 

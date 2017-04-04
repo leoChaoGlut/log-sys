@@ -124,11 +124,9 @@ public class ScheduleTask {
     private void buildIndexAndWriteToDisk(Collection<File> logs, CollectedItemDO collectedItem) throws Exception {
         Integer collectedItemId = collectedItem.getId();
 
-        ConcurrentHashMap<Long, ContextInfo> contextInfoMap = buildContextIndexBy(logs);
+        ConcurrentHashMap<String, ContextInfo> contextInfoMap = buildContextIndexBy(logs);
         ConcurrentHashMap<String, Set<KeywordIndex>> keywordIndexMap = buildKeywordIndexBy(logs, collectedItem);
         ConcurrentHashMap<String, ConcurrentHashMap<String, Set<KvIndex>>> kvIndexMap = buildKvIndexBy(logs, collectedItem);
-
-        recordLastestContextCount(collectedItemId, contextInfoMap);
 
         cacheContextIndex(contextInfoMap, collectedItemId);
         cacheKeywordIndex(keywordIndexMap, collectedItemId);
@@ -142,24 +140,6 @@ public class ScheduleTask {
             baseInfo = new CollectedItemCache.BaseInfo();
         }
         baseInfo.setLastModifyTimeStr(lastModifyTime);
-        CacheUtil.write(baseInfo, collectedItemId, CacheName.COLLECTED_ITEM_BASE_INFO);
-    }
-
-    /**
-     * TODO 好像没啥用?
-     *
-     * @param collectedItemId
-     * @param contextInfoMap
-     * @throws Exception
-     */
-    private void recordLastestContextCount(Integer collectedItemId, Map<Long, ContextInfo> contextInfoMap) throws Exception {
-        Set<Long> countSet = contextInfoMap.keySet();
-        Long lastestCount = Collections.max(countSet);
-        CollectedItemCache.BaseInfo baseInfo = CacheUtil.read(collectedItemId, CacheName.COLLECTED_ITEM_BASE_INFO);
-        if (baseInfo == null) {
-            baseInfo = new CollectedItemCache.BaseInfo();
-        }
-        baseInfo.setContextCount(lastestCount);
         CacheUtil.write(baseInfo, collectedItemId, CacheName.COLLECTED_ITEM_BASE_INFO);
     }
 
@@ -196,17 +176,17 @@ public class ScheduleTask {
         }
     }
 
-    private ConcurrentHashMap<Long, ContextInfo> buildContextIndexBy(Collection<File> logs) {
+    private ConcurrentHashMap<String, ContextInfo> buildContextIndexBy(Collection<File> logs) {
         ContextIndexAggregator aggregator = new ContextIndexAggregator();
         for (File log : logs) {
-            ConcurrentHashMap<Long, ContextInfo> contextInfoMap = new ContextIndexBuilder(log).build();
+            ConcurrentHashMap<String, ContextInfo> contextInfoMap = new ContextIndexBuilder(log).build();
             aggregator.aggregate(contextInfoMap);
         }
         return aggregator.getAggregatedCollection();
     }
 
-    public void cacheContextIndex(ConcurrentHashMap<Long, ContextInfo> contextInfoMap, Integer collectedItemId) throws Exception {
-        ConcurrentHashMap<Long, ContextInfo> contextInfoCacheMap = indexManager.getContextIndexBy(collectedItemId);
+    public void cacheContextIndex(ConcurrentHashMap<String, ContextInfo> contextInfoMap, Integer collectedItemId) throws Exception {
+        ConcurrentHashMap<String, ContextInfo> contextInfoCacheMap = indexManager.getContextIndexBy(collectedItemId);
         if (contextInfoCacheMap == null) {
             CacheUtil.write(contextInfoMap, collectedItemId, CacheName.CONTEXT_INDEX);
         } else {
@@ -214,7 +194,7 @@ public class ScheduleTask {
             aggregator.aggregate(contextInfoMap);
             aggregator.aggregate(contextInfoCacheMap);
 
-            ConcurrentHashMap<Long, ContextInfo> aggregatedContextInfoMap = aggregator.getAggregatedCollection();
+            ConcurrentHashMap<String, ContextInfo> aggregatedContextInfoMap = aggregator.getAggregatedCollection();
             indexManager.setContextIndexBy(collectedItemId, aggregatedContextInfoMap);
 
             CacheUtil.write(aggregatedContextInfoMap, collectedItemId, CacheName.CONTEXT_INDEX);

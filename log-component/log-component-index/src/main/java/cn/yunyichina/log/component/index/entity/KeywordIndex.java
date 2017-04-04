@@ -20,15 +20,15 @@ public class KeywordIndex extends AbstractIndex implements Serializable {
 
     private static final long serialVersionUID = 5922961444464197133L;
 
-    private Long contextCount;
+    private String contextId;
 
     public KeywordIndex() {
     }
 
-    public KeywordIndex(File logFile, int indexOfLogFile, Long contextCount) {
+    public KeywordIndex(File logFile, int indexOfLogFile, String contextId) {
         this.logFile = logFile;
         this.indexOfLogFile = indexOfLogFile;
-        this.contextCount = contextCount;
+        this.contextId = contextId;
     }
 
     /**
@@ -43,12 +43,12 @@ public class KeywordIndex extends AbstractIndex implements Serializable {
         if (o == null || getClass() != o.getClass()) return false;
         KeywordIndex keywordIndex = (KeywordIndex) o;
         return Objects.equals(logFile, keywordIndex.logFile) &&
-                Objects.equals(contextCount, keywordIndex.contextCount);
+                Objects.equals(contextId, keywordIndex.contextId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(logFile, contextCount);
+        return Objects.hash(logFile, contextId);
     }
 
 }

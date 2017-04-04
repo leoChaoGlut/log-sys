@@ -21,10 +21,10 @@ public class KvSearchEngine extends AbstractSearchEngine implements SearchEngine
 
 
     private ConcurrentHashMap<String, ConcurrentHashMap<String, Set<KvIndex>>> kvIndexMap;
-    private ConcurrentHashMap<Long, ContextInfo> contextInfoMap;
+    private ConcurrentHashMap<String, ContextInfo> contextInfoMap;
 
 
-    public KvSearchEngine(ConcurrentHashMap<String, ConcurrentHashMap<String, Set<KvIndex>>> kvIndexMap, ConcurrentHashMap<Long, ContextInfo> contextInfoMap, SearchConditionDTO searchCondition) throws Exception {
+    public KvSearchEngine(ConcurrentHashMap<String, ConcurrentHashMap<String, Set<KvIndex>>> kvIndexMap, ConcurrentHashMap<String, ContextInfo> contextInfoMap, SearchConditionDTO searchCondition) throws Exception {
         this.kvIndexMap = kvIndexMap;
         this.contextInfoMap = contextInfoMap;
         if (searchCondition.getBeginDateTime().after(searchCondition.getEndDateTime())) {
@@ -63,8 +63,8 @@ public class KvSearchEngine extends AbstractSearchEngine implements SearchEngine
         } else {
             matchedContextInfoSet = new HashSet<>(kvIndexSet.size());
             for (KvIndex kvIndex : kvIndexSet) {
-                Long contextCount = kvIndex.getContextCount();
-                ContextInfo contextInfo = contextInfoMap.get(contextCount);
+                String contextId = kvIndex.getContextId();
+                ContextInfo contextInfo = contextInfoMap.get(contextId);
                 if (inDateTimeRange(contextInfo)) {
                     matchedContextInfoSet.add(contextInfo);
                 }

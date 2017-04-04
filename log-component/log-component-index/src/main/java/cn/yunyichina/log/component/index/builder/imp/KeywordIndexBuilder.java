@@ -1,12 +1,12 @@
 package cn.yunyichina.log.component.index.builder.imp;
 
+import cn.yunyichina.log.common.constant.GlobalConst;
 import cn.yunyichina.log.common.constant.Tag;
 import cn.yunyichina.log.component.index.base.AbstractBuilder;
 import cn.yunyichina.log.component.index.builder.IndexBuilder;
 import cn.yunyichina.log.component.index.entity.KeywordIndex;
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,12 +64,12 @@ public class KeywordIndexBuilder extends AbstractBuilder implements IndexBuilder
                 int cursor = 0;
                 while (0 <= (cursor = logContent.indexOf(keywordTag, cursor))) {
                     int rowEndTagIndex = logContent.indexOf(Tag.ROW_END, cursor + keywordTagLength);
-                    int contextCountBeginTagIndex = rowEndTagIndex + rowEndTagLength;
-                    int contextCountEndTagIndex = logContent.indexOf(Tag.CONTEXT_COUNT_END, contextCountBeginTagIndex);
-                    if (0 <= contextCountBeginTagIndex && contextCountBeginTagIndex < contextCountEndTagIndex) {
-                        String count = logContent.substring(contextCountBeginTagIndex, contextCountEndTagIndex);
-                        if (StringUtils.isNumeric(count)) {
-                            KeywordIndex keywordIndex = new KeywordIndex(logFile, cursor, Long.valueOf(count));
+                    int contextIdBeginTagIndex = rowEndTagIndex + rowEndTagLength;
+                    int contextIdEndTagIndex = logContent.indexOf(Tag.CONTEXT_ID_END, contextIdBeginTagIndex);
+                    if (0 <= contextIdBeginTagIndex && contextIdBeginTagIndex < contextIdEndTagIndex) {
+                        String contextId = logContent.substring(contextIdBeginTagIndex, contextIdEndTagIndex);
+                        if (contextId.length() >= GlobalConst.UUID_LENGTH) {
+                            KeywordIndex keywordIndex = new KeywordIndex(logFile, cursor, contextId);
                             Set<KeywordIndex> keywordIndexSet = keywordIndexMap.get(keywordTag);
                             if (keywordIndexSet == null) {
                                 keywordIndexSet = new HashSet<>();
@@ -78,7 +78,7 @@ public class KeywordIndexBuilder extends AbstractBuilder implements IndexBuilder
                             keywordIndexMap.put(keywordTag, keywordIndexSet);
                         }
                     }
-                    cursor = contextCountEndTagIndex;
+                    cursor = contextIdEndTagIndex;
                 }
             }
             return keywordIndexMap;

@@ -10,7 +10,7 @@ public interface Tag {
 
     String CONTEXT_BEGIN = "$@CtxBegin@$";
     String CONTEXT_END = "@$CtxEnd$@";
-    String CONTEXT_COUNT_END = "@CntEnd@";
+    String CONTEXT_ID_END = "@CntIdEnd@";
     String ROW_END = "$RowEnd$";
 
 }

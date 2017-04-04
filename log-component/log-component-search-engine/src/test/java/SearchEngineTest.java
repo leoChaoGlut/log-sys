@@ -138,10 +138,10 @@ public class SearchEngineTest {
         return logs;
     }
 
-    public ConcurrentHashMap<Long, ContextInfo> getContextInfoMap(Collection<File> logs) {
+    public ConcurrentHashMap<String, ContextInfo> getContextInfoMap(Collection<File> logs) {
         ContextIndexAggregator contextIndexAggregator = new ContextIndexAggregator();
         for (File log : logs) {
-            ConcurrentHashMap<Long, ContextInfo> contextInfoMap = new ContextIndexBuilder(log).build();
+            ConcurrentHashMap<String, ContextInfo> contextInfoMap = new ContextIndexBuilder(log).build();
             contextIndexAggregator.aggregate(contextInfoMap);
         }
         return contextIndexAggregator.getAggregatedCollection();

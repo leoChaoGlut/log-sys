@@ -23,7 +23,7 @@ public class CollectedItemCache implements Serializable {
 
     private BaseInfo baseInfo;
 
-    private ConcurrentHashMap<Long, ContextInfo> contextInfoMap;
+    private ConcurrentHashMap<String, ContextInfo> contextInfoMap;
     private ConcurrentHashMap<String, Set<KeywordIndex>> keywordIndexMap;
     private ConcurrentHashMap<String, ConcurrentHashMap<String, Set<KvIndex>>> kvIndexMap;
 
@@ -34,7 +34,7 @@ public class CollectedItemCache implements Serializable {
         private static final long serialVersionUID = 1553068597241585195L;
 
         private Integer collectedItemId;
-        private Long contextCount;
+        private String contextId;
         private String lastModifyTimeStr;
 
     }

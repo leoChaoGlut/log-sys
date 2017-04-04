@@ -25,9 +25,9 @@ public class KeywordSearchEngine extends AbstractSearchEngine implements SearchE
     private static final Logger logger = LoggerFactory.getLogger(KeywordSearchEngine.class);
 
     private ConcurrentHashMap<String, Set<KeywordIndex>> keywordIndexMap;
-    private ConcurrentHashMap<Long, ContextInfo> contextInfoMap;
+    private ConcurrentHashMap<String, ContextInfo> contextInfoMap;
 
-    public KeywordSearchEngine(ConcurrentHashMap<String, Set<KeywordIndex>> keywordIndexMap, ConcurrentHashMap<Long, ContextInfo> contextInfoMap, SearchConditionDTO searchCondition) throws Exception {
+    public KeywordSearchEngine(ConcurrentHashMap<String, Set<KeywordIndex>> keywordIndexMap, ConcurrentHashMap<String, ContextInfo> contextInfoMap, SearchConditionDTO searchCondition) throws Exception {
         this.keywordIndexMap = keywordIndexMap;
         this.contextInfoMap = contextInfoMap;
         if (searchCondition.getBeginDateTime().after(searchCondition.getEndDateTime())) {
@@ -44,8 +44,8 @@ public class KeywordSearchEngine extends AbstractSearchEngine implements SearchE
         } else {
             matchedContextInfoSet = new HashSet<>(keywordIndexSet.size());
             for (KeywordIndex keywordIndex : keywordIndexSet) {
-                Long contextCount = keywordIndex.getContextCount();
-                ContextInfo contextInfo = contextInfoMap.get(contextCount);
+                String contextId = keywordIndex.getContextId();
+                ContextInfo contextInfo = contextInfoMap.get(contextId);
                 if (inDateTimeRange(contextInfo)) {
                     matchedContextInfoSet.add(contextInfo);
                 }

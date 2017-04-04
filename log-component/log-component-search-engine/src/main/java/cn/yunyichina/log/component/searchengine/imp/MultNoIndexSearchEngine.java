@@ -16,9 +16,9 @@ public class MultNoIndexSearchEngine extends AbstractSearchEngine implements Sea
 
     private String keyword;
     private Collection<File> logs;
-    private ConcurrentHashMap<Long, ContextInfo> contextInfoMap;
+    private ConcurrentHashMap<String, ContextInfo> contextInfoMap;
 
-    public MultNoIndexSearchEngine(Collection<File> logs, ConcurrentHashMap<Long, ContextInfo> contextInfoMap, String keyword) {
+    public MultNoIndexSearchEngine(Collection<File> logs, ConcurrentHashMap<String, ContextInfo> contextInfoMap, String keyword) {
         this.keyword = keyword;
         this.contextInfoMap = contextInfoMap;
         this.logs = logs;

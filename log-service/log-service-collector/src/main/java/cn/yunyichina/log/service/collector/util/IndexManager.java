@@ -32,7 +32,7 @@ public class IndexManager {
     private ReentrantReadWriteLock.WriteLock writeLock = readWriteLock.writeLock();
     private ReentrantReadWriteLock.ReadLock readLock = readWriteLock.readLock();
 
-    public void setContextIndexBy(Integer collectedItemId, ConcurrentHashMap<Long, ContextInfo> contextInfoMap) {
+    public void setContextIndexBy(Integer collectedItemId, ConcurrentHashMap<String, ContextInfo> contextInfoMap) {
         CollectedItemCache collectedItemCache = collectedItemCacheMap.get(collectedItemId);
         if (collectedItemCache == null) {
             collectedItemCache = new CollectedItemCache()
@@ -68,7 +68,7 @@ public class IndexManager {
         }
     }
 
-    public ConcurrentHashMap<Long, ContextInfo> getContextIndexBy(Integer collectedItemId) throws Exception {
+    public ConcurrentHashMap<String, ContextInfo> getContextIndexBy(Integer collectedItemId) throws Exception {
         writeLock.lock();
         try {
             CollectedItemCache collectedItemCache = collectedItemCacheMap.get(collectedItemId);
@@ -76,7 +76,7 @@ public class IndexManager {
                 collectedItemCache = new CollectedItemCache();
 
                 CollectedItemCache.BaseInfo baseInfo = CacheUtil.read(collectedItemId, CacheName.COLLECTED_ITEM_BASE_INFO);
-                ConcurrentHashMap<Long, ContextInfo> contextIndexMap = CacheUtil.read(collectedItemId, CacheName.CONTEXT_INDEX);
+                ConcurrentHashMap<String, ContextInfo> contextIndexMap = CacheUtil.read(collectedItemId, CacheName.CONTEXT_INDEX);
 
                 collectedItemCache.setBaseInfo(baseInfo);
                 collectedItemCache.setContextInfoMap(contextIndexMap);
@@ -85,7 +85,7 @@ public class IndexManager {
 
                 return contextIndexMap;
             } else {
-                ConcurrentHashMap<Long, ContextInfo> contextInfoMap = collectedItemCache.getContextInfoMap();
+                ConcurrentHashMap<String, ContextInfo> contextInfoMap = collectedItemCache.getContextInfoMap();
                 if (contextInfoMap == null) {
                     contextInfoMap = CacheUtil.read(collectedItemId, CacheName.CONTEXT_INDEX);
                     collectedItemCache.setContextInfoMap(contextInfoMap);

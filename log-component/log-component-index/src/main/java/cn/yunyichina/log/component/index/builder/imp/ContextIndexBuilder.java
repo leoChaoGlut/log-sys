@@ -1,5 +1,6 @@
 package cn.yunyichina.log.component.index.builder.imp;
 
+import cn.yunyichina.log.common.constant.GlobalConst;
 import cn.yunyichina.log.common.constant.Tag;
 import cn.yunyichina.log.component.index.base.AbstractBuilder;
 import cn.yunyichina.log.component.index.builder.IndexBuilder;
@@ -7,7 +8,6 @@ import cn.yunyichina.log.component.index.entity.ContextIndex;
 import cn.yunyichina.log.component.index.entity.ContextInfo;
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,14 +22,14 @@ import java.util.concurrent.ConcurrentHashMap;
  * @CreateTime: 2016/11/3 14:23
  * @Description: 上下文索引构造器
  */
-public class ContextIndexBuilder extends AbstractBuilder implements IndexBuilder<ConcurrentHashMap<Long, ContextInfo>>, Serializable {
+public class ContextIndexBuilder extends AbstractBuilder implements IndexBuilder<ConcurrentHashMap<String, ContextInfo>>, Serializable {
     private static final long serialVersionUID = -6007560470667273849L;
     private final Logger logger = LoggerFactory.getLogger(ContextIndexBuilder.class);
     /**
-     * key: context count
+     * key: context id (eg:UUID) 当数据量大的时候,可以考虑用"UUID+suffix"的形式,提高查询效率
      * value:{@link ContextInfo}
      */
-    private ConcurrentHashMap<Long, ContextInfo> contextInfoMap = new ConcurrentHashMap<>(1024);
+    private ConcurrentHashMap<String, ContextInfo> contextInfoMap = new ConcurrentHashMap<>(1024);
 
     public ContextIndexBuilder(File logFile) {
         this.logFile = logFile;
@@ -46,7 +46,7 @@ public class ContextIndexBuilder extends AbstractBuilder implements IndexBuilder
     }
 
     @Override
-    public ConcurrentHashMap<Long, ContextInfo> build() {
+    public ConcurrentHashMap<String, ContextInfo> build() {
         try {
             markTag(Tag.CONTEXT_BEGIN, true);
             markTag(Tag.CONTEXT_END, false);
@@ -59,17 +59,16 @@ public class ContextIndexBuilder extends AbstractBuilder implements IndexBuilder
 
     private void markTag(String tag, boolean isBeginTag) {
         int cursor = 0;
-        int contextCountBeginTagIndex;
-        int contextCountEndTagIndex;
+        int contextIdBeginTagIndex;
+        int contextIdEndTagIndex;
         int tagLength = tag.length();
         while (0 <= (cursor = logContent.indexOf(tag, cursor))) {
-            contextCountBeginTagIndex = cursor + tagLength;
-            contextCountEndTagIndex = logContent.indexOf(Tag.CONTEXT_COUNT_END, contextCountBeginTagIndex);
-            if (0 <= contextCountBeginTagIndex && contextCountBeginTagIndex < contextCountEndTagIndex) {//防止标记异常
-                String countStr = logContent.substring(contextCountBeginTagIndex, contextCountEndTagIndex);
-                if (StringUtils.isNumeric(countStr)) {//防止没有启用contextBegin，导致count="null"的情况
-                    Long count = Long.valueOf(countStr);
-                    ContextInfo contextInfo = contextInfoMap.get(count);
+            contextIdBeginTagIndex = cursor + tagLength;
+            contextIdEndTagIndex = logContent.indexOf(Tag.CONTEXT_ID_END, contextIdBeginTagIndex);
+            if (0 <= contextIdBeginTagIndex && contextIdBeginTagIndex < contextIdEndTagIndex) {//防止标记异常
+                String contextId = logContent.substring(contextIdBeginTagIndex, contextIdEndTagIndex);
+                if (contextId.length() >= GlobalConst.UUID_LENGTH) {
+                    ContextInfo contextInfo = contextInfoMap.get(contextId);
                     if (null == contextInfo) {
                         contextInfo = new ContextInfo();
                     }
@@ -79,10 +78,10 @@ public class ContextIndexBuilder extends AbstractBuilder implements IndexBuilder
                     } else {
                         contextInfo.setEnd(contextIndex);
                     }
-                    contextInfoMap.put(count, contextInfo);//理论上 key( AtomicLong ) 不会有重复
+                    contextInfoMap.put(contextId, contextInfo);//理论上 key( UUID ) 不会有重复
                 }
             }
-            cursor = contextCountBeginTagIndex;
+            cursor = contextIdBeginTagIndex;
         }
     }
 

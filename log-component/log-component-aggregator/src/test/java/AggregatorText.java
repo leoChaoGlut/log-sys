@@ -41,11 +41,11 @@ public class AggregatorText {
         Collection<File> logs = getLogs();
 
         for (File log : logs) {
-            ConcurrentHashMap<Long, ContextInfo> contextInfoMap = new ContextIndexBuilder(log).build();
+            ConcurrentHashMap<String, ContextInfo> contextInfoMap = new ContextIndexBuilder(log).build();
             System.out.println(contextInfoMap.size());
             contextIndexAggregator.aggregate(contextInfoMap);
         }
-        ConcurrentHashMap<Long, ContextInfo> aggregatedCollection = contextIndexAggregator.getAggregatedCollection();
+        ConcurrentHashMap<String, ContextInfo> aggregatedCollection = contextIndexAggregator.getAggregatedCollection();
         System.out.println(aggregatedCollection.size());
 
     }
