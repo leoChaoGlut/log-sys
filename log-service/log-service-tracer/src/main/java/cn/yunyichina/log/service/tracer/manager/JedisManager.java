@@ -1,6 +1,8 @@
 package cn.yunyichina.log.service.tracer.manager;
 
 import lombok.Getter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
 import org.springframework.stereotype.Component;
@@ -20,6 +22,7 @@ import java.util.List;
  */
 @Component
 public class JedisManager {
+    final Logger logger = LoggerFactory.getLogger(JedisManager.class);
 
     @Autowired
     private RedisProperties redisProperties;
@@ -36,6 +39,7 @@ public class JedisManager {
         int port = redisProperties.getPort();
         int timeout = redisProperties.getTimeout();
         String password = redisProperties.getPassword();
+        logger.info(host + " - " + port + " - " + timeout + " - " + password);
         pool = new JedisPool(poolConfig, host, port, timeout, password);
     }
 

@@ -16,15 +16,17 @@ import java.util.List;
 @Setter
 public class CollectedItemDO implements Serializable {
     private static final long serialVersionUID = 685370116673816671L;
+
     private Integer id;
     private String name;
     private Integer collectorId;
+    private String stdoutFilePath;
     private String collectedLogDir;
+    private String applicationName;
 
     //    extra
     private List<KeywordTagDO> keywordTagList;
     private List<KvTagDO> kvTagList;
 
-    private String stdoutFilePath;
 
 }

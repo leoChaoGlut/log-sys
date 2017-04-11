@@ -15,7 +15,6 @@ import java.io.Serializable;
 @Getter
 @Setter
 public abstract class AbstractIndex implements Serializable {
-
     private static final long serialVersionUID = 3382721186738490900L;
 
     protected File logFile;

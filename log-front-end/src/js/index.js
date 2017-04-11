@@ -105,7 +105,7 @@ var Home = (function () {
                 },
             })
         }
-        var post = function (url, data, successCallback) {
+        var postJson = function (url, data, successCallback) {
             $.ajax({
                 url: url,
                 data: JSON.stringify(data),
@@ -136,9 +136,39 @@ var Home = (function () {
                 },
             })
         }
+        var postForm = function (url, data, successCallback) {
+            $.ajax({
+                url: url,
+                data: data,
+                timeout: Common.TIME_OUT,
+                type: "POST",
+                complete: function (resp) {
+                    if (loading) {
+                        loading.close();
+                    }
+                    if (200 == resp.status) {
+                        var respBody = JSON.parse(resp.responseText);
+                        if (Common.Status.OK == respBody.code) {
+                            if (successCallback) {
+                                successCallback(respBody.result);
+                            }
+                        } else {
+                            Tips.error('code:' + respBody.code + ", msg:" + respBody.msg);
+                        }
+                    } else {
+                        if ("timeout" == resp.statusText) {
+                            Tips.error("请求超时")
+                        } else {
+                            Tips.error("连接服务器异常,code:" + resp.status + ",msg:" + resp.statusText);
+                        }
+                    }
+                },
+            })
+        }
         return {
             get: get,
-            post: post,
+            postJson: postJson,
+            postForm: postForm,
         }
     })()
 
@@ -187,7 +217,6 @@ var Home = (function () {
 
         return validate;
     }
-
 
     (function () {
         var url = Common.GATEWAY + "/collector-service/collector/all";
@@ -240,6 +269,13 @@ var Home = (function () {
             $("#app").fadeIn(ANIMATION_DURATION);
         },
         data: {
+            activeApplicationName: "",
+            activeContext: 1,
+            contextList: [],
+            showDistributedLog: false,
+            showExtraFunctionDialog: false,
+            showLogContentDialog: false,
+            resultItem: {},
             logResultList: [],
             lastClickNode: {},
             lastClickNodeTime: new Date(),
@@ -288,7 +324,6 @@ var Home = (function () {
             linking: false,
             reading: false,
             logContentTitle: "",
-            showLogContentDialog: false,
             lockScroll: false,
             readingRealtimeLog: false,
             noMoreContentToBeLoad: false,
@@ -306,7 +341,8 @@ var Home = (function () {
                     var collectorId = vm.collectedItem.collectorId;
                     var collector = getCollectorBy(vm.collectorList, collectorId);
                     var url = buildUrlBy(collector, "search/history");
-                    Http.post(url, vm.searchCondition, function (result) {
+                    console.log(vm.searchCondition)
+                    Http.postJson(url, vm.searchCondition, function (result) {
                         if (result.length > 0) {
                             var logResultList = [];
                             var firstLogResult = result[0];
@@ -321,6 +357,7 @@ var Home = (function () {
                                 var logTreeNode = {
                                     beginLog: logRegionSet[0],
                                     contextContent: logResult.contextContent,
+                                    contextId: logResult.contextId,
                                     endLogList: [],
                                 }
                                 for (var j = 1; j < logRegionSet.length; j++) {
@@ -340,46 +377,36 @@ var Home = (function () {
                     Tips.warning(validate.msg);
                 }
             },
-            loadLogContent: function (obj, node, component) {
-                vm.logContent = obj.contextContent;
-                if (vm.lastClickNode == obj.beginLog) {
-                    var now = new Date().getTime();
-                    if (now - vm.lastClickNodeTime > DOUBLE_CLICK_DURATION) {
-                        vm.lastClickNodeTime = now;
-                    } else {
-                        vm.showLogContentDialog = true;
-                        vm.logContentTitle = obj.beginLog;
+            loadLogContent: function () {
+                vm.showExtraFunctionDialog = false;
+                vm.showLogContentDialog = true;
+                vm.logContentTitle = vm.resultItem.beginLog;
 
-                        var collectorId = vm.collectedItem.collectorId;
-                        var collector = getCollectorBy(vm.collectorList, collectorId);
-                        var url = buildUrlBy(collector, "history");
+                var collectorId = vm.collectedItem.collectorId;
+                var collector = getCollectorBy(vm.collectorList, collectorId);
+                var url = buildUrlBy(collector, "history");
 
-                        historySocket = new SockJS(url);
-                        historySocket.onopen = function (e) {
-                            loading.close();
-                            Tips.success("连接成功");
-                            var data = {
-                                collectedItemId: vm.searchCondition.collectedItemId,
-                                beginDateTime: vm.logContentTitle,
-                                endDateTime: vm.logContentTitle,
-                            }
-                            vm.logContent = "";
-                            historySocket.send(JSON.stringify(data));
-                        }
-                        historySocket.onmessage = function (e) {
-                            vm.logContent += e.data;
-                        }
-                        historySocket.onerror = function (error) {
-                            loading.close();
-                            Tips.error(JSON.stringify(error));
-                        }
-                        historySocket.onclose = function (e) {
-                            vm.reading = false;
-                        }
+                historySocket = new SockJS(url);
+                historySocket.onopen = function (e) {
+                    loading.close();
+                    Tips.success("连接成功");
+                    var data = {
+                        collectedItemId: vm.searchCondition.collectedItemId,
+                        beginDateTime: vm.logContentTitle,
+                        endDateTime: vm.logContentTitle,
                     }
-                } else {
-                    vm.lastClickNode = obj.beginLog;
-                    vm.lastClickNodeTime = new Date().getTime();
+                    vm.logContent = "";
+                    historySocket.send(JSON.stringify(data));
+                }
+                historySocket.onmessage = function (e) {
+                    vm.logContent += e.data;
+                }
+                historySocket.onerror = function (error) {
+                    loading.close();
+                    Tips.error(JSON.stringify(error));
+                }
+                historySocket.onclose = function (e) {
+                    vm.reading = false;
                 }
             },
             readRealtimeLog: function () {
@@ -481,6 +508,39 @@ var Home = (function () {
             },
             readMoreHistoryLog: function () {
                 historySocket.send();
+            },
+            extraFunction: function (obj, node, component) {
+                vm.logContent = obj.contextContent;
+                if (vm.lastClickNode == obj.beginLog) {
+                    var now = new Date().getTime();
+                    if (now - vm.lastClickNodeTime > DOUBLE_CLICK_DURATION) {
+                        vm.lastClickNodeTime = now;
+                    } else {
+                        vm.showExtraFunctionDialog = true;
+                        vm.resultItem = obj;
+                    }
+                } else {
+                    vm.lastClickNode = obj.beginLog;
+                    vm.lastClickNodeTime = new Date().getTime();
+                }
+            },
+            loadDistributedLog: function () {
+                loading = vm.$loading();
+                var url = Common.GATEWAY + "/tracer/trace/linked/get/by/contextId";
+                Http.postForm(url, {
+                    contextId: vm.resultItem.contextId
+                }, function (result) {
+                    if (result && result.length > 0) {
+                        vm.activeApplicationName = result[0].applicationName + "-" + 0;
+                        vm.contextList = result;
+                        vm.showDistributedLog = true;
+                    } else {
+                        Tips.warning("不存在跨应用日志");
+                    }
+                })
+            },
+            choiceConext: function (index) {
+                vm.activeContext = index;
             }
         },
         watch: {
@@ -557,6 +617,39 @@ var Home = (function () {
                     } else {
                         Tips.warning("日志长度超过 2万 字符,继续加载能会造成卡顿");
                     }
+                }
+            },
+            "activeApplicationName": function (applicationNameAndIndex) {
+                var applicationName = applicationNameAndIndex.split("-")[0];
+                var length = vm.contextList.length;
+                var traceNode;
+                for (var i = 0; i < length; i++) {
+                    if (vm.contextList[i].applicationName + "-" + i == applicationNameAndIndex) {
+                        traceNode = vm.contextList[i];
+                        break;
+                    }
+                }
+                if (traceNode.loaded == true) {
+                    vm.logContent = traceNode.logContent;
+                } else {
+                    loading = vm.$loading({text: "正在获取节点信息"});
+                    var url = Common.GATEWAY + "/collector-service/collector/get/by/applicationName";
+                    Http.postForm(url, {
+                        applicationName: applicationName
+                    }, function (result) {
+                        loading = vm.$loading({text: "正在获取日志内容"});
+                        var collector = result.collector;
+                        var collectedItem = result.collectedItem;
+                        var url = buildUrlBy(collector, "search/by/contextId");
+                        Http.postForm(url, {
+                            collectedItemId: collectedItem.id,
+                            contextId: traceNode.contextId,
+                        }, function (result) {
+                            vm.logContent = result;
+                            traceNode.loaded = true;
+                            traceNode.logContent = result;
+                        })
+                    })
                 }
             }
         },

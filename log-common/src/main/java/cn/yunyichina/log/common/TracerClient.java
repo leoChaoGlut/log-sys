@@ -1,15 +1,16 @@
 package cn.yunyichina.log.common;
 
-import cn.yunyichina.log.common.entity.dto.ResponseBodyDTO;
-import cn.yunyichina.log.common.util.ResponseUtil;
-import com.alibaba.fastjson.JSON;
 import org.apache.http.NameValuePair;
-import org.apache.http.client.fluent.Request;
-import org.apache.http.client.fluent.Response;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 
 import java.io.IOException;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,9 +22,15 @@ import java.util.List;
  */
 public class TracerClient {
 
+    public static final int TIMEOUT_IN_MILLIS = 500;
     public static final int SOCKET_TIMEOUT_MS = 10_000;
     public static final int CONNECT_TIMEOUT_MS = 3_000;
-    public static final Charset UTF8 = Charset.forName("UTF-8");
+
+    private final RequestConfig requestConfig = RequestConfig.custom()
+            .setConnectionRequestTimeout(TIMEOUT_IN_MILLIS)
+            .setConnectTimeout(TIMEOUT_IN_MILLIS)
+            .setSocketTimeout(TIMEOUT_IN_MILLIS)
+            .build();
 
     private LoggerWrapper loggerWrapper;
 
@@ -36,19 +43,23 @@ public class TracerClient {
      *
      * @param url
      * @param traceId
-     * @param timestamp
-     * @param serviceId
-     * @param contextBegin true:服务被调用(代表上下文开始) false:服务主动调用(代表上下文结束)
+     * @param dateTimeStr     yyyy-MM-dd HH:mm:ss SSS 这个格式是为了适配dubbo.
+     * @param applicationName 对应数据库表'log_collected_item'的'application_name'字段
+     * @param contextBegin    true:服务被调用(代表上下文开始) false:服务主动调用(代表上下文结束)
      */
-    public void aroundRPC(String url, String traceId, String timestamp, String serviceId, boolean contextBegin) {
-        String msg = url + " - " + traceId + " - " + timestamp + " - " + serviceId;
+    public void aroundRPC(String url, String traceId, String dateTimeStr, String applicationName, boolean contextBegin) {
+        String msg = url + " - " + traceId + " - " + dateTimeStr + " - " + applicationName;
+        int beginIndex = applicationName.indexOf(":") + 3;
+        int endIndex = applicationName.indexOf("?");
+        applicationName = applicationName.substring(beginIndex, endIndex);
         String contextId;
         if (contextBegin) {
             contextId = loggerWrapper.contextBegin(msg);
         } else {
             contextId = loggerWrapper.contextEnd(msg);
         }
-        List<NameValuePair> traceNodeParamList = buildTraceParamList(contextId, traceId, timestamp, serviceId);
+        List<NameValuePair> traceNodeParamList = buildTraceParamList(contextId, traceId, dateTimeStr, applicationName);
+        loggerWrapper.info(traceNodeParamList.toString());
         try {
             sendNewTraceNodeRequest(url, traceNodeParamList);
         } catch (IOException e) {
@@ -56,12 +67,12 @@ public class TracerClient {
         }
     }
 
-    private List<NameValuePair> buildTraceParamList(String contextId, String traceId, String timestamp, String serviceId) {
+    private List<NameValuePair> buildTraceParamList(String contextId, String traceId, String timestamp, String applicationName) {
         List<NameValuePair> traceNodeParamList = new ArrayList<>();
         traceNodeParamList.add(new BasicNameValuePair("contextId", contextId));
         traceNodeParamList.add(new BasicNameValuePair("traceId", traceId));
         traceNodeParamList.add(new BasicNameValuePair("timestamp", timestamp));
-        traceNodeParamList.add(new BasicNameValuePair("serviceId", serviceId));
+        traceNodeParamList.add(new BasicNameValuePair("applicationName", applicationName));
         return traceNodeParamList;
     }
 
@@ -74,17 +85,23 @@ public class TracerClient {
      * @throws IOException
      */
     private <T> T sendNewTraceNodeRequest(String url, List<NameValuePair> traceNodeParamList, boolean handleResponseBody) throws IOException {
-        Response response = Request.Post(url)
-                .bodyForm(traceNodeParamList, UTF8)
-                .socketTimeout(SOCKET_TIMEOUT_MS)
-                .connectTimeout(CONNECT_TIMEOUT_MS)
-                .execute();
-        if (handleResponseBody) {
-            String json = response.returnContent().asString(UTF8);
-            ResponseBodyDTO responseBodyDTO = JSON.parseObject(json, ResponseBodyDTO.class);
-            return (T) ResponseUtil.getResult(responseBodyDTO);
-        } else {
-            return null;
+        CloseableHttpResponse response = null;
+        try {
+            CloseableHttpClient httpClient = HttpClients.createDefault();
+            HttpPost post = new HttpPost(url);
+            post.setConfig(requestConfig);
+            post.setEntity(new UrlEncodedFormEntity(traceNodeParamList, StandardCharsets.UTF_8));
+            response = httpClient.execute(post);
+            if (handleResponseBody) {
+//            TODO 暂时默认不处理response
+                return null;
+            } else {
+                return null;
+            }
+        } finally {
+            if (response != null) {
+                response.close();
+            }
         }
     }
 

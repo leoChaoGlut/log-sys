@@ -19,5 +19,6 @@ public class LogResultDTO implements Serializable {
 
     private String contextContent;
     private TreeSet<String> logRegionSet;
+    private String contextId;
 
 }

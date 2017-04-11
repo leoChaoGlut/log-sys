@@ -1,18 +1,19 @@
 package cn.yunyichina.log.service.tracer.service;
 
 import cn.yunyichina.log.common.base.AbstractService;
+import cn.yunyichina.log.common.entity.do_.LinkedTraceNode;
 import cn.yunyichina.log.common.exception.TracerException;
 import cn.yunyichina.log.service.tracer.manager.JedisManager;
-import cn.yunyichina.log.service.tracer.trace.linked.LinkedTraceNode;
 import com.alibaba.fastjson.JSON;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.Transaction;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.concurrent.TimeUnit;
 
 import static cn.yunyichina.log.service.tracer.manager.JedisManager.*;
@@ -69,26 +70,39 @@ public class TraceService extends AbstractService {
         return trasactionFailure(resultList);
     }
 
-    public Set<String> getTraceByContextId(String contextId) {
+    public TreeSet<LinkedTraceNode> getTraceByContextId(String contextId) {
         try (
                 Jedis jedis = jedisManager.getJedis();
         ) {
             String traceId = jedis.get(contextId);
             if (null == traceId) {
-                return new HashSet<>();
+                return new TreeSet<>();
             } else {
-                Set<String> contextIdSet = jedis.zrange(traceId, 0, -1);
-                return contextIdSet;
+                return getLinkedTraceNodeSet(traceId, jedis);
             }
         }
     }
 
-    public Set<String> getTraceByTraceId(String traceId) {
+    public TreeSet<LinkedTraceNode> getTraceByTraceId(String traceId) {
         try (
                 Jedis jedis = jedisManager.getJedis();
         ) {
-            Set<String> contextIdSet = jedis.zrange(traceId, 0, -1);
-            return contextIdSet;
+            return getLinkedTraceNodeSet(traceId, jedis);
+        }
+    }
+
+    private TreeSet<LinkedTraceNode> getLinkedTraceNodeSet(String traceId, Jedis jedis) {
+        Set<String> traceNodeStrSet = jedis.zrange(traceId, 0, -1);
+        if (CollectionUtils.isEmpty(traceNodeStrSet)) {
+            return new TreeSet<>();
+        } else {
+            TreeSet<LinkedTraceNode> traceNodeSet = new TreeSet<>();
+            LinkedTraceNode traceNode;
+            for (String traceNodeStr : traceNodeStrSet) {
+                traceNode = JSON.parseObject(traceNodeStr, LinkedTraceNode.class);
+                traceNodeSet.add(traceNode);
+            }
+            return traceNodeSet;
         }
     }
 }

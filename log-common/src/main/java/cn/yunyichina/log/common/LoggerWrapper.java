@@ -13,14 +13,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @Author: Leo
  * @Blog: http://blog.csdn.net/lc0817
  * @CreateTime: 2016/11/9 16:37
- * @Description: *************注意*************
- * 在每一个请求的开始和结束,   *
- * 一定要调用contextBegin和    *
- * contextEnd,否则无法进行     *
- * 请求计数,导致索引构建       *
- * 异常. 最好把contextEnd      *
- * 放在finally块里.            *
- * *************注意*************
+ * @Description: 注意, 在每一个请求的开始和结束, 一定要调用contextBegin和contextEnd, 否则无法正常索引上下文, 导致该段上下文失效.
  */
 public class LoggerWrapper {
     /**
@@ -134,14 +127,15 @@ public class LoggerWrapper {
      * 0: getInvokeClassAndMethod
      * 1: contextBegin或contextEnd或error
      * 2. 调用contextBegin或contextEnd或error的方法
+     * 有了这一段,就不需要在logback.xml中配置打印类名方法名了.
      *
      * @return
      */
     private String getInvokeClassAndMethod() {
         StackTraceElement stackTraceElement = Thread.currentThread().getStackTrace()[STACK_DEPTH];
-        return stackTraceElement.getClassName() + "." +
+        return "[" + stackTraceElement.getClassName() + "." +
                 stackTraceElement.getMethodName() + ":" +
-                stackTraceElement.getLineNumber();
+                stackTraceElement.getLineNumber() + "]";
     }
 
 

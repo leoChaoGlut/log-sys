@@ -8,7 +8,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50619
 File Encoding         : 65001
 
-Date: 2017-03-28 12:30:47
+Date: 2017-04-06 15:34:39
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -19,14 +19,15 @@ SET FOREIGN_KEY_CHECKS=0;
 DROP TABLE IF EXISTS `log_collected_item`;
 CREATE TABLE `log_collected_item` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `collector_id` int(11) NOT NULL,
   `name` varchar(255) NOT NULL COMMENT '采集项名称',
-  `collected_log_dir` varchar(255) NOT NULL COMMENT '被采集的日志的根目录',
+  `collector_id` int(11) NOT NULL,
   `stdout_file_path` varchar(255) DEFAULT 'nohup.out' COMMENT '控制台输出文件名称,如console.out,nohup.out',
+  `collected_log_dir` varchar(255) NOT NULL COMMENT '被采集的日志的根目录',
+  `application_name` varchar(255) DEFAULT NULL COMMENT '被采集的应用名,需唯一.',
   PRIMARY KEY (`id`),
   KEY `log_collected_item_collector_id` (`collector_id`),
   CONSTRAINT `log_collected_item_collector_id` FOREIGN KEY (`collector_id`) REFERENCES `log_collector` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=36 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=38 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Table structure for log_collector
@@ -40,7 +41,7 @@ CREATE TABLE `log_collector` (
   `remark` varchar(255) DEFAULT NULL COMMENT '备注',
   `reachable` tinyint(4) DEFAULT '0' COMMENT '0: false, 1:true 该采集节点是否可以直接通过外网访问',
   `create_time` datetime DEFAULT CURRENT_TIMESTAMP,
-  `application_name` varchar(255) NOT NULL COMMENT 'spring.application.name，如: collector-shensan-test',
+  `application_name` varchar(255) NOT NULL COMMENT '采集器的spring.application.name，如: collector-shensan-test',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=31 DEFAULT CHARSET=utf8;
 

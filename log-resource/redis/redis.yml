@@ -1,0 +1,3 @@
+#redis 需要修改的部分配置
+appendonely yes
+requirepass 123

@@ -22,6 +22,7 @@ import org.springframework.util.CollectionUtils;
 
 import java.io.File;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @Author: Leo
@@ -58,7 +59,6 @@ public class SearchService {
             default:
                 throw new CollectorException("不支持的搜索引擎类型:" + condition.getSearchEngineType());
         }
-
         List<LogResultDTO> logResultList = getLogResultListBy(collectedItemId, contextInfoSet);
         return logResultList;
     }
@@ -67,7 +67,6 @@ public class SearchService {
         if (CollectionUtils.isEmpty(contextInfoSet)) {
             throw new CollectorException("查不到符合条件的上下文");
         } else {
-
             CollectedItemDO collectedItem = cacheService.getCollectedItemBy(collectedItemId);
             if (collectedItem == null) {
                 throw new CollectorException(collectedItemId + " 对应的采集项不存在");
@@ -81,7 +80,6 @@ public class SearchService {
                     contextContent = LogAggregator.aggregate(contextInfo, collectedLogDir);
                     if (StringUtils.isNotBlank(contextContent)) {
                         LogResultDTO logResult = buildLogResult(collectedLogDir, contextContent, contextInfo);
-
                         logResultList.add(logResult);
                     }
                 }
@@ -101,6 +99,7 @@ public class SearchService {
         TreeSet<String> logRegionSet = scanLogRegion(contextInfo, collectedLogDir);
 
         return new LogResultDTO()
+                .setContextId(contextInfo.getContextId())
                 .setContextContent(contextContent)
                 .setLogRegionSet(logRegionSet);
     }
@@ -174,4 +173,20 @@ public class SearchService {
         return contextInfoSet;
     }
 
+    public String searchByContextId(Integer collectedItemId, String contextId) throws Exception {
+        CollectedItemDO collectedItem = cacheService.getCollectedItemBy(collectedItemId);
+        if (collectedItem == null) {
+            throw new CollectorException(collectedItemId + " 对应的采集项不存在");
+        } else {
+            ConcurrentHashMap<String, ContextInfo> contextInfoMap = indexManager.getContextIndexBy(collectedItemId);
+            ContextInfo contextInfo = contextInfoMap.get(contextId);
+            if (contextInfo == null) {
+                throw new CollectorException("查询不到" + contextId + "的上下文");
+            } else {
+                String collectedLogDir = collectedItem.getCollectedLogDir();
+                String contextContent = LogAggregator.aggregate(contextInfo, collectedLogDir);
+                return contextContent;
+            }
+        }
+    }
 }

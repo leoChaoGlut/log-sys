@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Author: Leo
@@ -50,4 +51,15 @@ public class CollectorController extends AbstractController {
         logger.info(JSON.toJSONString(collectorList, true));
         return ResponseBodyDTO.ok(collectorList);
     }
+
+    @PostMapping("get/by/applicationName")
+    ResponseBodyDTO<Map<String, Object>> getByApplicationName(
+            String applicationName
+    ) throws CollectorException {
+        logger.info(applicationName);
+        Map<String, Object> resultMap = collectorService.getByApplicationName(applicationName);
+        logger.info(JSON.toJSONString(resultMap, true));
+        return ResponseBodyDTO.ok(resultMap);
+    }
+
 }

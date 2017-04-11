@@ -1,10 +1,10 @@
 package cn.yunyichina.log.component.index.entity;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.io.Serializable;
-import java.util.Objects;
 
 /**
  * @Author: Leo
@@ -16,28 +16,12 @@ import java.util.Objects;
  */
 @Getter
 @Setter
+@EqualsAndHashCode(of = {"contextId", "begin", "end"})
 public class ContextInfo implements Serializable {
-
     private static final long serialVersionUID = -8753201735866113930L;
 
+    private String contextId;
     private ContextIndex begin;
     private ContextIndex end;
-
-    public ContextInfo() {
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        ContextInfo that = (ContextInfo) o;
-        return Objects.equals(begin, that.begin) &&
-                Objects.equals(end, that.end);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(begin, end);
-    }
 
 }

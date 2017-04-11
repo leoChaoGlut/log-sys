@@ -136,7 +136,7 @@
                                     :props="defaultProps"
                                     :highlight-current=true
                                     class="no-border"
-                                    @node-click="loadLogContent"
+                                    @node-click="extraFunction"
                                     :style="style.logResultList">
                             </el-tree>
                         </el-tab-pane>
@@ -148,6 +148,9 @@
                         </el-tab-pane>
                     </el-tabs>
                 </el-col>
+            </el-row>
+            <el-row :gutter="30" v-show="activedMenu == '0-1'">
+
             </el-row>
             <el-row :gutter="30" v-show="activedMenu == '1-0'">
                 <el-col :span="8" id="realtimeLogPanel">
@@ -275,6 +278,27 @@
             <el-button type="primary" style="width:100%;"
                        @click="readMoreHistoryLog" :diabled="noMoreContentToBeLoad">加 载 更 多</el-button>
         </span>
+    </el-dialog>
+    <!---->
+    <el-dialog title="功能选择" v-model="showExtraFunctionDialog" size="tiny">
+        <el-button type="success" @click="loadLogContent">查看该分钟的日志</el-button>
+        <el-button type="primary" @click="loadDistributedLog">查看相关的跨应用日志</el-button>
+    </el-dialog>
+    <!---->
+    <el-dialog title="服务调用链:" v-model="showDistributedLog" size="full">
+        <el-row>
+            <el-tabs v-model="activeApplicationName">
+                <el-tab-pane
+                        v-for="(context,index) in contextList"
+                        :label="(index+1) + '.' + context.applicationName"
+                        :name="context.applicationName + '-' + index">
+                    {{logContent}}
+                </el-tab-pane>
+            </el-tabs>
+        </el-row>
+        <el-row>
+
+        </el-row>
     </el-dialog>
 </div>
 </body>

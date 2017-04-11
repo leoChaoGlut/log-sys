@@ -39,4 +39,15 @@ public class SearchController extends AbstractController {
         List<LogResultDTO> logResultList = searchService.searchHistory(condition);
         return ResponseBodyDTO.ok(logResultList);
     }
+
+    @PostMapping("by/contextId")
+    ResponseBodyDTO<String> searchByContextId(
+            Integer collectedItemId,
+            String contextId
+    ) throws Exception {
+        logger.info(JSON.toJSONString(contextId, true));
+        String logContent = searchService.searchByContextId(collectedItemId, contextId);
+        return ResponseBodyDTO.ok(logContent);
+    }
+
 }

@@ -70,7 +70,7 @@ public class ContextIndexBuilder extends AbstractBuilder implements IndexBuilder
                 if (contextId.length() >= GlobalConst.UUID_LENGTH) {
                     ContextInfo contextInfo = contextInfoMap.get(contextId);
                     if (null == contextInfo) {
-                        contextInfo = new ContextInfo();
+                        contextInfo = new ContextInfo().setContextId(contextId);
                     }
                     ContextIndex contextIndex = new ContextIndex(logFile, cursor);
                     if (isBeginTag) {

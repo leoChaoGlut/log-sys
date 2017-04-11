@@ -1,6 +1,6 @@
 spring:
   application:
-    name: tracer-localhost
+    name: api-localhost
   cloud:
     config:
       discovery:
@@ -9,4 +9,4 @@ spring:
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://log.yunyichina.cn:10100/eureka/
+      defaultZone: http://localhost:10100/eureka/

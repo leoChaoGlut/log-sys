@@ -17,6 +17,7 @@ import java.util.List;
 @Setter
 public class CollectorDO implements Serializable {
     private static final long serialVersionUID = -8466348104442220979L;
+
     private Integer id;
     private String ip;
     private String port;

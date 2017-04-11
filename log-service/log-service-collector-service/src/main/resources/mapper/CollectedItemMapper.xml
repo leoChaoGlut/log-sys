@@ -4,6 +4,14 @@
 
     <sql id="table">log_collected_item</sql>
 
+    <select id="selectOne" parameterType="CollectedItemDO" resultType="CollectedItemDO">
+        SELECT * FROM
+        <include refid="table"/>
+        <trim prefix="WHERE" suffixOverrides="AND|OR">
+            <if test="applicationName != null">application_name = #{applicationName} AND</if>
+        </trim>
+    </select>
+
     <select id="selectList" parameterType="CollectedItemDO" resultType="CollectedItemDO">
         SELECT * FROM
         <include refid="table"/>

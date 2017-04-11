@@ -20,6 +20,7 @@
         <module>log-component-index</module>
         <module>log-component-search-engine</module>
         <module>log-component-scanner</module>
+        <module>log-component-filter</module>
     </modules>
 
     <dependencies>

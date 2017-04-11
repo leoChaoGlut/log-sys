@@ -9,7 +9,7 @@ var Common = (function () {
 
     var TIME_OUT = 10000;
 
-    var DOMAIN = "http://localhost";
+    var DOMAIN = "http://log.yunyichina.cn";
     var GATEWAY = DOMAIN + ":10300";
 
     var Status = {

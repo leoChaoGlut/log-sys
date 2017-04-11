@@ -17,7 +17,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Author: Leo
@@ -126,4 +128,24 @@ public class CollectorService extends AbstractService {
         return collectorMapper.selectOne(collectorParam);
     }
 
+    public Map<String, Object> getByApplicationName(String applicationName) {
+        CollectedItemDO collectedItemParam = new CollectedItemDO()
+                .setApplicationName(applicationName);
+        CollectedItemDO collectedItemResult = collectedItemMapper.selectOne(collectedItemParam);
+        if (null == collectedItemResult) {
+            throw new CollectorServiceException("ApplicationName:" + applicationName + "所对应的采集项不存在");
+        } else {
+            CollectorDO collectorParam = new CollectorDO()
+                    .setId(collectedItemResult.getCollectorId());
+            CollectorDO collectorResult = collectorMapper.selectOne(collectorParam);
+            if (collectorResult == null) {
+                throw new CollectorServiceException("ApplicationName:" + applicationName + "所对应的采集节点不存在");
+            } else {
+                Map<String, Object> resultMap = new HashMap<>();
+                resultMap.put("collector", collectorResult);
+                resultMap.put("collectedItem", collectedItemResult);
+                return resultMap;
+            }
+        }
+    }
 }

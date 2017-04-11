@@ -53,6 +53,7 @@ public class RealtimeLogService {
         BufferedReader br = null;
         try {
             String stdoutFilePath = getStdoutFilePathBy(collectedItemId);
+            logger.info(stdoutFilePath);
             FileInputStream fis = new FileInputStream(stdoutFilePath);
             br = new BufferedReader(new InputStreamReader(fis));
             br.skip(fis.available());
@@ -63,7 +64,7 @@ public class RealtimeLogService {
                     if (tailLine == null) {
 
                     } else {
-                        logger.info(tailLine);
+                        logger.info(tailLine.length() + "");
                         session.sendMessage(new TextMessage(tailLine));
                     }
                     TimeUnit.MILLISECONDS.sleep(INTERVAL_MS);
@@ -72,7 +73,7 @@ public class RealtimeLogService {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error(e.getMessage(), e);
         } finally {
             if (br != null) {
                 try {

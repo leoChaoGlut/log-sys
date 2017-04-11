@@ -24,12 +24,17 @@
         <jarName>${project.artifactId}</jarName>
         <outputDir>target</outputDir>
         <classpathPrefix>lib/</classpathPrefix>
+        <!---->
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
+        <maven.compiler.compilerVersion>${java.version}</maven.compiler.compilerVersion>
     </properties>
 
     <profiles>
         <profile>
             <id>pkg</id>
             <activation>
+                <jdk>${java.version}</jdk>
                 <activeByDefault>true</activeByDefault>
             </activation>
             <build>

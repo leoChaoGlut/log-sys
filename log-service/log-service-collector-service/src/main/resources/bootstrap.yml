@@ -1,7 +1,6 @@
 spring:
   application:
     name: collector-service-localhost
-#    name: log-service-collector-service
   cloud:
     config:
       discovery:
@@ -10,4 +9,4 @@ spring:
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://localhost:10100/eureka/
+      defaultZone: http://log.yunyichina.cn:10100/eureka/
