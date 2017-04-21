@@ -273,7 +273,7 @@
     <!---->
     <el-dialog :title="logContentTitle" v-model="showLogContentDialog">
         <div id="logContentOfDialog" v-text="logContent"
-             style="word-wrap: break-word;max-height:50vh;overflow-y: auto"></div>
+             style="max-height:50vh;overflow: scroll"></div>
         <span slot="footer" class="dialog-footer">
             <el-button type="primary" style="width:100%;"
                        @click="readMoreHistoryLog" :diabled="noMoreContentToBeLoad">加 载 更 多</el-button>

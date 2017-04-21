@@ -6,3 +6,8 @@ yylog/
 *.log
 node_modules/
 dist/
+.vertx/
+cache/
+.project
+.settings
+.classpath

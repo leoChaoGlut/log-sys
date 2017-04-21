@@ -1,0 +1,16 @@
+spring:
+  application:
+      name: redis-proxy
+  profiles:
+    active: default
+  cloud:
+    config:
+      enabled: true
+      discovery:
+        enabled: true
+        service-id: config-center
+      fail-fast: true
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://127.0.0.1:10100/eureka/

@@ -13,7 +13,7 @@
     <artifactId>log-service-collector-service</artifactId>
 
     <properties>
-        <mainClass>cn.yunyichina.log.service.collectorservice.Application</mainClass>
+        <mainClass>cn.yunyichina.log.service.collectorservice.CollectorServiceApp</mainClass>
     </properties>
 
     <dependencies>
@@ -33,6 +33,19 @@
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>cn.yunyichina.log</groupId>
+            <artifactId>log-service-common</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-collections4</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-feign</artifactId>
         </dependency>
     </dependencies>
 

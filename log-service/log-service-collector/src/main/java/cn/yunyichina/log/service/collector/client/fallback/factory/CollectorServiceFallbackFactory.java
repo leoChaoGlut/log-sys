@@ -3,6 +3,7 @@ package cn.yunyichina.log.service.collector.client.fallback.factory;
 import cn.yunyichina.log.common.entity.do_.CollectorDO;
 import cn.yunyichina.log.common.entity.dto.ResponseBodyDTO;
 import cn.yunyichina.log.service.collector.client.CollectorServiceClient;
+import cn.yunyichina.log.service.common.entity.dto.RedisProxyIndexDTO;
 import feign.hystrix.FallbackFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,6 +36,11 @@ public class CollectorServiceFallbackFactory implements FallbackFactory<Collecto
 
             @Override
             public ResponseBodyDTO<List<CollectorDO>> listAllCollector() {
+                return ResponseBodyDTO.error(errorMsg);
+            }
+
+            @Override
+            public ResponseBodyDTO cacheIndex(RedisProxyIndexDTO redisProxyIndexDTO) {
                 return ResponseBodyDTO.error(errorMsg);
             }
         };

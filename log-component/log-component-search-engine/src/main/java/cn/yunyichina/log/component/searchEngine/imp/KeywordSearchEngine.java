@@ -45,9 +45,11 @@ public class KeywordSearchEngine extends AbstractSearchEngine implements SearchE
             matchedContextInfoSet = new HashSet<>(keywordIndexSet.size());
             for (KeywordIndex keywordIndex : keywordIndexSet) {
                 String contextId = keywordIndex.getContextId();
-                ContextInfo contextInfo = contextInfoMap.get(contextId);
-                if (inDateTimeRange(contextInfo)) {
-                    matchedContextInfoSet.add(contextInfo);
+                if (contextId != null) {
+                    ContextInfo contextInfo = contextInfoMap.get(contextId);
+                    if (inDateTimeRange(contextInfo)) {
+                        matchedContextInfoSet.add(contextInfo);
+                    }
                 }
             }
             return matchedContextInfoSet;

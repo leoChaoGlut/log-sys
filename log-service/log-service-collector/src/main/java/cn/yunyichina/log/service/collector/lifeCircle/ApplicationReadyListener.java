@@ -3,11 +3,12 @@ package cn.yunyichina.log.service.collector.lifecircle;
 
 import cn.yunyichina.log.common.entity.do_.CollectorDO;
 import cn.yunyichina.log.common.entity.dto.ResponseBodyDTO;
-import cn.yunyichina.log.common.exception.CollectorException;
 import cn.yunyichina.log.common.util.ResponseUtil;
 import cn.yunyichina.log.service.collector.client.CollectorServiceClient;
+import cn.yunyichina.log.service.collector.exception.CollectorException;
 import cn.yunyichina.log.service.collector.service.CacheService;
 import cn.yunyichina.log.service.collector.task.ScheduleTask;
+import cn.yunyichina.log.service.collector.task.ScheduleTaskV2;
 import com.alibaba.fastjson.JSON;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,6 +48,8 @@ public class ApplicationReadyListener implements ApplicationListener<Application
 
     @Autowired
     ScheduleTask scheduleTask;
+    @Autowired
+    ScheduleTaskV2 scheduleTaskV2;
 
     @Autowired
     CollectorServiceClient collectorServiceClient;
@@ -88,6 +91,7 @@ public class ApplicationReadyListener implements ApplicationListener<Application
         CollectorDO collector = ResponseUtil.getResult(responseBody);
         cacheService.setCollector(collector);
         scheduleTask.buildCollectedItemList();
+        scheduleTaskV2.buildCollectedItemList();
     }
 
 

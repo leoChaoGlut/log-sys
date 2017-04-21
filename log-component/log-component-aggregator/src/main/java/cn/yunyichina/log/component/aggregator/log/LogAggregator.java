@@ -1,6 +1,6 @@
 package cn.yunyichina.log.component.aggregator.log;
 
-import cn.yunyichina.log.common.exception.AggregatorException;
+import cn.yunyichina.log.component.aggregator.exception.AggregatorException;
 import cn.yunyichina.log.component.index.entity.ContextIndex;
 import cn.yunyichina.log.component.index.entity.ContextInfo;
 import cn.yunyichina.log.component.scanner.imp.LogScanner;

@@ -1,0 +1,7 @@
+eureka:
+  instance:
+    ipAddress: 127.0.0.1 #必须提供ip
+server:
+  port: 10500
+# extra
+fixedRateInMillis: 5000

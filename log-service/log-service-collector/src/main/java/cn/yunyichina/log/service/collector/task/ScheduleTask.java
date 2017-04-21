@@ -25,9 +25,6 @@ import org.apache.commons.lang3.time.FastDateFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -43,7 +40,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @Description:
  */
 @Service
-@RefreshScope
+//@RefreshScope
 public class ScheduleTask {
     final Logger logger = LoggerFactory.getLogger(ScheduleTask.class);
 
@@ -52,7 +49,7 @@ public class ScheduleTask {
     @Autowired
     IndexManager indexManager;
 
-    @Value("${fixedRate}")
+    //    @Value("${fixedRate:6000000}")
     private String fixedRate;
 
     @Autowired
@@ -75,7 +72,7 @@ public class ScheduleTask {
         }
     }
 
-    @Scheduled(fixedRateString = "${fixedRate}")
+    //    @Scheduled(fixedRateString = "${fixedRate}")
     public void execute() {
         logger.info(JSON.toJSONString(collectedItemList, true));
         for (CollectedItemDO collectedItem : collectedItemList) {

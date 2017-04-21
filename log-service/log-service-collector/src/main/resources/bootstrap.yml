@@ -1,12 +1,16 @@
 spring:
   application:
-    name: collector-localhost
+      name: collector
+  profiles:
+    active: default
   cloud:
     config:
+      enabled: true
       discovery:
         enabled: true
-        service-id: log-service-center-config-center
+        service-id: config-center
+      fail-fast: true
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://localhost:10101/eureka/
+      defaultZone: http://127.0.0.1:10100/eureka/

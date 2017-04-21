@@ -33,7 +33,6 @@ public class RefreshController extends AbstractController {
     @Autowired
     ScheduleTask scheduleTask;
 
-
     @Value("${eureka.instance.ipAddress}")
     String ip;
     @Value("${server.port}")

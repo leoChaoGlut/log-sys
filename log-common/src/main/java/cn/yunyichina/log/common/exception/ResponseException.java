@@ -8,7 +8,6 @@ package cn.yunyichina.log.common.exception;
  */
 public class ResponseException extends RuntimeException {
 
-
     public ResponseException(String message) {
         super(message);
     }

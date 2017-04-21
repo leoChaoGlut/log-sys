@@ -1,13 +1,10 @@
 import cn.yunyichina.log.common.LoggerWrapper;
 import cn.yunyichina.log.common.TracerClient;
-import cn.yunyichina.log.common.entity.do_.KvTagDO;
 import org.junit.Test;
 
-import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.UUID;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.LockSupport;
 
 /**
  * @Author: Leo
@@ -18,63 +15,27 @@ import java.util.concurrent.TimeUnit;
 public class CommonTest {
 
     @Test
-    public void commonTest() {
-        KvTagDO kvTagDO = new KvTagDO()
-                .setKey("")
-                .setId(1)
-                .setKeyOffset(1);
-
-    }
-
-    @Test
-    public void test() {
-        long begin = System.nanoTime();
-        String uuid = UUID.randomUUID().toString();
-        System.out.println(uuid);
-        System.out.println(BigDecimal.valueOf(System.nanoTime() - begin, 9));
-    }
-
-    @Test
     public void tracerClientTest() {
-        LoggerWrapper loggerWrapper = LoggerWrapper.getLogger(CommonTest.class);
-        TracerClient tracerClient = new TracerClient(loggerWrapper);
-        String url = "http://localhost:10402/tracer-localhost/";
-        tracerClient.aroundRPC(url, "traceId", new Date().getTime() + "", "serviceId", true);
-    }
-
-    @Test
-    public void test0() throws InterruptedException {
-        CountDownLatch latch = new CountDownLatch(2);
-        Worker worker0 = new Worker(latch, 0);
-        Worker worker1 = new Worker(latch, 1);
-        new Thread(worker0).start();
-        new Thread(worker1).start();
-        latch.await();
-        System.err.println("all jobs are done");
-    }
-
-
-    public static class Worker implements Runnable {
-
-        private CountDownLatch countDownLatch;
-        private int id;
-
-        public Worker(CountDownLatch countDownLatch, int id) {
-            this.countDownLatch = countDownLatch;
-            this.id = id;
-        }
-
-        @Override
-        public void run() {
-            try {
-                System.err.println("begin");
-                TimeUnit.SECONDS.sleep(2);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } finally {
-                System.err.println("end");
-                countDownLatch.countDown();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss SSS");
+        TracerClient tracerClient = new TracerClient(LoggerWrapper.getLogger(CommonTest.class));
+        String url = "http://127.0.0.1:10402/trace/linked/append/linkednode/batch";
+        for (int i = 0; i < Integer.MAX_VALUE; i++) {
+            String traceId = "t-" + i;
+            String dateTimeStr = dateFormat.format(new Date().getTime());
+            String applicationName = "dubbo://127.0.0.1:20884/cn.yunyichina.provider.iface.service.IHisiface?";
+            tracerClient.aroundRPC(url, traceId, dateTimeStr, applicationName, true);
+            if (i % 1000 == 0) {
+                LockSupport.parkNanos(2_000_000_000L);
             }
         }
     }
+
+    @Test
+    public void test0() {
+        Date date = new Date(1492425343808L);
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss SSS");
+        String format = dateFormat.format(date);
+        System.out.println(format);
+    }
+
 }

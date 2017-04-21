@@ -5,8 +5,7 @@ import cn.yunyichina.log.common.entity.do_.CollectedItemDO;
 import cn.yunyichina.log.common.entity.do_.CollectorDO;
 import cn.yunyichina.log.common.entity.do_.KeywordTagDO;
 import cn.yunyichina.log.common.entity.do_.KvTagDO;
-import cn.yunyichina.log.common.exception.CollectorException;
-import cn.yunyichina.log.common.exception.CollectorServiceException;
+import cn.yunyichina.log.service.collectorservice.exception.CollectorServiceException;
 import cn.yunyichina.log.service.collectorservice.mapper.CollectedItemMapper;
 import cn.yunyichina.log.service.collectorservice.mapper.CollectorMapper;
 import cn.yunyichina.log.service.collectorservice.mapper.KeywordTagMapper;
@@ -55,10 +54,10 @@ public class CollectorService extends AbstractService {
         }
     }
 
-    public List<CollectorDO> listAllCollector() throws CollectorException {
+    public List<CollectorDO> listAllCollector() {
         List<String> applicationNameList = collectorMapper.selectAllApplicationName();
         if (CollectionUtils.isEmpty(applicationNameList)) {
-            throw new CollectorException("log_collector 表为空");
+            throw new CollectorServiceException("log_collector 表为空");
         } else {
             List<CollectorDO> collectorList = new ArrayList<>(applicationNameList.size());
             for (String applicationName : applicationNameList) {

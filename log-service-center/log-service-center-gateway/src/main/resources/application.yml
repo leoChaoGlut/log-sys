@@ -6,15 +6,14 @@ spring:
 eureka:
   instance:
     prefer-ip-address: true
-#    ip-address: 127.0.0.1
-    ip-address: 192.168.1.150
+    ip-address: 127.0.0.1
     instance-id: ${eureka.instance.ip-address}:${server.port}
+    lease-renewal-interval-in-seconds: 2
+    lease-expiration-duration-in-seconds: 4
   client:
-    healthcheck:
-      enabled: true
     serviceUrl:
-      defaultZone: http://192.168.1.150:10100/eureka/
-logging:
-  config: classpath:logback.xml
+      defaultZone: http://127.0.0.1:10100/eureka/
 server:
   port: 10300
+logging:
+  config: classpath:logback.xml

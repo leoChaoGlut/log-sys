@@ -6,6 +6,7 @@ package cn.yunyichina.log.component.filter;
  * @CreateTime: 2017/4/5 10:31
  * @Description:
  */
-public interface Filter {
+public interface Filter<T> {
 //    TODO 根据给定条件,将inputStr中符合条件的str过滤
+	T filter() throws Exception;
 }

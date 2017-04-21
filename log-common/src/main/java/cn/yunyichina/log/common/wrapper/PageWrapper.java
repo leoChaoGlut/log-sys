@@ -9,7 +9,7 @@ import java.util.List;
  * @Author: Leo
  * @Blog: http://blog.csdn.net/lc0817
  * @CreateTime: 2017/3/27 11:22
- * @Description:
+ * @Description: 用于分页查询
  */
 @Getter
 @Setter

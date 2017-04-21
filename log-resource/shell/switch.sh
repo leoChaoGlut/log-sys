@@ -2,7 +2,7 @@
 
 #================== Variable Begin ==================
 
-jar=$(pwd)/$(ls | grep ".jar")
+jar=$(pwd)/$(ls | grep ".jar$")
 
 #================== Variable End ==================
 

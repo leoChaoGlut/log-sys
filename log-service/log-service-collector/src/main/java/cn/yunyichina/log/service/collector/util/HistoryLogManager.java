@@ -2,8 +2,8 @@ package cn.yunyichina.log.service.collector.util;
 
 import cn.yunyichina.log.common.entity.do_.CollectedItemDO;
 import cn.yunyichina.log.common.entity.dto.SearchConditionDTO;
-import cn.yunyichina.log.common.exception.CollectorException;
 import cn.yunyichina.log.component.scanner.imp.LogScanner;
+import cn.yunyichina.log.service.collector.exception.CollectorException;
 import cn.yunyichina.log.service.collector.listener.HistoryLogListener;
 import cn.yunyichina.log.service.collector.service.CacheService;
 import com.alibaba.fastjson.JSON;

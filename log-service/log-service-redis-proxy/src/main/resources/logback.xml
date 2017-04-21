@@ -1,0 +1,35 @@
+<!--@Author: Leo-->
+<!--@CreateTime: 16-9-1 下午2:36-->
+<!--@Description: logback打印配置-->
+<!--@Blog: http://blog.csdn.net/lc0817-->
+<configuration>
+
+    <property name="log.path" value="./log"></property>
+    <property name="log.context" value="log-service-redis-proxy"></property>
+
+    <contextName>${log.context}</contextName>
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>[%d{yyyy-MM-dd HH:mm:ss}][%-5level][%thread][%class.%method:%line]:%m%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="ALL" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${log.path}/%d{yyyy/MM/dd/HH, aux}/%d{yyyyMMddHH}.log</fileNamePattern>
+        </rollingPolicy>
+        <encoder>
+            <pattern>[%d{yyyy-MM-dd HH:mm:ss}][%-5level][%thread][%class.%method:%line]:%m%n</pattern>
+        </encoder>
+    </appender>
+
+    <logger name="cn.yunyichina.log" level="INFO">
+        <appender-ref ref="ALL"/>
+    </logger>
+
+    <root level="INFO">
+        <appender-ref ref="STDOUT"/>
+    </root>
+
+</configuration>

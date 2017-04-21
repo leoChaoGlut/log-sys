@@ -14,7 +14,7 @@
     <artifactId>log-service-center-gateway</artifactId>
 
     <properties>
-        <mainClass>cn.yunyichina.log.serviceCenter.gateway.Application</mainClass>
+        <mainClass>cn.yunyichina.log.serviceCenter.gateway.GatewayApp</mainClass>
     </properties>
 
     <dependencies>

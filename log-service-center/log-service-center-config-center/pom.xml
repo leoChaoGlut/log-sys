@@ -13,7 +13,7 @@
     <artifactId>log-service-center-config-center</artifactId>
 
     <properties>
-        <mainClass>cn.yunyichina.log.servicecenter.configcenter.Application</mainClass>
+        <mainClass>cn.yunyichina.log.servicecenter.configcenter.ConfigCenterApp</mainClass>
     </properties>
 
     <dependencies>

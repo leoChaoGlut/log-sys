@@ -64,9 +64,11 @@ public class KvSearchEngine extends AbstractSearchEngine implements SearchEngine
             matchedContextInfoSet = new HashSet<>(kvIndexSet.size());
             for (KvIndex kvIndex : kvIndexSet) {
                 String contextId = kvIndex.getContextId();
-                ContextInfo contextInfo = contextInfoMap.get(contextId);
-                if (inDateTimeRange(contextInfo)) {
-                    matchedContextInfoSet.add(contextInfo);
+                if (contextId != null) {
+                    ContextInfo contextInfo = contextInfoMap.get(contextId);
+                    if (inDateTimeRange(contextInfo)) {
+                        matchedContextInfoSet.add(contextInfo);
+                    }
                 }
             }
             return matchedContextInfoSet;

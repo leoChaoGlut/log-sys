@@ -2,12 +2,14 @@ eureka:
   client:
     registerWithEureka: false
     fetchRegistry: false
+    serviceUrl:
+      defaultZone: http://${eureka.instance.ip-address}:${server.port}/eureka/
   instance:
     prefer-ip-address: true
-    ip-address: 192.168.1.150
+    ip-address: 127.0.0.1
   server:
     enable-self-preservation: false
-    eviction-interval-timer-in-ms: 30000
+    eviction-interval-timer-in-ms: 2000
 spring:
   profiles:
     active: default

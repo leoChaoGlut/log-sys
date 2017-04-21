@@ -45,7 +45,7 @@ public class SearchController extends AbstractController {
             Integer collectedItemId,
             String contextId
     ) throws Exception {
-        logger.info(JSON.toJSONString(contextId, true));
+        logger.info(collectedItemId + " - " + contextId);
         String logContent = searchService.searchByContextId(collectedItemId, contextId);
         return ResponseBodyDTO.ok(logContent);
     }

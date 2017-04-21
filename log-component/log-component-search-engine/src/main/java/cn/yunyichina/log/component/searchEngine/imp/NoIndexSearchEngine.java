@@ -58,9 +58,11 @@ public class NoIndexSearchEngine extends AbstractSearchEngine implements SearchE
         } else {
             matchedContextInfoSet = new HashSet<>(contextIdList.size());
             for (String contextId : contextIdList) {
-                ContextInfo contextInfo = contextInfoMap.get(contextId);
-                if (contextInfo != null) {
-                    matchedContextInfoSet.add(contextInfo);
+                if (contextId != null) {
+                    ContextInfo contextInfo = contextInfoMap.get(contextId);
+                    if (contextInfo != null) {
+                        matchedContextInfoSet.add(contextInfo);
+                    }
                 }
             }
             return matchedContextInfoSet;

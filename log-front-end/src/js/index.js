@@ -263,8 +263,7 @@ var Home = (function () {
             }
             this.style.logContent = {
                 "height": panelHeight,
-                "overflow-y": "auto",
-                "word-wrap": "break-word",
+                "overflow": "scroll",
             }
             $("#app").fadeIn(ANIMATION_DURATION);
         },
@@ -292,9 +291,9 @@ var Home = (function () {
                     menu("实时日志", "el-icon-setting"),
                     menu("历史日志", "el-icon-message"),
                 ]),
-                menu("管理", "el-icon-menu", [
-                    menu("采集节点", "el-icon-date"),
-                ]),
+                // menu("管理", "el-icon-menu", [
+                //     menu("采集节点", "el-icon-date"),
+                // ]),
             ],
             user: {
                 username: "",
@@ -526,9 +525,10 @@ var Home = (function () {
             },
             loadDistributedLog: function () {
                 loading = vm.$loading();
-                var url = Common.GATEWAY + "/tracer/trace/linked/get/by/contextId";
+                var url = Common.GATEWAY + "/tracer-read/trace/linked/read/by/contextId/collectorId";
                 Http.postForm(url, {
-                    contextId: vm.resultItem.contextId
+                    contextId: vm.resultItem.contextId,
+                    collectorId: vm.collectedItem.collectorId
                 }, function (result) {
                     if (result && result.length > 0) {
                         vm.activeApplicationName = result[0].applicationName + "-" + 0;

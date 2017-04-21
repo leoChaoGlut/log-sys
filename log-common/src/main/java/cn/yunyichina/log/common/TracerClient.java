@@ -1,18 +1,26 @@
 package cn.yunyichina.log.common;
 
-import org.apache.http.NameValuePair;
+import cn.yunyichina.log.common.entity.do_.LinkedTraceNode;
+import com.alibaba.fastjson.JSON;
+import lombok.Setter;
 import org.apache.http.client.config.RequestConfig;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
-import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.message.BasicHeader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.locks.LockSupport;
 
 /**
  * @Author: Leo
@@ -21,18 +29,104 @@ import java.util.List;
  * @Description: 用于向tracer添加traceNode, 用于适配dubbo类型的应用
  */
 public class TracerClient {
+    private static final Logger logger = LoggerFactory.getLogger(TracerClient.class);
+    private static final int TIMEOUT_IN_MILLIS = 2000;
+    private static final int BATCH_SIZE = 100;
 
-    public static final int TIMEOUT_IN_MILLIS = 500;
-    public static final int SOCKET_TIMEOUT_MS = 10_000;
-    public static final int CONNECT_TIMEOUT_MS = 3_000;
-
-    private final RequestConfig requestConfig = RequestConfig.custom()
+    private static ConcurrentLinkedQueue<LinkedTraceNode.DTO> traceNodeQueue = new ConcurrentLinkedQueue<>();
+    private static ExecutorService threadPool;
+    private static final RequestConfig REQUEST_CONFIG = RequestConfig.custom()
             .setConnectionRequestTimeout(TIMEOUT_IN_MILLIS)
             .setConnectTimeout(TIMEOUT_IN_MILLIS)
             .setSocketTimeout(TIMEOUT_IN_MILLIS)
             .build();
 
+    private static final BasicHeader CONTENT_TYPE_HEADER = new BasicHeader("Content-type", "application/json;charset=UTF-8");
+
     private LoggerWrapper loggerWrapper;
+    private AtomicBoolean hasInit = new AtomicBoolean(false);
+    private AtomicBoolean hasSetUrl = new AtomicBoolean(false);
+    /**
+     * format:"http://$gatewayIp:$port/$tracerApplicationName"   eg: "http://127.0.0.1:10300/log-service-tracer"
+     */
+    @Setter
+    private static String url;
+
+    static {
+        int corePoolSize = Runtime.getRuntime().availableProcessors();
+        int maximumPoolSize = corePoolSize * 100;
+        threadPool = new ThreadPoolExecutor(
+                corePoolSize,
+                maximumPoolSize,
+                0L,
+                TimeUnit.MILLISECONDS,
+                new LinkedBlockingQueue<Runnable>()
+        );
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                long ONE_MILLIS = 100_000_000L;
+                while (true) {
+                    if (url == null) {//说明还没有调用aroundRPC.
+                        LockSupport.parkNanos(ONE_MILLIS);
+                    } else {
+                        consume();
+                    }
+                }
+            }
+
+            private void consume() {
+                if (!traceNodeQueue.isEmpty() && traceNodeQueue.size() >= BATCH_SIZE) {
+                    List<LinkedTraceNode> linkedTraceNodeList = buildTraceNodeList();
+                    sendRequest(linkedTraceNodeList);
+                    consume();
+                }
+            }
+
+            private List<LinkedTraceNode> buildTraceNodeList() {
+                List<LinkedTraceNode> linkedTraceNodeList = new ArrayList<>(BATCH_SIZE);
+                for (int i = 0; i < BATCH_SIZE; i++) {
+                    LinkedTraceNode.DTO dto = traceNodeQueue.poll();
+                    if (dto == null) {
+                        break;
+                    }
+                    try {
+                        linkedTraceNodeList.add(LinkedTraceNode.parseBy(dto));
+                    } catch (ParseException e) {
+                        logger.error(e.getMessage());
+                    }
+                }
+                return linkedTraceNodeList;
+            }
+
+            private void sendRequest(final List<LinkedTraceNode> linkedTraceNodeList) {
+                threadPool.execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        CloseableHttpResponse response = null;
+                        try {
+                            CloseableHttpClient httpClient = HttpClients.createDefault();
+                            HttpPost post = new HttpPost(url);
+                            post.setConfig(REQUEST_CONFIG);
+                            post.setHeader(CONTENT_TYPE_HEADER);
+                            post.setEntity(new StringEntity(JSON.toJSONString(linkedTraceNodeList), StandardCharsets.UTF_8));
+                            response = httpClient.execute(post);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        } finally {
+                            if (response != null) {
+                                try {
+                                    response.close();
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+        }).start();
+    }
 
     public TracerClient(LoggerWrapper loggerWrapper) {
         this.loggerWrapper = loggerWrapper;
@@ -48,65 +142,29 @@ public class TracerClient {
      * @param contextBegin    true:服务被调用(代表上下文开始) false:服务主动调用(代表上下文结束)
      */
     public void aroundRPC(String url, String traceId, String dateTimeStr, String applicationName, boolean contextBegin) {
-        String msg = url + " - " + traceId + " - " + dateTimeStr + " - " + applicationName;
-        int beginIndex = applicationName.indexOf(":") + 3;
-        int endIndex = applicationName.indexOf("?");
-        applicationName = applicationName.substring(beginIndex, endIndex);
-        String contextId;
-        if (contextBegin) {
-            contextId = loggerWrapper.contextBegin(msg);
-        } else {
-            contextId = loggerWrapper.contextEnd(msg);
-        }
-        List<NameValuePair> traceNodeParamList = buildTraceParamList(contextId, traceId, dateTimeStr, applicationName);
-        loggerWrapper.info(traceNodeParamList.toString());
         try {
-            sendNewTraceNodeRequest(url, traceNodeParamList);
-        } catch (IOException e) {
-            loggerWrapper.error(e.getMessage());
-        }
-    }
-
-    private List<NameValuePair> buildTraceParamList(String contextId, String traceId, String timestamp, String applicationName) {
-        List<NameValuePair> traceNodeParamList = new ArrayList<>();
-        traceNodeParamList.add(new BasicNameValuePair("contextId", contextId));
-        traceNodeParamList.add(new BasicNameValuePair("traceId", traceId));
-        traceNodeParamList.add(new BasicNameValuePair("timestamp", timestamp));
-        traceNodeParamList.add(new BasicNameValuePair("applicationName", applicationName));
-        return traceNodeParamList;
-    }
-
-    /**
-     * @param url                format:"http://$gatewayIp:$port/$tracerApplicationName"   eg: "http://127.0.0.1:10300/log-service-tracer"
-     * @param traceNodeParamList @link cn.yunyichina.log.service.tracer.trace.TraceNode} 必备参数:[traceId,timestamp,contextId,serviceId]
-     * @param handleResponseBody 是否需要处理response body
-     * @param <T>
-     * @return
-     * @throws IOException
-     */
-    private <T> T sendNewTraceNodeRequest(String url, List<NameValuePair> traceNodeParamList, boolean handleResponseBody) throws IOException {
-        CloseableHttpResponse response = null;
-        try {
-            CloseableHttpClient httpClient = HttpClients.createDefault();
-            HttpPost post = new HttpPost(url);
-            post.setConfig(requestConfig);
-            post.setEntity(new UrlEncodedFormEntity(traceNodeParamList, StandardCharsets.UTF_8));
-            response = httpClient.execute(post);
-            if (handleResponseBody) {
-//            TODO 暂时默认不处理response
-                return null;
+            if (!hasSetUrl.get()) {
+                this.url = url;
+                hasSetUrl.set(true);
+            }
+            String msg = url + " - " + traceId + " - " + dateTimeStr + " - " + applicationName;
+            int beginIndex = applicationName.indexOf(":") + 3;
+            int endIndex = applicationName.indexOf("?");
+            applicationName = applicationName.substring(beginIndex, endIndex);
+            if (contextBegin) {
+                String contextId = loggerWrapper.contextBegin(msg);
+                LinkedTraceNode.DTO dto = new LinkedTraceNode.DTO()
+                        .setTraceId(traceId)
+                        .setContextId(contextId)
+                        .setTimestamp(dateTimeStr)
+                        .setApplicationName(applicationName);
+                traceNodeQueue.add(dto);
             } else {
-                return null;
+                loggerWrapper.contextEnd(msg);
             }
-        } finally {
-            if (response != null) {
-                response.close();
-            }
+        } catch (Exception e) {
+            loggerWrapper.error(e.getMessage(), e);
         }
-    }
-
-    private <T> T sendNewTraceNodeRequest(String url, List<NameValuePair> traceNodeParamList) throws IOException {
-        return sendNewTraceNodeRequest(url, traceNodeParamList, false);
     }
 
 }

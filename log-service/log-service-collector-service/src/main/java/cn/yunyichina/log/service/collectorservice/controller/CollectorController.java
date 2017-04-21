@@ -3,7 +3,6 @@ package cn.yunyichina.log.service.collectorservice.controller;
 import cn.yunyichina.log.common.base.AbstractController;
 import cn.yunyichina.log.common.entity.do_.CollectorDO;
 import cn.yunyichina.log.common.entity.dto.ResponseBodyDTO;
-import cn.yunyichina.log.common.exception.CollectorException;
 import cn.yunyichina.log.service.collectorservice.service.CollectorService;
 import com.alibaba.fastjson.JSON;
 import org.slf4j.Logger;
@@ -45,7 +44,7 @@ public class CollectorController extends AbstractController {
     }
 
     @GetMapping("all")
-    ResponseBodyDTO<List<CollectorDO>> listAllCollector() throws CollectorException {
+    ResponseBodyDTO<List<CollectorDO>> listAllCollector() {
         logger.info("listAllCollector");
         List<CollectorDO> collectorList = collectorService.listAllCollector();
         logger.info(JSON.toJSONString(collectorList, true));
@@ -55,7 +54,7 @@ public class CollectorController extends AbstractController {
     @PostMapping("get/by/applicationName")
     ResponseBodyDTO<Map<String, Object>> getByApplicationName(
             String applicationName
-    ) throws CollectorException {
+    ) {
         logger.info(applicationName);
         Map<String, Object> resultMap = collectorService.getByApplicationName(applicationName);
         logger.info(JSON.toJSONString(resultMap, true));

@@ -8,7 +8,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50619
 File Encoding         : 65001
 
-Date: 2017-04-06 15:34:39
+Date: 2017-04-20 11:33:00
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -27,7 +27,7 @@ CREATE TABLE `log_collected_item` (
   PRIMARY KEY (`id`),
   KEY `log_collected_item_collector_id` (`collector_id`),
   CONSTRAINT `log_collected_item_collector_id` FOREIGN KEY (`collector_id`) REFERENCES `log_collector` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=38 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=121 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Table structure for log_collector
@@ -43,7 +43,7 @@ CREATE TABLE `log_collector` (
   `create_time` datetime DEFAULT CURRENT_TIMESTAMP,
   `application_name` varchar(255) NOT NULL COMMENT '采集器的spring.application.name，如: collector-shensan-test',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=31 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=33 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Table structure for log_keyword_tag
@@ -98,6 +98,35 @@ CREATE TABLE `log_mid_collected_item_kv` (
   CONSTRAINT `log_mid_collected_item_kv_kv_tag_id` FOREIGN KEY (`kv_tag_id`) REFERENCES `log_kv_tag` (`id`),
   CONSTRAINT `log_mid_collected_item_kv_collected_item_id` FOREIGN KEY (`collected_item_id`) REFERENCES `log_collected_item` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=62 DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Table structure for log_mid_collector_redis
+-- ----------------------------
+DROP TABLE IF EXISTS `log_mid_collector_redis`;
+CREATE TABLE `log_mid_collector_redis` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `collector_id` int(11) DEFAULT NULL,
+  `redis_record_id` int(11) DEFAULT NULL,
+  `create_time` datetime DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `lmcr_lrr` (`redis_record_id`),
+  KEY `lmcr_c` (`collector_id`),
+  CONSTRAINT `lmcr_c` FOREIGN KEY (`collector_id`) REFERENCES `log_collector` (`id`),
+  CONSTRAINT `lmcr_lrr` FOREIGN KEY (`redis_record_id`) REFERENCES `log_redis_record` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Table structure for log_redis_record
+-- ----------------------------
+DROP TABLE IF EXISTS `log_redis_record`;
+CREATE TABLE `log_redis_record` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `ip` varchar(255) DEFAULT NULL,
+  `port` int(11) DEFAULT NULL,
+  `password` varchar(255) DEFAULT NULL,
+  `create_time` datetime DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Table structure for log_store_record

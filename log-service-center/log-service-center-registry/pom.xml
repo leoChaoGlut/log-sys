@@ -13,7 +13,7 @@
     <artifactId>log-service-center-registry</artifactId>
 
     <properties>
-        <mainClass>cn.yunyichina.log.servicecenter.registry.Application</mainClass>
+        <mainClass>cn.yunyichina.log.servicecenter.registry.RegistryApp</mainClass>
     </properties>
 
     <dependencies>

@@ -19,12 +19,15 @@
         <module>log-service-api</module>
         <module>log-service-collector-service</module>
         <module>log-service-tracer</module>
+        <module>log-service-redis-proxy</module>
+        <module>log-service-common</module>
+        <module>log-service-searcher</module>
     </modules>
 
     <dependencies>
         <dependency>
             <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-config</artifactId>
+            <artifactId>spring-cloud-config-client</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.cloud</groupId>
@@ -32,11 +35,11 @@
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-actuator</artifactId>
+            <artifactId>spring-boot-devtools</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-devtools</artifactId>
+            <artifactId>spring-boot-actuator</artifactId>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
