@@ -16,19 +16,12 @@
 
     <modules>
         <module>log-service-collector</module>
-        <module>log-service-api</module>
         <module>log-service-collector-service</module>
         <module>log-service-tracer</module>
-        <module>log-service-redis-proxy</module>
         <module>log-service-common</module>
-        <module>log-service-searcher</module>
     </modules>
 
     <dependencies>
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-config-client</artifactId>
-        </dependency>
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-eureka</artifactId>

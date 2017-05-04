@@ -14,6 +14,7 @@ import java.util.TreeSet;
  */
 @Getter
 @Setter
+@Deprecated
 public class LogResultDTO implements Serializable {
     private static final long serialVersionUID = 4673943686711709115L;
 

@@ -8,6 +8,7 @@ import cn.yunyichina.log.component.searchengine.SearchEngine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -38,21 +39,27 @@ public class KeywordSearchEngine extends AbstractSearchEngine implements SearchE
 
     @Override
     public Set<ContextInfo> search() throws Exception {
-        Set<KeywordIndex> keywordIndexSet = keywordIndexMap.get(searchCondition.getKeyword());
-        if (null == keywordIndexSet || keywordIndexSet.isEmpty()) {
-            return new HashSet<>();
-        } else {
-            matchedContextInfoSet = new HashSet<>(keywordIndexSet.size());
-            for (KeywordIndex keywordIndex : keywordIndexSet) {
-                String contextId = keywordIndex.getContextId();
-                if (contextId != null) {
-                    ContextInfo contextInfo = contextInfoMap.get(contextId);
-                    if (inDateTimeRange(contextInfo)) {
-                        matchedContextInfoSet.add(contextInfo);
+        logger.info("keyword 搜索开始");
+        long begin = System.nanoTime();
+        try {
+            Set<KeywordIndex> keywordIndexSet = keywordIndexMap.get(searchCondition.getKeyword());
+            if (null == keywordIndexSet || keywordIndexSet.isEmpty()) {
+                return new HashSet<>();
+            } else {
+                matchedContextInfoSet = new HashSet<>(keywordIndexSet.size());
+                for (KeywordIndex keywordIndex : keywordIndexSet) {
+                    String contextId = keywordIndex.getContextId();
+                    if (contextId != null) {
+                        ContextInfo contextInfo = contextInfoMap.get(contextId);
+                        if (inDateTimeRange(contextInfo)) {
+                            matchedContextInfoSet.add(contextInfo);
+                        }
                     }
                 }
+                return matchedContextInfoSet;
             }
-            return matchedContextInfoSet;
+        } finally {
+            logger.info("keyword 搜索结束,耗时:" + BigDecimal.valueOf(System.nanoTime() - begin, 9));
         }
     }
 

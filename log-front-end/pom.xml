@@ -11,6 +11,6 @@
 
     <groupId>cn.yunyichina.log</groupId>
     <artifactId>log-front-end</artifactId>
-
+    <packaging>pom</packaging>
 
 </project>

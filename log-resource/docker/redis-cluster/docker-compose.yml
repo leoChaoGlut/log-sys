@@ -1,0 +1,56 @@
+version: '3'
+services:
+  redis0:
+    image: hub.c.163.com/library/redis
+    ports:
+      - "7000:7000"
+    volumes:
+      - "./7000:/redis"
+    entrypoint:
+      - redis-server
+      - /redis/redis.conf
+  redis1:
+    image: hub.c.163.com/library/redis
+    ports:
+      - "7001:7000"
+    volumes:
+      - "./7001:/redis"
+    entrypoint:
+      - redis-server
+      - /redis/redis.conf
+  redis2:
+    image: hub.c.163.com/library/redis
+    ports:
+      - "7002:7000"
+    volumes:
+      - "./7002:/redis"
+    entrypoint:
+      - redis-server
+      - /redis/redis.conf
+  redis3:
+    image: hub.c.163.com/library/redis
+    ports:
+      - "7003:7000"
+    volumes:
+      - "./7003:/redis"
+    entrypoint:
+      - redis-server
+      - /redis/redis.conf
+  redis4:
+    image: hub.c.163.com/library/redis
+    ports:
+      - "7004:7000"
+    volumes:
+      - "./7004:/redis"
+    entrypoint:
+      - redis-server
+      - /redis/redis.conf
+  redis5:
+    image: hub.c.163.com/library/redis
+    ports:
+      - "7005:7000"
+    volumes:
+      - "./7005:/redis"
+    entrypoint:
+      - redis-server
+      - /redis/redis.conf

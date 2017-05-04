@@ -7,8 +7,11 @@ import cn.yunyichina.log.component.searchengine.AbstractSearchEngine;
 import cn.yunyichina.log.component.searchengine.SearchEngine;
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -19,6 +22,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @Description:
  */
 public class NoIndexSearchEngine extends AbstractSearchEngine implements SearchEngine<Set<ContextInfo>> {
+    final Logger logger = LoggerFactory.getLogger(NoIndexSearchEngine.class);
 
     private String keyword;
     private Collection<File> logs;
@@ -32,40 +36,46 @@ public class NoIndexSearchEngine extends AbstractSearchEngine implements SearchE
 
     @Override
     public Set<ContextInfo> search() throws Exception {
-        int keywordLength = keyword.length();
-        int rowEndTagLength = Tag.ROW_END.length();
-        List<String> contextIdList = new ArrayList<>(1024);
-        for (File log : logs) {
-            if (log.exists()) {
-                String logContent = Files.asCharSource(log, Charsets.UTF_8).read();
-                int cursor = 0;
-                while (0 <= (cursor = logContent.indexOf(keyword, cursor))) {
-                    int rowEndTagIndex = logContent.indexOf(Tag.ROW_END, cursor + keywordLength);
-                    int contextIdBeginTagIndex = rowEndTagIndex + rowEndTagLength;
-                    int contextIdEndTagIndex = logContent.indexOf(Tag.CONTEXT_ID_END, contextIdBeginTagIndex);
-                    if (0 <= contextIdBeginTagIndex && contextIdBeginTagIndex < contextIdEndTagIndex) {
-                        String contextId = logContent.substring(contextIdBeginTagIndex, contextIdEndTagIndex);
-                        if (contextId.length() >= GlobalConst.UUID_LENGTH) {
-                            contextIdList.add(contextId);
+        logger.info("No Index 搜索开始");
+        long begin = System.nanoTime();
+        try {
+            int keywordLength = keyword.length();
+            int rowEndTagLength = Tag.ROW_END.length();
+            List<String> contextIdList = new ArrayList<>(1024);
+            for (File log : logs) {
+                if (log.exists()) {
+                    String logContent = Files.asCharSource(log, Charsets.UTF_8).read();
+                    int cursor = 0;
+                    while (0 <= (cursor = logContent.indexOf(keyword, cursor))) {
+                        int rowEndTagIndex = logContent.indexOf(Tag.ROW_END, cursor + keywordLength);
+                        int contextIdBeginTagIndex = rowEndTagIndex + rowEndTagLength;
+                        int contextIdEndTagIndex = logContent.indexOf(Tag.CONTEXT_ID_END, contextIdBeginTagIndex);
+                        if (0 <= contextIdBeginTagIndex && contextIdBeginTagIndex < contextIdEndTagIndex) {
+                            String contextId = logContent.substring(contextIdBeginTagIndex, contextIdEndTagIndex);
+                            if (contextId.length() >= GlobalConst.UUID_LENGTH) {
+                                contextIdList.add(contextId);
+                            }
+                        }
+                        cursor = contextIdEndTagIndex;
+                    }
+                }
+            }
+            if (contextIdList.isEmpty()) {
+                return new HashSet<>();
+            } else {
+                matchedContextInfoSet = new HashSet<>(contextIdList.size());
+                for (String contextId : contextIdList) {
+                    if (contextId != null) {
+                        ContextInfo contextInfo = contextInfoMap.get(contextId);
+                        if (contextInfo != null) {
+                            matchedContextInfoSet.add(contextInfo);
                         }
                     }
-                    cursor = contextIdEndTagIndex;
                 }
+                return matchedContextInfoSet;
             }
-        }
-        if (contextIdList.isEmpty()) {
-            return new HashSet<>();
-        } else {
-            matchedContextInfoSet = new HashSet<>(contextIdList.size());
-            for (String contextId : contextIdList) {
-                if (contextId != null) {
-                    ContextInfo contextInfo = contextInfoMap.get(contextId);
-                    if (contextInfo != null) {
-                        matchedContextInfoSet.add(contextInfo);
-                    }
-                }
-            }
-            return matchedContextInfoSet;
+        } finally {
+            logger.info("No Index 搜索结束,耗时:" + BigDecimal.valueOf(System.nanoTime() - begin, 9));
         }
     }
 

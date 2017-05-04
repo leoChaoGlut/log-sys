@@ -14,3 +14,7 @@ eureka:
   client:
     serviceUrl:
       defaultZone: http://127.0.0.1:10100/eureka/
+  instance:
+    ipAddress: 127.0.0.1 #必须提供ip
+server:
+  port: 10400

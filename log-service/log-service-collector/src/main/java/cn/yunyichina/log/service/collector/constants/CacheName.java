@@ -12,10 +12,16 @@ public interface CacheName {
 
     String COLLECTED_ITEM_BASE_INFO = "application.cache";
 
-    String CONTEXT_INDEX = "context.cache";
+    String CONTEXT_INDEX = "context";
 
-    String KV_INDEX = "keyValueIndex.cache";
+    String KV_INDEX = "keyValueIndex";
 
-    String KEYWORD_INDEX = "keywordIndex.cache";
+    String KEYWORD_INDEX = "keywordIndex";
+
+    String CONTEXT_INDEX_SUFFIX = ".ctx";
+
+    String KV_INDEX_SUFFIX = ".kv";
+
+    String KEYWORD_INDEX_SUFFIX = ".kw";
     
 }

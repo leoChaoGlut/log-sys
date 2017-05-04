@@ -21,13 +21,13 @@ public class LogScanner implements Scanner<Map<String, File>> {
 
     private static final Logger logger = LoggerFactory.getLogger(LogScanner.class);
 
-    private final String LOG_SUFFIX = ".log";
-    private final String DOT = ".";
+    protected final String LOG_SUFFIX = ".log";
+    protected final String DOT = ".";
 
-    private String logDir;
-    private String beginDatetime;
-    private String endDatetime;
-    private Integer rightLogNameLength = 16;
+    protected String logDir;
+    protected String beginDatetime;
+    protected String endDatetime;
+    protected Integer rightLogNameLength = 16;//len(yyyyMMddHHmm.log) = 16
 
     /**
      * key: file name
@@ -37,7 +37,7 @@ public class LogScanner implements Scanner<Map<String, File>> {
 
     public static Map<String, File> scan(String beginDatetime, String endDatetime, String logDir) {
         try {
-            logger.info(beginDatetime + " - " + endDatetime);
+//            logger.info(beginDatetime + " - " + endDatetime);
             return new LogScanner(beginDatetime, endDatetime, logDir)
                     .scan();
         } catch (Exception e) {
@@ -48,7 +48,7 @@ public class LogScanner implements Scanner<Map<String, File>> {
 
     public static Map<String, File> scan(File beginLogFile, File endLogFile, String logDir) {
         try {
-            logger.info(beginLogFile + " - " + endLogFile);
+//            logger.info(beginLogFile + " - " + endLogFile);
             return new LogScanner(beginLogFile, endLogFile, logDir)
                     .scan();
         } catch (Exception e) {
@@ -121,7 +121,7 @@ public class LogScanner implements Scanner<Map<String, File>> {
         return logMap;
     }
 
-    private boolean logNameValidated(File log) {
+    protected boolean logNameValidated(File log) {
         int logLength = log.getName().length();
 
         if (logLength == rightLogNameLength && log.getName().endsWith(LOG_SUFFIX)) {
@@ -141,7 +141,7 @@ public class LogScanner implements Scanner<Map<String, File>> {
      * @param log
      * @param depth
      */
-    private void dfs(File log, int depth) {
+    protected void dfs(File log, int depth) {
         boolean needToPrune = prune(log, depth);
         if (!needToPrune) {
             if (log.isDirectory()) {
@@ -168,7 +168,7 @@ public class LogScanner implements Scanner<Map<String, File>> {
      * @param depth
      * @return
      */
-    private boolean prune(File log, int depth) {
+    protected boolean prune(File log, int depth) {
         if (depth > DirDepth.MINUTE) {
             return false;
         } else {

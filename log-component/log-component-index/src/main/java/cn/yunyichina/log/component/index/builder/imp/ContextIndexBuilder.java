@@ -26,7 +26,7 @@ public class ContextIndexBuilder extends AbstractBuilder implements IndexBuilder
     private static final long serialVersionUID = -6007560470667273849L;
     private final Logger logger = LoggerFactory.getLogger(ContextIndexBuilder.class);
     /**
-     * key: context id (eg:UUID) 当数据量大的时候,可以考虑用"UUID+suffix"的形式,提高查询效率
+     * key: context id (eg:ContextId) 当数据量大的时候,可以考虑用"ContextId+suffix"的形式,提高查询效率
      * value:{@link ContextInfo}
      */
     private ConcurrentHashMap<String, ContextInfo> contextInfoMap = new ConcurrentHashMap<>(1024);
@@ -78,7 +78,7 @@ public class ContextIndexBuilder extends AbstractBuilder implements IndexBuilder
                     } else {
                         contextInfo.setEnd(contextIndex);
                     }
-                    contextInfoMap.put(contextId, contextInfo);//理论上 key( UUID ) 不会有重复
+                    contextInfoMap.put(contextId, contextInfo);//理论上 key( ContextId ) 不会有重复
                 }
             }
             cursor = contextIdBeginTagIndex;

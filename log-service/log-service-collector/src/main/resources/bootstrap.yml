@@ -5,12 +5,34 @@ spring:
     active: default
   cloud:
     config:
-      enabled: true
+      enabled: false
       discovery:
-        enabled: true
-        service-id: config-center
-      fail-fast: true
+        enabled: false
 eureka:
   client:
     serviceUrl:
       defaultZone: http://127.0.0.1:10100/eureka/
+  instance:
+    ipAddress: 127.0.0.1 #必须提供ip
+    prefer-ip-address: true
+    instance-id: ${eureka.instance.ipAddress}:${server.port}
+    lease-renewal-interval-in-seconds: 2
+    lease-expiration-duration-in-seconds: 4
+server:
+  port: 10500
+mybatis:
+  mapper-locations: classpath:mapper/*Mapper.xml
+  configuration:
+    mapUnderscoreToCamelCase: true
+    defaultStatementTimeout: 30
+  type-aliases-package: cn.yunyichina.log.common.cache.do_
+hystrix.command.default.execution.isolation.thread.timeoutInMilliseconds: 3000
+ribbon:
+  ReadTimeout: 1000
+  ConnectTimeout: 1000
+  MaxAutoRetries: 1 # SR6版本,这里设为1,会重试3次
+logging:
+  config: classpath:logback.xml
+#extra
+cleanCacheIntervalInMillis: 5000
+logTaskIntervalInMillis: 5000

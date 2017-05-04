@@ -1,4 +1,8 @@
 #redis 需要修改的部分配置
+#requirepass 123
 appendonely yes
-requirepass 123
-dir /data
+dir /data/redis/data
+logfile /data/redis/redis.log
+cluster-enabled yes
+cluster-config-file nodes.conf
+cluster-node-timeout 5000

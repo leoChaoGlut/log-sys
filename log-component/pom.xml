@@ -21,6 +21,7 @@
         <module>log-component-search-engine</module>
         <module>log-component-scanner</module>
         <module>log-component-filter</module>
+        <module>log-component-common</module>
     </modules>
 
     <dependencies>

@@ -7,6 +7,11 @@ package cn.yunyichina.log.component.filter;
  * @Description:
  */
 public interface Filter<T> {
-//    TODO 根据给定条件,将inputStr中符合条件的str过滤
-	T filter() throws Exception;
+
+    /**
+     * 根据给定条件,将inputStr中符合条件的str过滤
+     *
+     * @return
+     */
+    T filter();
 }

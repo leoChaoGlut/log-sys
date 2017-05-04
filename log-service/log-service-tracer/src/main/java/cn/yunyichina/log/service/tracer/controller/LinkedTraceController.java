@@ -4,7 +4,6 @@ import cn.yunyichina.log.common.base.AbstractController;
 import cn.yunyichina.log.common.entity.do_.LinkedTraceNode;
 import cn.yunyichina.log.common.entity.dto.ResponseBodyDTO;
 import cn.yunyichina.log.service.tracer.service.LinkedTraceService;
-import com.alibaba.fastjson.JSON;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,25 +31,23 @@ public class LinkedTraceController extends AbstractController {
 
     @PostMapping("read/by/contextId/collectorId")
     ResponseBodyDTO<TreeSet<LinkedTraceNode>> getTraceByContextId(
-            String contextId,
-            Integer collectorId
+            String contextId
     ) {
-        logger.info(JSON.toJSONString(contextId, true));
-        TreeSet<LinkedTraceNode> traceNodeSet = linkedTraceService.getTraceByContextId(contextId, collectorId);
+        logger.info(contextId);
+        TreeSet<LinkedTraceNode> traceNodeSet = linkedTraceService.getTraceByContextId(contextId);
         return ResponseBodyDTO.ok(traceNodeSet);
     }
 
     @PostMapping("read/by/traceId/collectorId")
     ResponseBodyDTO<TreeSet<LinkedTraceNode>> getTraceByTraceId(
-            String traceId,
-            Integer collectorId
+            String traceId
     ) {
-        logger.info(JSON.toJSONString(traceId, true));
-        TreeSet<LinkedTraceNode> traceNodeSet = linkedTraceService.getTraceByTraceId(traceId, collectorId);
+        logger.info(traceId);
+        TreeSet<LinkedTraceNode> traceNodeSet = linkedTraceService.getTraceByTraceId(traceId);
         return ResponseBodyDTO.ok(traceNodeSet);
     }
 
-    @PostMapping("write/linkednode/batch")
+    @PostMapping("append/linkednode")
     ResponseBodyDTO appendLinkedNodeBatch(
             @RequestBody List<LinkedTraceNode> linkedTraceNodeList
     ) {

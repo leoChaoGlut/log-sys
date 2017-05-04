@@ -7,7 +7,7 @@
 
 var Common = (function () {
 
-    var TIME_OUT = 10000;
+    var TIME_OUT_IN_MILLIS = 15000;
 
     var DOMAIN = "http://127.0.0.1";
     var GATEWAY = DOMAIN + ":10300";
@@ -19,7 +19,7 @@ var Common = (function () {
 
     var get = function (url, completeCallback) {
         $.ajax({
-            timeout: TIME_OUT,
+            timeout: TIME_OUT_IN_MILLIS,
             url: url,
             complete: completeCallback,
         })
@@ -28,7 +28,7 @@ var Common = (function () {
     var post = function (url, data, completeCallback) {
         $.ajax({
             type: "POST",
-            timeout: TIME_OUT,
+            timeout: TIME_OUT_IN_MILLIS,
             url: url,
             // data: {
             //     json: encodeURIComponent(JSON.stringify(data)),
@@ -43,7 +43,7 @@ var Common = (function () {
         post: post,
         DOMAIN: DOMAIN,
         GATEWAY: GATEWAY,
-        TIME_OUT: TIME_OUT,
+        TIME_OUT_IN_MILLIS: TIME_OUT_IN_MILLIS,
         Status: Status,
     }
 })()

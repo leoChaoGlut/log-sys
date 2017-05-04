@@ -76,7 +76,7 @@ public class TracerClient {
             }
 
             private void consume() {
-                if (!traceNodeQueue.isEmpty() && traceNodeQueue.size() >= BATCH_SIZE) {
+                if (!traceNodeQueue.isEmpty()) {
                     List<LinkedTraceNode> linkedTraceNodeList = buildTraceNodeList();
                     sendRequest(linkedTraceNodeList);
                     consume();
@@ -163,7 +163,8 @@ public class TracerClient {
                 loggerWrapper.contextEnd(msg);
             }
         } catch (Exception e) {
-            loggerWrapper.error(e.getMessage(), e);
+//            ignore all exception
+//            loggerWrapper.error(e.getMessage(), e);
         }
     }
 

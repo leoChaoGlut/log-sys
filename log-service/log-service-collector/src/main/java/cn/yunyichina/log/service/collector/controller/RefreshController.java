@@ -6,7 +6,7 @@ import cn.yunyichina.log.common.entity.dto.ResponseBodyDTO;
 import cn.yunyichina.log.common.util.ResponseUtil;
 import cn.yunyichina.log.service.collector.client.CollectorServiceClient;
 import cn.yunyichina.log.service.collector.service.CacheService;
-import cn.yunyichina.log.service.collector.task.ScheduleTask;
+import cn.yunyichina.log.service.collector.task.LogTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +31,7 @@ public class RefreshController extends AbstractController {
     @Autowired
     CacheService cacheService;
     @Autowired
-    ScheduleTask scheduleTask;
+    LogTask logTask;
 
     @Value("${eureka.instance.ipAddress}")
     String ip;
@@ -46,7 +46,7 @@ public class RefreshController extends AbstractController {
         ResponseBodyDTO<CollectorDO> responseBody = collectorServiceClient.registerAndGetData(ip, port, applicationName);
         CollectorDO collector = ResponseUtil.getResult(responseBody);
         cacheService.setCollector(collector);
-        scheduleTask.buildCollectedItemList();
+        logTask.buildCollectedItemList();
         logger.info("刷新配置成功");
         return ResponseBodyDTO.ok();
     }

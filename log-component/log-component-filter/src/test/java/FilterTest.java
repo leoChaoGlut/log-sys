@@ -11,13 +11,13 @@ import java.io.InputStreamReader;
  */
 public class FilterTest {
 
-    public static String str = "C:\\Users\\Administrator\\Desktop\\a.txt";
+    public static String str = "E:\\yunyi\\log-sys\\log-component\\log-component-filter\\src\\test\\resource\\test.log";
 
     @Test
     public void test() {
 
         try {
-            BufferedReader bf = new BufferedReader(new InputStreamReader(new FileInputStream(str), "GBK"));
+            BufferedReader bf = new BufferedReader(new InputStreamReader(new FileInputStream(str), "UTF-8"));
 
             String content = "";
             StringBuilder sb = new StringBuilder();
@@ -32,7 +32,7 @@ public class FilterTest {
 
             bf.close();
             FilterConditionDTO fcd = new FilterConditionDTO();
-            fcd.setContextId("191");
+            fcd.setContextId("5900388c85f35a2cce1cec09");
             ContextFilter cf = new ContextFilter(sb.toString(), fcd);
             System.out.println(cf.filter());
         } catch (Exception e) {

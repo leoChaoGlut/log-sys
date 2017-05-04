@@ -30,10 +30,6 @@ public class AggregatorText {
     public static final String LOG_DIR = "D:\\gitRepo\\yunyi\\src\\log\\log-sys\\log-resource\\test-resource\\log";
     public static final File LOG_FILE = new File(LOG_DIR + "\\2017\\02\\27\\10\\33\\201702271033.log");
 
-    @Test
-    public void logAggregatorTest() {
-//        TODO
-    }
 
     @Test
     public void contextIndexAggregatorTest() {

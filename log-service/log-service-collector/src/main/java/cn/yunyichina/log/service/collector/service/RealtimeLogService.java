@@ -1,6 +1,7 @@
 package cn.yunyichina.log.service.collector.service;
 
 import cn.yunyichina.log.common.entity.do_.CollectedItemDO;
+import cn.yunyichina.log.service.collector.util.SessionCacheManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,9 +14,9 @@ import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.HashSet;
+import java.nio.charset.StandardCharsets;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * @Author: Leo
@@ -30,14 +31,13 @@ public class RealtimeLogService {
 
     public static final int INTERVAL_MS = 100;
 
-    private HashSet<String> sessionIdSet = new HashSet<>();
-
-    private ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
-    private ReentrantReadWriteLock.WriteLock writeLock = lock.writeLock();
-    private ReentrantReadWriteLock.ReadLock readLock = lock.readLock();
+    private ReentrantLock lock = new ReentrantLock();
 
     @Autowired
     CacheService cacheService;
+
+    @Autowired
+    SessionCacheManager sessionCacheManager;
 
     /**
      * impl tail -f
@@ -53,17 +53,14 @@ public class RealtimeLogService {
         BufferedReader br = null;
         try {
             String stdoutFilePath = getStdoutFilePathBy(collectedItemId);
-            logger.info(stdoutFilePath);
             FileInputStream fis = new FileInputStream(stdoutFilePath);
-            br = new BufferedReader(new InputStreamReader(fis));
+            br = new BufferedReader(new InputStreamReader(new FileInputStream(stdoutFilePath), StandardCharsets.UTF_8));
             br.skip(fis.available());
             String tailLine;
             while (true) {
-                if (sessionIdSet.contains(sessionId)) {
+                if (sessionCacheManager.containsKey(sessionId)) {
                     tailLine = br.readLine();
-                    if (tailLine == null) {
-
-                    } else {
+                    if (tailLine != null) {
                         logger.info(tailLine.length() + "");
                         session.sendMessage(new TextMessage(tailLine));
                     }
@@ -73,7 +70,7 @@ public class RealtimeLogService {
                 }
             }
         } catch (Exception e) {
-            logger.error(e.getMessage(), e);
+            logger.error("Exception occured when tailing", e);
         } finally {
             if (br != null) {
                 try {
@@ -91,21 +88,21 @@ public class RealtimeLogService {
     }
 
     private void addSession(String sessionId) {
-        writeLock.lock();
+        lock.lock();
         try {
-            sessionIdSet.add(sessionId);
+            sessionCacheManager.put(sessionId, sessionId);
         } finally {
-            writeLock.unlock();
+            lock.unlock();
         }
     }
 
 
     public void removeSession(String sessionId) {
-        writeLock.lock();
+        lock.lock();
         try {
-            sessionIdSet.remove(sessionId);
+            sessionCacheManager.remove(sessionId);
         } finally {
-            writeLock.unlock();
+            lock.unlock();
         }
     }
 }

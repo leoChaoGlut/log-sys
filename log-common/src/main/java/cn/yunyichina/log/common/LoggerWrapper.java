@@ -6,7 +6,6 @@ import lombok.Setter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -18,7 +17,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class LoggerWrapper {
     /**
      * key: current thread id
-     * value: context id (UUID)
+     * value: context id (ContextId)
      */
     private static final ConcurrentHashMap<String, String> map = new ConcurrentHashMap<>();
     /**
@@ -69,9 +68,9 @@ public class LoggerWrapper {
     public String contextBegin(String msg) {
         String contextId;
         if (null == suffix) {
-            contextId = UUID.randomUUID().toString();
+            contextId = ContextId.getStr();
         } else {
-            contextId = UUID.randomUUID().toString() + SUFFIX_SEPARATOR + suffix;
+            contextId = ContextId.getStr() + SUFFIX_SEPARATOR + suffix;
         }
         map.put(buildThreadId(), contextId);
         logger.info(getInvokeClassAndMethod() + msg + Tag.CONTEXT_BEGIN + contextId + Tag.CONTEXT_ID_END + Tag.ROW_END + contextId + Tag.CONTEXT_ID_END);

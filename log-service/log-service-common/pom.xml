@@ -15,13 +15,8 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-redis</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>cn.yunyichina.log</groupId>
-            <artifactId>log-common</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <groupId>redis.clients</groupId>
+            <artifactId>jedis</artifactId>
         </dependency>
         <dependency>
             <groupId>cn.yunyichina.log.component</groupId>

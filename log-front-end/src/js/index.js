@@ -24,7 +24,7 @@ var Home = (function () {
     var loading,
         realtimeSocket,
         historySocket
-        ;
+    ;
     //================= tips begin =====================
 
     var Tips = (function () {
@@ -83,7 +83,7 @@ var Home = (function () {
     var Http = (function () {
         var get = function (url, successCallback) {
             $.ajax({
-                timeout: Common.TIME_OUT,
+                timeout: Common.TIME_OUT_IN_MILLIS,
                 url: url,
                 complete: function (resp) {
                     if (200 == resp.status) {
@@ -109,7 +109,7 @@ var Home = (function () {
             $.ajax({
                 url: url,
                 data: JSON.stringify(data),
-                timeout: Common.TIME_OUT,
+                timeout: Common.TIME_OUT_IN_MILLIS,
                 type: "POST",
                 dataType: "json",
                 contentType: "application/json",
@@ -140,7 +140,7 @@ var Home = (function () {
             $.ajax({
                 url: url,
                 data: data,
-                timeout: Common.TIME_OUT,
+                timeout: Common.TIME_OUT_IN_MILLIS,
                 type: "POST",
                 complete: function (resp) {
                     if (loading) {
@@ -268,6 +268,7 @@ var Home = (function () {
             $("#app").fadeIn(ANIMATION_DURATION);
         },
         data: {
+            contextInfoDTO: {},
             activeApplicationName: "",
             activeContext: 1,
             contextList: [],
@@ -340,34 +341,27 @@ var Home = (function () {
                     var collectorId = vm.collectedItem.collectorId;
                     var collector = getCollectorBy(vm.collectorList, collectorId);
                     var url = buildUrlBy(collector, "search/history");
-                    console.log(vm.searchCondition)
-                    Http.postJson(url, vm.searchCondition, function (result) {
+                    Http.postForm(url, vm.searchCondition, function (result) {
                         if (result.length > 0) {
                             var logResultList = [];
-                            var firstLogResult = result[0];
-                            if (firstLogResult) {
-                                vm.logContent = firstLogResult.contextContent;
-                            } else {
-                                vm.logContent = "";
-                            }
                             for (var i = 0; i < result.length; i++) {//result 不会为空
                                 var logResult = result[i];
                                 var logRegionSet = logResult.logRegionSet;
                                 var logTreeNode = {
-                                    beginLog: logRegionSet[0],
-                                    contextContent: logResult.contextContent,
                                     contextId: logResult.contextId,
+                                    contextInfoDTO: logResult.contextInfoDTO,
+                                    beginLog: logRegionSet[0],
                                     endLogList: [],
                                 }
                                 for (var j = 1; j < logRegionSet.length; j++) {
                                     logTreeNode.endLogList.push({
                                         beginLog: logRegionSet[j],
-                                        contextContent: logResult.contextContent,
                                     });
                                 }
                                 logResultList.push(logTreeNode);
                             }
                             vm.logResultList = logResultList;
+                            vm.activedPanel = "result";
                         } else {
                             Tips.warning("无匹配日志");
                         }
@@ -509,23 +503,50 @@ var Home = (function () {
                 historySocket.send();
             },
             extraFunction: function (obj, node, component) {
-                vm.logContent = obj.contextContent;
-                if (vm.lastClickNode == obj.beginLog) {
-                    var now = new Date().getTime();
-                    if (now - vm.lastClickNodeTime > DOUBLE_CLICK_DURATION) {
-                        vm.lastClickNodeTime = now;
+                console.log(obj, node, component)
+                if (obj.logContent) {
+                    vm.logContent = obj.logContent;
+                    if (vm.lastClickNode == obj.beginLog) {
+                        var now = new Date().getTime();
+                        if (now - vm.lastClickNodeTime > DOUBLE_CLICK_DURATION) {
+                            vm.lastClickNodeTime = now;
+                        } else {
+                            vm.showExtraFunctionDialog = true;
+                            vm.resultItem = obj;
+                        }
                     } else {
-                        vm.showExtraFunctionDialog = true;
-                        vm.resultItem = obj;
+                        vm.lastClickNode = obj.beginLog;
+                        vm.lastClickNodeTime = new Date().getTime();
                     }
                 } else {
-                    vm.lastClickNode = obj.beginLog;
-                    vm.lastClickNodeTime = new Date().getTime();
+                    var collectorId = vm.collectedItem.collectorId;
+                    var collector = getCollectorBy(vm.collectorList, collectorId);
+                    var url = buildUrlBy(collector, "search/by/contextInfoDTO");
+                    var data;
+                    if (obj.contextInfoDTO) {
+                        loading = vm.$loading();
+                        data = obj.contextInfoDTO;
+                        Http.postJson(url, data, function (result) {
+                            obj.logContent = result;
+                            vm.logContent = result;
+                        })
+                    } else {
+                        if (node.parent.data.logContent) {
+                            obj.logContent = node.parent.data.logContent;
+                        } else {
+                            loading = vm.$loading();
+                            data = node.parent.data.contextInfoDTO;
+                            Http.postJson(url, data, function (result) {
+                                obj.logContent = result;
+                                vm.logContent = result;
+                            })
+                        }
+                    }
                 }
             },
             loadDistributedLog: function () {
                 loading = vm.$loading();
-                var url = Common.GATEWAY + "/tracer-read/trace/linked/read/by/contextId/collectorId";
+                var url = Common.GATEWAY + "/tracer/trace/linked/read/by/contextId/collectorId";
                 Http.postForm(url, {
                     contextId: vm.resultItem.contextId,
                     collectorId: vm.collectedItem.collectorId

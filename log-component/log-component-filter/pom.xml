@@ -8,7 +8,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>cn.yunyichina.log</groupId>
+    <groupId>cn.yunyichina.log.component</groupId>
     <artifactId>log-component-filter</artifactId>
     <version>1.0-SNAPSHOT</version>
 

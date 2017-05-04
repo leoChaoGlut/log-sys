@@ -1,0 +1,8 @@
+eureka:
+  instance:
+    prefer-ip-address: true
+    instance-id: ${eureka.instance.ipAddress}:${server.port}
+    lease-renewal-interval-in-seconds: 2
+    lease-expiration-duration-in-seconds: 4
+logging:
+  config: classpath:logback.xml

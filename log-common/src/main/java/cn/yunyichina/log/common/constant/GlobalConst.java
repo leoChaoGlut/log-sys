@@ -1,5 +1,7 @@
 package cn.yunyichina.log.common.constant;
 
+import cn.yunyichina.log.common.ContextId;
+
 /**
  * @Author: Leo
  * @Blog: http://blog.csdn.net/lc0817
@@ -7,5 +9,5 @@ package cn.yunyichina.log.common.constant;
  * @Description:
  */
 public interface GlobalConst {
-    int UUID_LENGTH = 36;
+    int UUID_LENGTH = ContextId.getStr().length();
 }

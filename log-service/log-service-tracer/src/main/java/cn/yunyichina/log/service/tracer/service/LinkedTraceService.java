@@ -1,11 +1,8 @@
 package cn.yunyichina.log.service.tracer.service;
 
 import cn.yunyichina.log.common.base.AbstractService;
-import cn.yunyichina.log.common.entity.do_.CollectedItemDO;
 import cn.yunyichina.log.common.entity.do_.LinkedTraceNode;
-import cn.yunyichina.log.service.tracer.exception.TracerException;
-import cn.yunyichina.log.service.tracer.factory.TracerJedisFactory;
-import cn.yunyichina.log.service.tracer.mapper.CollectedItemMapper;
+import cn.yunyichina.log.service.tracer.manager.JedisManager;
 import com.alibaba.fastjson.JSON;
 import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
@@ -32,18 +29,13 @@ public class LinkedTraceService extends AbstractService {
     final Logger logger = LoggerFactory.getLogger(LinkedTraceService.class);
 
     @Autowired
-    CollectedItemMapper collectedItemMapper;
-
-    @Autowired
-    TracerJedisFactory jedisFactory;
+    JedisManager jedisManager;
 
     public TreeSet<LinkedTraceNode> getTraceByContextId(
-            String contextId,
-            Integer collectorId
+            String contextId
     ) {
-        CollectedItemDO collectedItem = new CollectedItemDO().setCollectorId(collectorId);
         try (
-                Jedis jedis = jedisFactory.getJedis(collectedItem)
+                Jedis jedis = jedisManager.getJedis();
         ) {
             String traceId = jedis.get(contextId);
             if (null == traceId) {
@@ -55,12 +47,10 @@ public class LinkedTraceService extends AbstractService {
     }
 
     public TreeSet<LinkedTraceNode> getTraceByTraceId(
-            String traceId,
-            Integer collectorId
+            String traceId
     ) {
-        CollectedItemDO collectedItem = new CollectedItemDO().setCollectorId(collectorId);
         try (
-                Jedis jedis = jedisFactory.getJedis(collectedItem)
+                Jedis jedis = jedisManager.getJedis();
         ) {
             return getLinkedTraceNodeSet(traceId, jedis);
         }
@@ -88,29 +78,20 @@ public class LinkedTraceService extends AbstractService {
      */
     @Async
     public void appendLinkedNodeBatch(List<LinkedTraceNode> linkedTraceNodeList) {
-        if (CollectionUtils.isNotEmpty(linkedTraceNodeList)) {
-            String applicationName = linkedTraceNodeList.get(0).getApplicationName();
-            CollectedItemDO collectedItemParam = new CollectedItemDO().setApplicationName(applicationName);
-            CollectedItemDO collectedItemResult = collectedItemMapper.selectOne(collectedItemParam);
-            if (collectedItemResult == null) {
-                throw new TracerException("The database did not find the applicationName " + applicationName);
-            } else {
-                try (
-                        Jedis jedis = jedisFactory.getJedis(collectedItemResult)
-                ) {
-                    Pipeline p = jedis.pipelined();
-                    for (LinkedTraceNode linkedTraceNode : linkedTraceNodeList) {
-                        p.zadd(
-                                linkedTraceNode.getTraceId(),
-                                linkedTraceNode.getTimestamp(),
-                                JSON.toJSONString(linkedTraceNode)
-                        );
-                        p.set(linkedTraceNode.getContextId(), linkedTraceNode.getTraceId());
-                    }
-                    p.sync();
-                }
+        try (
+                Jedis jedis = jedisManager.getJedis();
+        ) {
+            Pipeline p = jedis.pipelined();
+            for (LinkedTraceNode linkedTraceNode : linkedTraceNodeList) {
+                p.zadd(
+                        linkedTraceNode.getTraceId(),
+                        linkedTraceNode.getTimestamp(),
+                        JSON.toJSONString(linkedTraceNode)
+                );
+                p.set(linkedTraceNode.getContextId(), linkedTraceNode.getTraceId());
             }
+            p.sync();
         }
     }
-
 }
+

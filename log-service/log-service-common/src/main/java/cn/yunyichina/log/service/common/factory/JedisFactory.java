@@ -1,11 +1,11 @@
 package cn.yunyichina.log.service.common.factory;
 
-import cn.yunyichina.log.common.entity.do_.CollectedItemDO;
 import cn.yunyichina.log.common.entity.do_.RedisRecordDO;
 import org.apache.commons.collections4.CollectionUtils;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
+import redis.clients.jedis.Protocol;
 
 import java.util.Collection;
 import java.util.List;
@@ -19,7 +19,6 @@ import java.util.concurrent.locks.ReentrantLock;
  * @Description:
  */
 public abstract class JedisFactory {
-    protected final int DEFAULT_REDIS_TIMEOUT_IN_MILLIS = 3000;
     /**
      * key: collectedItemId
      * value: JedisPool
@@ -39,15 +38,13 @@ public abstract class JedisFactory {
         }
     }
 
-    public abstract Jedis getJedis(CollectedItemDO collectedItem);
-
     protected Jedis createJedisPoolAndReturnJedis(Integer collectorId, RedisRecordDO redisRecord) {
         JedisPoolConfig jedisPoolConfig = new JedisPoolConfig();
         JedisPool jedisPool = new JedisPool(
                 jedisPoolConfig,
                 redisRecord.getIp(),
                 redisRecord.getPort(),
-                DEFAULT_REDIS_TIMEOUT_IN_MILLIS,
+                Protocol.DEFAULT_TIMEOUT,
                 redisRecord.getPassword()
         );
         poolMap.put(collectorId, jedisPool);

@@ -4,6 +4,7 @@ import cn.yunyichina.log.component.aggregator.exception.AggregatorException;
 import cn.yunyichina.log.component.index.entity.ContextIndex;
 import cn.yunyichina.log.component.index.entity.ContextInfo;
 import cn.yunyichina.log.component.scanner.imp.LogScanner;
+import com.alibaba.fastjson.JSON;
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 import org.slf4j.Logger;
@@ -44,7 +45,7 @@ public class LogAggregator {
         ContextIndex begin = contextInfo.getBegin();
         ContextIndex end = contextInfo.getEnd();
         if (begin == null || end == null) {
-            throw new AggregatorException("日志聚合器无法聚合残缺的上下文.");
+            throw new AggregatorException("日志聚合器无法聚合残缺的上下文:" + JSON.toJSONString(contextInfo));
         }
         this.beginIndex = begin.getIndexOfLogFile();
         this.endIndex = end.getIndexOfLogFile();

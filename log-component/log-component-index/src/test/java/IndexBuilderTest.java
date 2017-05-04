@@ -5,6 +5,8 @@ import cn.yunyichina.log.component.index.builder.imp.KvIndexBuilder;
 import cn.yunyichina.log.component.index.entity.ContextInfo;
 import cn.yunyichina.log.component.index.entity.KeywordIndex;
 import cn.yunyichina.log.component.index.entity.KvIndex;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
 import org.junit.Test;
 
 import java.io.File;
@@ -21,13 +23,23 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class IndexBuilderTest {
 
-    public static final File LOG_FILE = new File("D:\\gitRepo\\yunyi\\src\\log\\log-sys\\log-resource\\test-resource\\log\\2017\\02\\27\\10\\33\\201702271033.log");
+    public static final File LOG_FILE = new File("D:\\gitRepo\\yunyi\\src\\log\\log-sys\\log-resource\\test-resource\\log\\2017\\04\\13\\17\\35\\201704131735.log");
 
     @Test
     public void contextIndexBuilderTest() {
         ContextIndexBuilder contextIndexBuilder = new ContextIndexBuilder(LOG_FILE);
         ConcurrentHashMap<String, ContextInfo> contextInfoMap = contextIndexBuilder.build();
         System.out.println(contextInfoMap.size());
+        String json = JSON.toJSONString(contextInfoMap);
+        TypeReference<ConcurrentHashMap<String, ContextInfo>> type = new TypeReference<ConcurrentHashMap<String, ContextInfo>>() {
+        };
+        ConcurrentHashMap<String, ContextInfo> map = JSON.parseObject(json, type);
+//        ConcurrentHashMap<String, ContextInfo> map = JSON.parseObject(json, ConcurrentHashMap.class);
+        Set<Map.Entry<String, ContextInfo>> entries = map.entrySet();
+        for (Map.Entry<String, ContextInfo> entry : entries) {
+            System.out.println(entry.getKey());
+            System.out.println(entry.getValue().getBegin().getIndexOfLogFile());
+        }
     }
 
     @Test
