@@ -31,10 +31,58 @@
 - maven3.3.9
 - nodejs6.9.2
 # 相关技术
-- [spring cloud Camden.SR6](http://cloud.spring.io/spring-cloud-static/Camden.SR6/)
-- [spring boot 1.4.5](http://docs.spring.io/spring-boot/docs/1.4.5.RELEASE/reference/htmlsingle/)
+- [Spring Cloud Camden.SR6](http://cloud.spring.io/spring-cloud-static/Camden.SR6/)
+- [Spring Boot 1.4.5](http://docs.spring.io/spring-boot/docs/1.4.5.RELEASE/reference/htmlsingle/)
 - [Vue](https://github.com/vuejs/vue)
 - [Element UI](http://element.eleme.io/)
 - [Sockjs](https://github.com/sockjs/sockjs-client)
 - [Redis3.2.8](https://redis.io/)
+# 日志规范
+- Logback配置: 请使用logback作为日志打印,并将配置文件logback.xml修改如下.[STDOUT,ALL]是必须的Appender.
+```xml
+<configuration>
+    <property name="log.path" value="./log"></property>
+    <property name="log.context" value="appName"></property>
+
+    <contextName>${log.context}</contextName>
+
+    <!--控制台输出-->
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>[%d{yyyy-MM-dd HH:mm:ss}][%-5level][%thread][%class.%method:%line]:%m%n</pattern>
+        </encoder>
+    </appender>
+
+    <!--每分钟打印一个log, yyyy/MM/dd/HH/mm 树形目录-->
+    <appender name="ALL" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${log.path}/%d{yyyy/MM/dd/HH/mm, aux}/%d{yyyyMMddHHmm}.log</fileNamePattern>
+        </rollingPolicy>
+        <encoder>
+            <pattern>[%d{yyyy-MM-dd HH:mm:ss}][%-5level][%thread][%class.%method:%line]:%m%n</pattern>
+        </encoder>
+    </appender>
+
+    <!--打印任意包日志-->
+    <root level="INFO">
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="ALL"/>
+    </root>
+</configuration>
+```
+- 日志打印: 
+  - 1.引入依赖
+```xml
+<dependency>
+  <groupId>cn.yunyichina.log</groupId>
+  <artifactId>log-common</artifactId>
+  <version>1.0-SNAPSHOT</version>
+</dependency>
+```
+  - 2.使用LoggerWrapper替代Logger打印日志:
+```java
+LoggerWrapper wrapper = LoggerWrapper.getLogger(Target.class);
+wrapper.info("hello");
+wrapper.getLogger().info("world"); 
+```
 # 安装步骤
