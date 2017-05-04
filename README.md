@@ -38,7 +38,7 @@
 - [Sockjs](https://github.com/sockjs/sockjs-client)
 - [Redis3.2.8](https://redis.io/)
 # 日志规范
-- Logback配置: 请使用logback作为日志打印,并将配置文件logback.xml修改如下.[STDOUT,ALL]是必须的Appender.
+* Logback配置: 请使用logback作为日志打印,并将配置文件logback.xml修改如下.[STDOUT,ALL]是必须的Appender.
 ```xml
 <configuration>
     <property name="log.path" value="./log"></property>
@@ -70,8 +70,11 @@
     </root>
 </configuration>
 ```
-- 日志打印: 
-  - 1.引入依赖
+
+* 日志打印:
+
+1.引入依赖:
+  
 ```xml
 <dependency>
   <groupId>cn.yunyichina.log</groupId>
@@ -79,10 +82,34 @@
   <version>1.0-SNAPSHOT</version>
 </dependency>
 ```
-  - 2.使用LoggerWrapper替代Logger打印日志:
+
+2.使用LoggerWrapper替代Logger打印日志:
+
 ```java
 LoggerWrapper wrapper = LoggerWrapper.getLogger(Target.class);
 wrapper.info("hello");
 wrapper.getLogger().info("world"); 
+```
+
+3.定义上下文:
+```java
+/**
+ * User类,有如下方法
+ */
+public String getUserBy(Integer userId){
+  //...
+}
+```
+
+```java
+/**
+ * UserAspect类,是User类的一个切面,切点'userPointCut'可切取User类的'getUserBy'方法.
+ */
+@Around("userPointCut()")
+public Object aroundUserPointCut(ProceedingJoinPoint pjp) throws Throwable {
+  wrapper.contextBegin("获取用户开始");//为getUserBy方法生成一个上下文,上下文的开始就是方法被调用之前.此时会利用Mongodb的ObjectId,生成一个id,作为getUserBy这个方法调用的上下文id.
+  Object returnValue = pjp.proceed();//调用getUserBy()
+  wrapper.contextEnd("获取用户结束");//上下文的结束,就是getUserBy返回之后,或者异常捕获之后.
+}
 ```
 # 安装步骤
