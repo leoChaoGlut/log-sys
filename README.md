@@ -25,3 +25,16 @@
   - log-service-center-config-center: ☞配置中心
   - log-service-center-gateway: ☞统一入口网关
   - log-service-center-registry: ☞注册中心
+# 开发环境
+- intellj idea
+- jdk1.7
+- maven3.3.9
+- nodejs6.9.2
+# 相关技术
+- [spring cloud Camden.SR6](http://cloud.spring.io/spring-cloud-static/Camden.SR6/)
+- [spring boot 1.4.5](http://docs.spring.io/spring-boot/docs/1.4.5.RELEASE/reference/htmlsingle/)
+- [Vue](https://github.com/vuejs/vue)
+- [Element UI](http://element.eleme.io/)
+- [Sockjs](https://github.com/sockjs/sockjs-client)
+- [Redis3.2.8](https://redis.io/)
+# 安装步骤
