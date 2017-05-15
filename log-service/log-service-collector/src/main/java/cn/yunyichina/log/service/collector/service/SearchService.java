@@ -19,6 +19,7 @@ import cn.yunyichina.log.component.index.entity.KeywordIndex;
 import cn.yunyichina.log.component.index.entity.KvIndex;
 import cn.yunyichina.log.component.scanner.imp.IndexCacheScanner;
 import cn.yunyichina.log.component.scanner.imp.LogScanner;
+import cn.yunyichina.log.component.searchengine.imp.GrepSearchEngine;
 import cn.yunyichina.log.component.searchengine.imp.KeywordSearchEngine;
 import cn.yunyichina.log.component.searchengine.imp.KvSearchEngine;
 import cn.yunyichina.log.component.searchengine.imp.NoIndexSearchEngine;
@@ -36,6 +37,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -54,6 +56,12 @@ public class SearchService {
 
     public static final int DEFAULT_LOG_SIZE = 1024 * 1024;//1 M
     final Logger logger = LoggerFactory.getLogger(SearchService.class);
+    private String grepShellPath;
+
+    @PostConstruct
+    private void postConstruct() {
+        grepShellPath = System.getProperty("user.dir") + File.separator + "grep.sh";
+    }
 
     @Autowired
     CacheService cacheService;
@@ -74,13 +82,28 @@ public class SearchService {
                 contextInfoSet = useKvSearchEngine(condition, contextInfoMap, beginDatetimeStr, endDatetimeStr);
                 break;
             case SearchEngineType.NO_INDEX:
-                contextInfoSet = useNoIndexSearchEngine(condition, beginDatetimeStr, endDatetimeStr, contextInfoMap);
+//                contextInfoSet = useNoIndexSearchEngine(condition, beginDatetimeStr, endDatetimeStr, contextInfoMap);
+                contextInfoSet = useGrepSearchEngine(condition, beginDatetimeStr, endDatetimeStr, contextInfoMap);
                 break;
             default:
                 throw new CollectorException("不支持的搜索引擎类型:" + condition.getSearchEngineType());
         }
         List<LogResultDTO> logResultList = buildLogResultListBy(collectedItemId, contextInfoSet);
         return logResultList;
+    }
+
+    private Set<ContextInfo> useGrepSearchEngine(SearchConditionDTO condition, String beginDatetimeStr, String endDatetimeStr, ConcurrentHashMap<String, ContextInfo> contextInfoMap) throws Exception {
+        Integer collectedItemId = condition.getCollectedItemId();
+        CollectedItemDO collectedItem = cacheService.getCollectedItemBy(collectedItemId);
+        if (collectedItem == null) {
+            throw new CollectorException(collectedItemId + " 对应的采集项不存在");
+        } else {
+            String collectedLogDir = collectedItem.getCollectedLogDir();
+            Map<String, File> logMap = LogScanner.scan(beginDatetimeStr, endDatetimeStr, collectedLogDir);
+            GrepSearchEngine grepSearchEngine = new GrepSearchEngine(condition.getNoIndexKeyword(), grepShellPath, logMap.values().toArray(new File[0]), contextInfoMap);
+            Set<ContextInfo> contextInfoSet = grepSearchEngine.search();
+            return contextInfoSet;
+        }
     }
 
     public String searchByContextId(Integer collectedItemId, String contextId) throws Exception {

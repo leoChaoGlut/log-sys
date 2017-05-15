@@ -11,20 +11,14 @@ import cn.yunyichina.log.component.index.entity.ContextInfo;
 import cn.yunyichina.log.component.index.entity.KeywordIndex;
 import cn.yunyichina.log.component.index.entity.KvIndex;
 import cn.yunyichina.log.component.scanner.imp.LogScanner;
-import cn.yunyichina.log.component.searchengine.imp.KeywordSearchEngine;
-import cn.yunyichina.log.component.searchengine.imp.KvSearchEngine;
-import cn.yunyichina.log.component.searchengine.imp.MultNoIndexSearchEngine;
-import cn.yunyichina.log.component.searchengine.imp.NoIndexSearchEngine;
+import cn.yunyichina.log.component.searchengine.imp.*;
 import com.alibaba.fastjson.JSON;
 import org.apache.commons.lang3.time.FastDateFormat;
 import org.junit.Test;
 
 import java.io.File;
 import java.math.BigDecimal;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -42,6 +36,16 @@ public class SearchEngineTest {
     String endDatetime = "2018-11-15 14:25";
 
     @Test
+    public void grepSearchEngineTest() throws Exception {
+        Collection<File> logs = getLogs();
+        String keyword = "123";
+        String shellPath = "/";
+        GrepSearchEngine grepSearchEngine = new GrepSearchEngine(keyword, shellPath, logs.toArray(new File[0]), getContextInfoMap(logs));
+        Set<ContextInfo> contextInfoSet = grepSearchEngine.search();
+        System.out.println(JSON.toJSONString(contextInfoSet, true));
+    }
+
+    @Test
     public void noIndexSearchEngineTest() throws Exception {
         String keyword = "Exception1";
         Collection<File> logs = getLogs();
@@ -50,6 +54,19 @@ public class SearchEngineTest {
         Set<ContextInfo> contextInfoSet = noIndexSearchEngine.search();
         long endTime = System.nanoTime();
         System.out.println(JSON.toJSONString(contextInfoSet, true));
+        System.out.println("耗时:" + BigDecimal.valueOf(endTime - beginTime, 9) + " 秒");
+    }
+
+    @Test
+    public void noIndexWithoutSearchEngineTest() throws Exception {
+        String keyword = "getPatient";
+        List<File> logs = new ArrayList<>();
+        logs.add(new File("C:/Users/Administrator/Desktop/log-sys/log-resource/test-resource/log/2017/04/26/14/01/201704261401.log"));
+        long beginTime = System.nanoTime();
+        NoIndexWithoutContextIdSearchEngine noIndexWithoutContextIdSearchEngine = new NoIndexWithoutContextIdSearchEngine(logs, keyword);
+        Set<String> resultSet = noIndexWithoutContextIdSearchEngine.search();
+        long endTime = System.nanoTime();
+        System.out.println(JSON.toJSONString(resultSet, true));
         System.out.println("耗时:" + BigDecimal.valueOf(endTime - beginTime, 9) + " 秒");
     }
 

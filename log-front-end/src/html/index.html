@@ -8,6 +8,10 @@
     <link rel="stylesheet" href="../css/index.css">
 </head>
 <body>
+<input type="text" id="sel_content" style="display:none"><!-- 这是存储器 -->
+<div class="tooltip" role="tooltip">
+    <button class="tipfloat" id="copycardid">复制</button>
+</div><!-- 这是tip -->
 <div id="app" style="display: none;">
     <el-row :gutter="30">
         <el-col :span="4">
@@ -303,10 +307,13 @@
 </div>
 </body>
 <script src="../js/lib/jquery/3.1.1/jquery.min.js"></script>
+<script src="../js/lib/other/ZeroClipboard.js"></script><!--复制功能需要的js-->
 <script src="../js/lib/element/1.2.3/vue.js"></script>
 <script src="../js/lib/element/1.2.3/index.js"></script>
 <script src="../js/lib/sockjs/1.1.2/sockjs.js"></script>
 <!---->
 <script src="../js/common.js"></script>
 <script src="../js/index.js"></script>
+<script src="../js/lib/other/copy.js"></script><!--复制并且格式化json、xml-->
+
 </html>

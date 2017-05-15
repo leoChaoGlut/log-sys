@@ -72,11 +72,17 @@ public class ContextIndexBuilder extends AbstractBuilder implements IndexBuilder
                     if (null == contextInfo) {
                         contextInfo = new ContextInfo().setContextId(contextId);
                     }
-                    ContextIndex contextIndex = new ContextIndex(logFile, cursor);
                     if (isBeginTag) {
+                        ContextIndex contextIndex = new ContextIndex(logFile, cursor);
                         contextInfo.setBegin(contextIndex);
                     } else {
-                        contextInfo.setEnd(contextIndex);
+                        int endTagIndex = logContent.lastIndexOf(Tag.CONTEXT_ID_END);
+                        if (endTagIndex > 1) {
+                            endTagIndex += tagLength;
+                            ContextIndex contextIndex = new ContextIndex(logFile, endTagIndex);
+                            contextInfo.setEnd(contextIndex);
+                        }
+
                     }
                     contextInfoMap.put(contextId, contextInfo);//理论上 key( ContextId ) 不会有重复
                 }
