@@ -59,10 +59,10 @@ public class TracerTest {
         props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
         props.put("value.serializer", "cn.yunyichina.log.service.tracer.serialization.TraceNodeSerialization");
         Producer<String, LinkedTraceNode> producer = new KafkaProducer<>(props);
-        for (int i = 0; i < 1; i++) {
+        for (int i = 0; i < 150000; i++) {
             LinkedTraceNode node = new LinkedTraceNode()
-                    .setContextId("592149f4" + i * 10)
-                    .setTraceId("592149f4" + i);
+                    .setContextId(ContextId.getStr())
+                    .setTraceId(ContextId.getStr());
             producer.send(new ProducerRecord<String, LinkedTraceNode>("topic-trace", node));
 //            TimeUnit.MILLISECONDS.sleep(100);
         }
@@ -111,7 +111,7 @@ public class TracerTest {
     public void test5() {
         Properties props = new Properties();
         props.put("bootstrap.servers", "192.168.1.159:9000,192.168.1.159:9002,192.168.1.159:9002");
-        props.put("group.id", "group-trace1");
+        props.put("group.traceId", "group-trace1");
         props.put("enable.auto.commit", "false");
         props.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
         props.put("value.deserializer", "cn.yunyichina.log.service.tracer.serialization.TraceNodeDeserialization");
@@ -122,6 +122,11 @@ public class TracerTest {
             for (ConsumerRecord<String, LinkedTraceNode> record : records)
                 System.out.printf("offset = %d, key = %s, value = %s%n", record.offset(), record.key(), record.value());
         }
+    }
+
+    @Test
+    public void test6() {
+        System.out.println(new Date().getTime());
     }
 
 }

@@ -13,6 +13,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface CommonMapper extends BaseMapper {
 
-    void createTable(@Param("tableName") String tableName);
+    void createTraceTable(@Param("tableName") String tableName);
+
+    void createReverseIndexTable(@Param("tableName") String tableName);
 
 }

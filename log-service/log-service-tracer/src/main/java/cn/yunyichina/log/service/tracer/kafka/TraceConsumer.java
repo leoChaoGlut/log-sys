@@ -2,7 +2,10 @@ package cn.yunyichina.log.service.tracer.kafka;
 
 import cn.yunyichina.log.common.ContextId;
 import cn.yunyichina.log.common.entity.do_.LinkedTraceNode;
+import cn.yunyichina.log.service.common.entity.do_.ReverseIndexDO;
+import cn.yunyichina.log.service.common.entity.do_.TraceDO;
 import cn.yunyichina.log.service.tracer.mapper.CommonMapper;
+import cn.yunyichina.log.service.tracer.mapper.ReverseIndexMapper;
 import cn.yunyichina.log.service.tracer.mapper.TraceMapper;
 import cn.yunyichina.log.service.tracer.prop.TracerConsumerProp;
 import org.apache.commons.collections4.CollectionUtils;
@@ -25,6 +28,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+
 /**
  * @Author: Leo
  * @Blog: http://blog.csdn.net/lc0817
@@ -36,8 +40,7 @@ public class TraceConsumer {
 
     final Logger logger = LoggerFactory.getLogger(TraceConsumer.class);
 
-    public static final int MIN_BATCH_SIZE = 1;
-    public static final String TABLE_PREFIX_TRACE = "trace_";
+    public static final int MIN_BATCH_SIZE = 50;
 
     private ExecutorService singleThreadExecutor = Executors.newSingleThreadExecutor();
     private KafkaConsumer consumer;
@@ -51,11 +54,15 @@ public class TraceConsumer {
     TraceMapper traceMapper;
     @Autowired
     CommonMapper commonMapper;
+    @Autowired
+    ReverseIndexMapper reverseIndexMapper;
 
     public void createTable() {
         Calendar c = Calendar.getInstance();
         for (int i = 0; i < 7; i++) {
-            commonMapper.createTable(TABLE_PREFIX_TRACE + dateFormat.format(c.getTime()));
+            String curDateStr = dateFormat.format(c.getTime());
+            commonMapper.createTraceTable(TableNamePrefix.TRACE + curDateStr);
+            commonMapper.createReverseIndexTable(TableNamePrefix.REVERSE_INDEX + curDateStr);
             c.add(Calendar.DATE, 1);
         }
     }
@@ -94,16 +101,29 @@ public class TraceConsumer {
     @Transactional(rollbackFor = Exception.class)
     private void insertIntoDb(List<ConsumerRecord<String, LinkedTraceNode>> buffer) {
         if (CollectionUtils.isNotEmpty(buffer)) {
-            ConsumerRecord<String, LinkedTraceNode> firstRecord = buffer.get(0);
-            LinkedTraceNode node = firstRecord.value();
-            String traceId = node.getTraceId();
-            long timestamp = ContextId.getTimestamp(traceId);
-            String dateStr = dateFormat.format(timestamp);
-            List<LinkedTraceNode> nodeList = new ArrayList<>(buffer.size());
+            List<TraceDO> traceDOList = new ArrayList<>(buffer.size());
+            List<ReverseIndexDO> reverseIndexDOList = new ArrayList<>(buffer.size());
             for (ConsumerRecord<String, LinkedTraceNode> record : buffer) {
-                nodeList.add(record.value());
+                LinkedTraceNode node = record.value();
+
+                String traceId = node.getTraceId();
+                String contextId = node.getContextId();
+
+                TraceDO traceDO = new TraceDO()
+                        .setTraceId(traceId)
+                        .setContextId(contextId)
+                        .setTableName(buildTraceTableName(TableNamePrefix.TRACE, traceId));
+
+                ReverseIndexDO reverseIndexDO = new ReverseIndexDO()
+                        .setContextId(contextId)
+                        .setTraceId(traceId)
+                        .setTableName(buildTraceTableName(TableNamePrefix.REVERSE_INDEX, contextId));
+
+                traceDOList.add(traceDO);
+                reverseIndexDOList.add(reverseIndexDO);
             }
-            traceMapper.insertListByTableNameAndList(buildTraceTableName(dateStr), nodeList);
+            traceMapper.insertList(traceDOList);
+            reverseIndexMapper.insertList(reverseIndexDOList);
         }
     }
 
@@ -123,7 +143,21 @@ public class TraceConsumer {
         return props;
     }
 
-    private String buildTraceTableName(String dateStr) {
-        return TABLE_PREFIX_TRACE + dateStr;
+    private String buildTraceTableName(TableNamePrefix tableNamePrefix, String objectId) {
+        return tableNamePrefix.getVal() + dateFormat.format(ContextId.getTimestamp(objectId));
+    }
+
+    public enum TableNamePrefix {
+        TRACE("trace_"), REVERSE_INDEX("reverse_index_");
+
+        private String val;
+
+        TableNamePrefix(String val) {
+            this.val = val;
+        }
+
+        public String getVal() {
+            return val;
+        }
     }
 }
