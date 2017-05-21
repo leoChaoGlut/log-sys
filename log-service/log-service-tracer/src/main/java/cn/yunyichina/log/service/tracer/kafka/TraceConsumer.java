@@ -61,8 +61,8 @@ public class TraceConsumer {
         Calendar c = Calendar.getInstance();
         for (int i = 0; i < 7; i++) {
             String curDateStr = dateFormat.format(c.getTime());
-            commonMapper.createTraceTable(TableNamePrefix.TRACE + curDateStr);
-            commonMapper.createReverseIndexTable(TableNamePrefix.REVERSE_INDEX + curDateStr);
+            commonMapper.createTraceTable(TableNamePrefix.TRACE.getVal() + curDateStr);
+            commonMapper.createReverseIndexTable(TableNamePrefix.REVERSE_INDEX.getVal() + curDateStr);
             c.add(Calendar.DATE, 1);
         }
     }
@@ -79,7 +79,6 @@ public class TraceConsumer {
                         try {
                             ConsumerRecords<String, LinkedTraceNode> records = consumer.poll(100);
                             for (ConsumerRecord<String, LinkedTraceNode> record : records) {
-                                logger.info("======" + record.offset() + "," + record.key() + "," + record.value());
                                 buffer.add(record);
                             }
                             if (buffer.size() >= MIN_BATCH_SIZE) {
@@ -122,6 +121,9 @@ public class TraceConsumer {
                 traceDOList.add(traceDO);
                 reverseIndexDOList.add(reverseIndexDO);
             }
+//            TODO 事务不执行
+//            TODO 事务不执行
+//            TODO 事务不执行
             traceMapper.insertList(traceDOList);
             reverseIndexMapper.insertList(reverseIndexDOList);
         }
