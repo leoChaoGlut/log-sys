@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.yunyichina.log.service.tracer.mapper.TraceMapper">
+
+    <insert id="insertListByTableNameAndList">
+        <foreach collection="nodeList" item="node">
+            INSERT INTO ${tableName} VALUES
+            ('${node.traceId}', '"${node.contextId}"')
+            ON DUPLICATE KEY UPDATE
+            context_list = json_merge(context_list, '"${node.contextId}"');
+        </foreach>
+    </insert>
+
+</mapper>

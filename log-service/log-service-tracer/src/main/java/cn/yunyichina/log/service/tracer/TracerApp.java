@@ -13,7 +13,7 @@ import org.springframework.cloud.netflix.feign.EnableFeignClients;
  */
 @EnableEurekaClient
 @EnableFeignClients
-@SpringBootApplication(scanBasePackages = "cn.yunyichina.log.service.tracer")
+@SpringBootApplication
 public class TracerApp {
 
     public static void main(String[] args) {

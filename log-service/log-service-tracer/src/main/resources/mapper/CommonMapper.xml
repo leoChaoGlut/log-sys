@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.yunyichina.log.service.tracer.mapper.CommonMapper">
+
+    <select id="createTable">
+        CREATE TABLE IF NOT EXISTS ${tableName}  (
+        `id` char(32) NOT NULL,
+        `context_list` json NOT NULL,
+        PRIMARY KEY (`id`)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+    </select>
+
+</mapper>

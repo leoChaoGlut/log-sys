@@ -9,7 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
-import org.springframework.stereotype.Service;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.Pipeline;
 
@@ -23,7 +22,7 @@ import java.util.TreeSet;
  * @CreateTime: 2017/3/29 18:41
  * @Description:
  */
-@Service
+//@Service
 public class LinkedTraceService extends AbstractService {
 
     final Logger logger = LoggerFactory.getLogger(LinkedTraceService.class);

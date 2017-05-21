@@ -3,7 +3,6 @@ package cn.yunyichina.log.service.tracer.manager;
 import cn.yunyichina.log.service.tracer.config.JedisProperties;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import redis.clients.jedis.*;
 
 import javax.annotation.PostConstruct;
@@ -14,7 +13,7 @@ import javax.annotation.PostConstruct;
  * @CreateTime: 2017/05/01 10:45
  * @Description:
  */
-@Component
+//@Component
 public class JedisManager {
 
     @Getter

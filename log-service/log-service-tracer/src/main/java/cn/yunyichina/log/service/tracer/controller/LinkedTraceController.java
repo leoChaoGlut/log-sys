@@ -9,8 +9,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.TreeSet;
@@ -21,8 +19,8 @@ import java.util.TreeSet;
  * @CreateTime: 2017/3/28 15:19
  * @Description: 由于tracer并发量会比较大, 所以需要部署2套实例, 一个只读, 一个只写.
  */
-@RestController
-@RequestMapping("trace/linked")
+//@RestController
+//@RequestMapping("trace/linked")
 public class LinkedTraceController extends AbstractController {
     final Logger logger = LoggerFactory.getLogger(LinkedTraceController.class);
 

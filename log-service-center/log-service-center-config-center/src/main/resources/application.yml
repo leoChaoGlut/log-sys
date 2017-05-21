@@ -5,7 +5,7 @@ spring:
     config:
       server:
         native:
-          search-locations: file:///D:/gitRepo/yunyi/src/log/log-sys/log-resource/config-repo
+          search-locations: file:///D:/gitRepo/gitHub/log-sys/log-resource/config-repo
       username: test
       password: test
   application:
