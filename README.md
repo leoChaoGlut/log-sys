@@ -37,6 +37,8 @@
 - [Element UI](http://element.eleme.io/)
 - [Sockjs](https://github.com/sockjs/sockjs-client)
 - [Redis3.2.8](https://redis.io/)
+- [Kafka](http://kafka.apache.org/)
+- [MySQL5.7](https://www.mysql.com/)
 # 日志规范
 * Logback配置: 请使用logback作为日志打印,并将配置文件logback.xml修改如下.[STDOUT,ALL]是必须的Appender.
 ```xml
