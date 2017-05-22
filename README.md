@@ -112,5 +112,7 @@ public Object aroundUserPointCut(ProceedingJoinPoint pjp) throws Throwable {
   wrapper.contextEnd("获取用户结束");//上下文的结束,就是getUserBy返回之后,或者异常捕获之后.
 }
 ```
+# 基础架构图
+![ABC](http://avatar.csdn.net/D/6/7/1_qq_21376985.jpg) 
 # 安装步骤
 TODO
