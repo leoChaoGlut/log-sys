@@ -113,6 +113,6 @@ public Object aroundUserPointCut(ProceedingJoinPoint pjp) throws Throwable {
 }
 ```
 # 基础架构图
-![ABC](http://avatar.csdn.net/D/6/7/1_qq_21376985.jpg) 
+![](https://raw.githubusercontent.com/leoChaoGlut/log-sys/dev-kafka/log-resource/Architecture.png) 
 # 安装步骤
 TODO
