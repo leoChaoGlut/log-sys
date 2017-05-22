@@ -59,7 +59,7 @@ public class TracerTest {
         props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
         props.put("value.serializer", "cn.yunyichina.log.service.tracer.serialization.TraceNodeSerialization");
         Producer<String, LinkedTraceNode> producer = new KafkaProducer<>(props);
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 2; i++) {
             LinkedTraceNode node = new LinkedTraceNode()
                     .setContextId(ContextId.getStr())
                     .setTraceId(ContextId.getStr());

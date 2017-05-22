@@ -10,6 +10,8 @@ import cn.yunyichina.log.service.tracer.mapper.TraceMapper;
 import cn.yunyichina.log.service.tracer.prop.TracerConsumerProp;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.time.FastDateFormat;
+import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
@@ -17,7 +19,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PreDestroy;
 import java.util.ArrayList;
@@ -40,7 +41,7 @@ public class TraceConsumer {
 
     final Logger logger = LoggerFactory.getLogger(TraceConsumer.class);
 
-    public static final int MIN_BATCH_SIZE = 50;
+    public static final int MIN_BATCH_SIZE = 2;
 
     private ExecutorService singleThreadExecutor = Executors.newSingleThreadExecutor();
     private KafkaConsumer consumer;
@@ -97,8 +98,11 @@ public class TraceConsumer {
         }
     }
 
-    @Transactional(rollbackFor = Exception.class)
-    private void insertIntoDb(List<ConsumerRecord<String, LinkedTraceNode>> buffer) {
+    @Autowired
+    SqlSessionFactory sqlSessionFactory;
+
+    //    @Transactional(rollbackFor = Exception.class)
+    private void insertIntoDb(List<ConsumerRecord<String, LinkedTraceNode>> buffer) throws Exception {
         if (CollectionUtils.isNotEmpty(buffer)) {
             List<TraceDO> traceDOList = new ArrayList<>(buffer.size());
             List<ReverseIndexDO> reverseIndexDOList = new ArrayList<>(buffer.size());
@@ -124,8 +128,25 @@ public class TraceConsumer {
 //            TODO 事务不执行
 //            TODO 事务不执行
 //            TODO 事务不执行
-            traceMapper.insertList(traceDOList);
-            reverseIndexMapper.insertList(reverseIndexDOList);
+            SqlSession sqlSession = sqlSessionFactory.openSession(false);
+            TraceMapper traceMapper = sqlSession.getMapper(TraceMapper.class);
+            ReverseIndexMapper reverseIndexMapper = sqlSession.getMapper(ReverseIndexMapper.class);
+            try {
+                traceMapper.insertList(traceDOList);
+                reverseIndexMapper.insertList(reverseIndexDOList);
+                sqlSession.commit();
+            } catch (Exception e) {
+                sqlSession.rollback();
+                e.printStackTrace();
+            } finally {
+                sqlSession.close();
+            }
+
+//            this.traceMapper.insertList(traceDOList);
+//            if (1 == 1) {
+//                throw new Exception("11111");
+//            }
+//            reverseIndexMapper.insertList(reverseIndexDOList);
         }
     }
 
