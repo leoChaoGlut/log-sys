@@ -22,6 +22,7 @@
         <module>log-component-scanner</module>
         <module>log-component-filter</module>
         <module>log-component-common</module>
+        <module>log-component-healthcheck</module>
     </modules>
 
     <dependencies>
