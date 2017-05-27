@@ -2,7 +2,7 @@ package cn.yunyichina.log.service.tracer.lifecycle;
 
 
 import cn.yunyichina.log.common.LoggerWrapper;
-import cn.yunyichina.log.service.tracer.kafka.TraceConsumer;
+import cn.yunyichina.log.service.tracer.kafka.consumer.TraceConsumer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;

@@ -15,9 +15,9 @@ spring:
 mybatis:
   mapper-locations: classpath:mapper/*Mapper.xml
   configuration:
-    mapUnderscoreToCamelCase: true
-    defaultStatementTimeout: 30
-  type-aliases-package: cn.yunyichina.log.common.entity.do_
+      map-underscore-to-camel-case: false
+      default-fetch-size: 100
+      default-statement-timeout: 30
 kafka:
   consumer:
     bootstrapServers: 192.168.1.159:9000,192.168.1.159:9002,192.168.1.159:9002

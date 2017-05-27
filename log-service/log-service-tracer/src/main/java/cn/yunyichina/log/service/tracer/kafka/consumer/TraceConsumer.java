@@ -1,17 +1,14 @@
-package cn.yunyichina.log.service.tracer.kafka;
+package cn.yunyichina.log.service.tracer.kafka.consumer;
 
 import cn.yunyichina.log.common.ContextId;
 import cn.yunyichina.log.common.entity.do_.LinkedTraceNode;
 import cn.yunyichina.log.service.common.entity.do_.ReverseIndexDO;
 import cn.yunyichina.log.service.common.entity.do_.TraceDO;
 import cn.yunyichina.log.service.tracer.mapper.CommonMapper;
-import cn.yunyichina.log.service.tracer.mapper.ReverseIndexMapper;
-import cn.yunyichina.log.service.tracer.mapper.TraceMapper;
 import cn.yunyichina.log.service.tracer.prop.TracerConsumerProp;
+import cn.yunyichina.log.service.tracer.service.KafkaConsumerService;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.time.FastDateFormat;
-import org.apache.ibatis.session.SqlSession;
-import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
@@ -52,11 +49,10 @@ public class TraceConsumer {
     @Autowired
     TracerConsumerProp tracerConsumerProp;
     @Autowired
-    TraceMapper traceMapper;
-    @Autowired
     CommonMapper commonMapper;
+
     @Autowired
-    ReverseIndexMapper reverseIndexMapper;
+    KafkaConsumerService kafkaConsumerService;
 
     public void createTable() {
         Calendar c = Calendar.getInstance();
@@ -98,14 +94,8 @@ public class TraceConsumer {
         }
     }
 
-    @Autowired
-    SqlSessionFactory sqlSessionFactory;
-
-    //    @Transactional(rollbackFor = Exception.class)
-    private void insertIntoDb(List<ConsumerRecord<String, LinkedTraceNode>> buffer) throws Exception {
+    public void insertIntoDb(List<ConsumerRecord<String, LinkedTraceNode>> buffer) throws Exception {
         if (CollectionUtils.isNotEmpty(buffer)) {
-            List<TraceDO> traceDOList = new ArrayList<>(buffer.size());
-            List<ReverseIndexDO> reverseIndexDOList = new ArrayList<>(buffer.size());
             for (ConsumerRecord<String, LinkedTraceNode> record : buffer) {
                 LinkedTraceNode node = record.value();
 
@@ -122,31 +112,8 @@ public class TraceConsumer {
                         .setTraceId(traceId)
                         .setTableName(buildTraceTableName(TableNamePrefix.REVERSE_INDEX, contextId));
 
-                traceDOList.add(traceDO);
-                reverseIndexDOList.add(reverseIndexDO);
+                kafkaConsumerService.insertTraceAndReverseIndex(traceDO, reverseIndexDO);
             }
-//            TODO 事务不执行
-//            TODO 事务不执行
-//            TODO 事务不执行
-            SqlSession sqlSession = sqlSessionFactory.openSession(false);
-            TraceMapper traceMapper = sqlSession.getMapper(TraceMapper.class);
-            ReverseIndexMapper reverseIndexMapper = sqlSession.getMapper(ReverseIndexMapper.class);
-            try {
-                traceMapper.insertList(traceDOList);
-                reverseIndexMapper.insertList(reverseIndexDOList);
-                sqlSession.commit();
-            } catch (Exception e) {
-                sqlSession.rollback();
-                e.printStackTrace();
-            } finally {
-                sqlSession.close();
-            }
-
-//            this.traceMapper.insertList(traceDOList);
-//            if (1 == 1) {
-//                throw new Exception("11111");
-//            }
-//            reverseIndexMapper.insertList(reverseIndexDOList);
         }
     }
 

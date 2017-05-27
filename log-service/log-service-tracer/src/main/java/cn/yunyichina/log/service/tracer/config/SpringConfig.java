@@ -2,7 +2,6 @@ package cn.yunyichina.log.service.tracer.config;
 
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 /**
  * @Author: Leo
@@ -11,7 +10,6 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  * @Description:
  */
 @Configuration
-@EnableTransactionManagement
 @MapperScan(basePackages = "cn.yunyichina.log.service.tracer.mapper")
 public class SpringConfig {
 }

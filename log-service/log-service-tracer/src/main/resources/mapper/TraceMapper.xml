@@ -2,13 +2,10 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="cn.yunyichina.log.service.tracer.mapper.TraceMapper">
 
-    <insert id="insertList" parameterType="cn.yunyichina.log.service.common.entity.do_.TraceDO">
-        <foreach collection="traceDOList" item="traceDO">
-            INSERT INTO ${traceDO.tableName} VALUES
-            ('${traceDO.traceId}', '"${traceDO.contextId}"')
-            ON DUPLICATE KEY UPDATE
-            context_list = json_merge(context_list, '"${traceDO.contextId}"');
-        </foreach>
+    <insert id="insertOne" parameterType="cn.yunyichina.log.service.common.entity.do_.TraceDO">
+        INSERT INTO ${tableName}
+        VALUES (#{traceId}, '"${contextId}"')
+        ON DUPLICATE KEY UPDATE context_list = json_merge(context_list,'"${contextId}"')
     </insert>
 
 </mapper>
