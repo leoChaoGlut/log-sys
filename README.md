@@ -1,3 +1,7 @@
+# 说明
+- 日志追踪模型基于 Dapper 这篇论文
+  - [英文原文](research.google.com/pubs/pub36356.html)
+  - [论文译文](http://bigbully.github.io/Dapper-translation/)
 # 功能简介
 - 多余信息过滤
 - 规范日志打印格式
@@ -118,3 +122,4 @@ public Object aroundUserPointCut(ProceedingJoinPoint pjp) throws Throwable {
 ![](https://raw.githubusercontent.com/leoChaoGlut/log-sys/master/log-resource/Architecture.png) 
 # 安装步骤
 TODO
+
