@@ -1,5 +1,5 @@
 # 说明
-- 日志追踪模型基于 Dapper 这篇论文
+- 日志追踪模型基于论文: Dapper
   - [英文原文](http://research.google.com/pubs/pub36356.html)
   - [论文译文](http://bigbully.github.io/Dapper-translation/)
 # 功能简介
