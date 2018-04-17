@@ -121,5 +121,5 @@ public Object aroundUserPointCut(ProceedingJoinPoint pjp) throws Throwable {
 # 基础架构图
 ![](https://raw.githubusercontent.com/leoChaoGlut/log-sys/master/log-resource/Architecture.png) 
 # 安装步骤
-TODO
+[Here](https://github.com/leoChaoGlut/log-sys/issues/6)
 
